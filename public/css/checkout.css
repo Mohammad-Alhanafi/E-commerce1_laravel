@@ -1,0 +1,24 @@
+        body { background: #0f0f0f; color: #fff; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
+        .checkout-container { max-width: 1100px; margin: 50px auto; padding: 20px; }
+        .header-gold { color: #d4af37; text-align: center; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 40px; text-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+        .checkout-grid { display: grid; grid-template-columns: 1fr 400px; gap: 30px; }
+        @media (max-width: 850px) { .checkout-grid { grid-template-columns: 1fr; } }
+        .card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 20px; padding: 30px; backdrop-filter: blur(10px); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #b8a07c; font-size: 14px; }
+        input, textarea, select { width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(212, 175, 55, 0.3); color: #fff; border-radius: 10px; outline: none; box-sizing: border-box; }
+        input:focus { border-color: #d4af37; box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+        
+        /* تصميم خيارات الشحن */
+        .shipping-options { display: flex; gap: 15px; margin-bottom: 25px; }
+        .ship-opt { flex: 1; border: 1px solid rgba(212, 175, 55, 0.3); padding: 15px; border-radius: 12px; cursor: pointer; text-align: center; transition: 0.3s; background: rgba(255,255,255,0.02); }
+        .ship-opt.active { border-color: #d4af37; background: rgba(212, 175, 55, 0.1); box-shadow: 0 0 10px rgba(212,175,55,0.2); }
+        .ship-opt i { display: block; font-size: 20px; margin-bottom: 8px; color: #d4af37; }
+        .ship-opt input { display: none; }
+
+        .order-summary { background: linear-gradient(145deg, rgba(212, 175, 55, 0.1), rgba(0, 0, 0, 0.4)); border: 1px solid #d4af37; }
+        .item-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .total-row { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 2px dashed #d4af37; font-size: 22px; font-weight: bold; color: #d4af37; }
+        .confirm-btn { width: 100%; background: linear-gradient(135deg, #d4af37 0%, #b4941c 100%); color: #000; border: none; padding: 18px; font-size: 18px; font-weight: bold; border-radius: 40px; cursor: pointer; margin-top: 20px; transition: 0.3s; text-transform: uppercase; }
+        .payment-methods { display: flex; gap: 15px; margin-top: 20px; justify-content: center; opacity: 0.7; }
+        .payment-methods img { height: 25px; filter: grayscale(1) brightness(1.5); }

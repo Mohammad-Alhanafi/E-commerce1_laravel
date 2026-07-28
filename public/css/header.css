@@ -1,0 +1,773 @@
+/* =========================
+   HEADER / NAVBAR
+========================= */
+
+header {
+    background-color: var(--primary-black);
+    padding: 20px 0;
+    border-bottom: 2px solid var(--primary-gold);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+
+.header-content {
+    display: flex;
+    direction: rtl !important;   /* يثبت الترتيب البصري بكل اللغات متل العربي */
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+/* Logo */
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.logo-icon {
+    color: var(--primary-gold);
+    font-size: 2.5rem;
+}
+
+
+.logo-text {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--primary-gold);
+}
+
+
+.logo-text span {
+    color: var(--white);
+}
+
+
+
+/* Navigation */
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+
+nav a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: color 0.3s;
+    position: relative;
+}
+
+
+nav a:hover {
+    color: var(--primary-gold);
+}
+
+
+nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background: var(--primary-gold);
+    bottom: -5px;
+    right: 0;
+    transition: width 0.3s;
+}
+
+
+nav a:hover::after {
+    width: 100%;
+}
+
+
+
+/* Header Icons */
+
+.header-icons {
+    direction: rtl !important;
+    display: flex;
+    gap: 20px;
+}
+
+
+.header-icons i {
+    color: var(--primary-gold);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+
+.header-icons i:hover {
+    transform: scale(1.1);
+}
+
+
+
+/* =========================
+   USER DROPDOWN
+========================= */
+
+.user-dropdown {
+    position: relative;
+}
+
+/* إخفاء القائمة افتراضياً وإضافة تأثير سلاسة (Smooth Fade/Slide) */
+.user-menu {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    background: #111;
+    border: 1px solid #d4af37;
+    border-radius: 12px;
+    min-width: 220px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    z-index: 9999;
+    
+    /* --- الإخفاء والتأثيرات --- */
+    display: none;             /* إخفاء القائمة */
+    opacity: 0;                /* جعلها شفافة */
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.user-dropdown:hover .user-menu {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* في حال كنت تستخدم JavaScript لإضافة كلاس active/show بدلاً من Hover */
+.user-dropdown.active .user-menu,
+.user-menu.show {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+}
+
+
+.main-nav ul {
+    direction: rtl !important;
+}
+
+
+
+
+
+
+
+/* إخفاء قائمة الأقسام المنسدلة */
+.nav-dropdown .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #111;
+    border: 1px solid #d4af37;
+    border-radius: 12px;
+    min-width: 200px;
+    z-index: 9999;
+}
+
+/* إظهار قائمة الأقسام عند الوقوف بالماوس عليه */
+.nav-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+
+
+
+
+.user-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    color: white;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+
+.user-item:last-child {
+    border-bottom:none;
+}
+
+
+.user-item i {
+    color:#d4af37;
+    width:20px;
+    text-align:center;
+    font-size:14px;
+}
+
+
+.user-item:hover {
+    background:#d4af37;
+    color:black;
+    padding-right:25px;
+}
+
+
+.user-item:hover i {
+    color:black;
+}
+
+
+
+/* Admin Link */
+
+.admin-link {
+    color:#d4af37 !important;
+    font-weight:bold;
+}
+
+
+.admin-link:hover {
+    background-color:rgba(212,175,55,0.1) !important;
+    color:white !important;
+}
+
+
+.admin-link i {
+    color:#d4af37;
+}
+
+
+
+/* =========================
+   HEADER RESPONSIVE
+========================= */
+
+
+@media (max-width:992px){
+
+    nav ul{
+        gap:15px;
+    }
+
+}
+
+
+
+@media (max-width:768px){
+
+    .header-content{
+        flex-direction:column;
+        gap:20px;
+    }
+
+
+    nav ul{
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+
+}
+
+
+
+@media (max-width:576px){
+
+    .logo-text{
+        font-size:1.5rem;
+    }
+
+}
+
+
+
+
+/* =========================
+   FIX ALL DROPDOWNS IN NAV
+========================= */
+
+/* 1. تحديد العناصر التي تحتوي على قائمة منسدلة داخل القائمة */
+nav ul li {
+    position: relative; /* لضبط مكان القائمة المنسدلة بالنسبة للزر */
+}
+
+/* 2. إخفاء أي قائمة فرعية (ul داخل li) افتراضياً */
+nav ul li ul, 
+nav ul li .dropdown-menu,
+nav ul li .dropdown {
+    display: none !important;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #111;
+    border: 1px solid #d4af37;
+    border-radius: 10px;
+    padding: 10px 0;
+    min-width: 180px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+    z-index: 9999;
+}
+
+/* 3. تنسيق الروابط داخل القائمة المنسدلة للأقسام */
+nav ul li ul li,
+nav ul li .dropdown-menu a {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+}
+
+nav ul li ul li a {
+    padding: 8px 15px;
+    font-size: 0.95rem;
+    color: #fff;
+}
+
+/* 4. إظهار القائمة فقط عند تحريك الماوس فوق القسم الرئيسي */
+nav ul li:hover > ul,
+nav ul li:hover > .dropdown-menu,
+nav ul li:hover > .dropdown {
+    display: block !important;
+}
+
+
+
+
+
+
+
+/* =========================
+   FIX CUSTOM DROPDOWNS & D-NONE
+========================= */
+
+/* تعريف كلاس الإخفاء */
+.d-none {
+    display: none !important;
+}
+
+/* ضبط موضع القائمة الرئيسية للأقسام */
+.custom-dropdown {
+    position: relative;
+}
+
+.custom-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #111;
+    border: 1px solid #d4af37;
+    border-radius: 12px;
+    min-width: 230px;
+    padding: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
+
+/* إظهار قائمة الأقسام تلقائياً عند وضع الماوس على "الأقسام" */
+.custom-dropdown:hover .custom-dropdown-menu {
+    display: block !important;
+}
+
+/* تنسيق أزرار الأقسام والمنتجات داخل القائمة */
+.category-box {
+    margin-bottom: 5px;
+}
+
+.category-toggle {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: right;
+    font-family: inherit;
+    transition: 0.3s;
+}
+
+.category-toggle:hover {
+    background: #d4af37;
+    color: #000;
+}
+
+.products-list {
+    padding-right: 15px;
+    margin-top: 5px;
+}
+
+.product-link {
+    display: block;
+    color: #ccc;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 4px 0;
+    transition: 0.3s;
+}
+
+.product-link:hover {
+    color: #d4af37;
+}
+
+
+
+
+.language-box {
+    position: relative;
+}
+
+#langBtn {
+
+    width:45px;
+    height:45px;
+
+    border-radius:50%;
+
+    background: linear-gradient(135deg,#D4AF37,#B8941E);
+
+    color:#000;
+
+    border:none;
+
+    font-size:22px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+}
+
+#langList {
+
+    display: none;
+
+    position: absolute;
+    top: 45px;
+    right: 0;
+
+    background: black;
+    width: 50px;
+
+    border-radius: 10px;
+    padding: 8px;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.038);
+}
+
+#langList a {
+
+    display: block;
+    text-decoration: none;
+    font-size: 15px;
+    padding: 8px;
+
+}
+
+
+#langList.active {
+
+    display: block;
+
+}
+
+
+#langBtn:hover {
+
+    color: #FFD700;
+
+    transform: scale(1.55);
+
+}
+/* =========================
+   VISUAL IDENTITY MODAL (logoModal)
+========================= */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(6px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-content.logo-modal-pro {
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: linear-gradient(180deg, #141414, #0a0a0a);
+    border: 1px solid rgba(212, 160, 23, 0.25);
+    border-radius: 22px;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+    animation: modalPop 0.25s ease;
+}
+
+@keyframes modalPop {
+    from { opacity: 0; transform: translateY(14px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---- Header ---- */
+.modal-header-pro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(212, 160, 23, 0.18);
+}
+
+.modal-header-pro h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-family: 'Amiri', serif;
+    font-size: 1.3rem;
+    color: #ffd700;
+}
+
+.modal-header-pro .close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #ccc;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .2s, color .2s, transform .2s;
+}
+
+.modal-header-pro .close:hover {
+    background: rgba(212, 160, 23, 0.15);
+    color: #ffd700;
+    transform: rotate(90deg);
+}
+
+/* ---- Live preview ---- */
+.preview-container-pro {
+    padding: 26px 24px 10px;
+}
+
+.live-preview-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 26px;
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 30% 20%, rgba(212, 160, 23, 0.12), transparent 55%),
+        #050505;
+    border: 1px dashed rgba(212, 160, 23, 0.3);
+}
+
+.live-preview-box i#previewIcon {
+    color: #d4af37;
+}
+
+.live-preview-box img#previewLogoImg {
+    display: inline-block;
+    object-fit: contain;
+}
+
+.live-preview-box span#previewText {
+    font-family: 'Amiri', serif;
+    font-weight: 700;
+    color: #d4af37;
+}
+
+/* ---- Body / form ---- */
+.modal-body-pro {
+    padding: 20px 24px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.setting-group-pro { display: flex; flex-direction: column; gap: 8px; }
+
+.setting-group-pro label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    color: #cfcfcf;
+    font-weight: 600;
+}
+
+.setting-group-pro label i { color: #d4af37; width: 16px; text-align: center; }
+
+.setting-group-pro input[type="text"] {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 160, 23, 0.2);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #fff;
+    font-size: 0.92rem;
+    transition: border-color .2s, background .2s;
+}
+
+.setting-group-pro input[type="text"]:focus {
+    outline: none;
+    border-color: #d4af37;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.setting-group-pro select {
+    width: 100%;
+    background: #111 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%23d4af37' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E") no-repeat left 14px center;
+    border: 1px solid rgba(212, 160, 23, 0.2);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #fff;
+    font-size: 0.9rem;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color .2s;
+}
+
+.setting-group-pro select:focus { outline: none; border-color: #d4af37; }
+.setting-group-pro select option { background: #111; color: #fff; }
+
+/* range sliders */
+.setting-group-pro input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    outline: none;
+}
+
+.setting-group-pro input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd700, #d4a017);
+    box-shadow: 0 0 0 4px rgba(212, 160, 23, 0.18);
+    cursor: pointer;
+    transition: transform .2s;
+}
+
+.setting-group-pro input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+/* color picker */
+.setting-group-pro input[type="color"] {
+    -webkit-appearance: none;
+    width: 44px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid rgba(212, 160, 23, 0.25);
+    border-radius: 8px;
+    background: none;
+    cursor: pointer;
+}
+.setting-group-pro input[type="color"]::-webkit-color-swatch-wrapper { padding: 3px; }
+.setting-group-pro input[type="color"]::-webkit-color-swatch { border-radius: 5px; border: none; }
+
+.row-settings {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: end;
+    gap: 16px;
+}
+
+.row-settings .setting-group-pro.small { min-width: 60px; }
+
+/* upload box */
+.upload-box { display: flex; }
+
+.upload-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px;
+    border: 1px dashed rgba(212, 160, 23, 0.35);
+    border-radius: 12px;
+    color: #d4af37;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+}
+
+.upload-label:hover {
+    background: rgba(212, 160, 23, 0.08);
+    border-color: #d4af37;
+}
+
+.upload-label i { font-size: 1.1rem; }
+
+/* ---- Footer ---- */
+.modal-footer-pro {
+    padding: 20px 24px 24px;
+}
+
+.btn-save-pro {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ffd700, #d4a017);
+    color: #0a0a0a;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.btn-save-pro:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(212, 160, 23, 0.35);
+}
+
+.btn-save-pro:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ---- Mobile ---- */
+@media (max-width: 480px) {
+    .modal-content.logo-modal-pro { border-radius: 16px; }
+    .modal-header-pro, .preview-container-pro, .modal-body-pro, .modal-footer-pro {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+    .row-settings { grid-template-columns: 1fr; }
+}
+

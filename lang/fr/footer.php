@@ -1,0 +1,3 @@
+<?php
+return ['tagline'=>'L\'Excellence Définie',    'rights_reserved' => 'Tous droits réservés',
+'description'=>'Les meilleurs produits avec la plus haute qualité, soigneusement sélectionnés pour vous offrir une expérience à la hauteur de votre goût.','subtitle'=>'Suivez-nous pour recevoir les dernières offres et nouveaux produits.','follow_us'=>'Suivez-nous','qr_label'=>'Scan Rapide','qr_desc'=>'Scannez le code pour visiter la boutique sur mobile','developed_by'=>'Développé par','all_rights'=>'Tous Droits Réservés','privacy_policy'=>'Politique de Confidentialité','terms'=>'Conditions Générales','contact'=>'Nous Contacter','links'=>'Liens Rapides','home'=>'Accueil','categories'=>'Catégories','products'=>'Produits','about'=>'À Propos'];

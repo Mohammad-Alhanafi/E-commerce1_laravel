@@ -1,0 +1,50 @@
+<?php
+/*
+ * ============================================================
+ *  lang/ar/home.php — Arabic Home Page Translations
+ * ============================================================
+ */
+return [
+    'title'            => 'الصفحة الرئيسية | متجر الوقار',
+    'meta_description' => 'اكتشف أرقى العبايات وأجمل الأزياء النسائية الفاخرة في متجر الوقار.',
+    'meta_keywords'    => 'عبايات, أزياء نسائية, فاخر, موضة, لبنان',
+    'hero_title'       => 'أناقة لا مثيل لها',
+    'hero_subtitle'    => 'اكتشف مجموعتنا الحصرية من العبايات الفاخرة',
+    'hero_cta'         => 'تسوقي الآن',
+    'hero_cta_2'       => 'تعرفي على المجموعة',
+    'new_arrivals'     => 'الوافدون الجدد',
+    'new_arrivals_sub' => 'أحدث تصاميمنا لهذا الموسم',
+    'featured'         => 'منتجات مميزة',
+    'featured_sub'     => 'مختارة بعناية فائقة لكِ',
+    'bestsellers'      => 'الأكثر مبيعاً',
+    'categories_title' => 'تصفحي الأقسام',
+    'categories_sub'   => 'اختاري القسم الذي يناسبك',
+    'view_all'         => 'عرض الكل',
+    'shop_now'         => 'تسوقي الآن',
+    'free_shipping'    => 'شحن مجاني',
+    'free_shipping_desc'=> 'على الطلبات فوق 150,000 ل.ل',
+    'secure_payment'   => 'دفع آمن',
+    'secure_payment_desc'=> 'بيانات مشفرة وآمنة 100%',
+    'quality_guarantee'=> 'ضمان الجودة',
+    'quality_guarantee_desc'=> 'خامات فاخرة ومتينة',
+    'easy_returns'     => 'إرجاع سهل',
+    'easy_returns_desc'=> 'خلال 14 يوم',
+    'newsletter_title' => 'اشتركي في نشرتنا البريدية',
+    'newsletter_sub'   => 'أول من يعرف بأحدث العروض والتصاميم',
+    'newsletter_btn'   => 'اشتركي',
+    'newsletter_placeholder'=> 'بريدك الإلكتروني',
+    'send_reply' => 'إرسال الرد',
+    'slider_explore'   => 'اكتشفي المجموعة',
+    'write_reply' => 'اكتب ردك...',
+      'share_opinion' => 'شاركنا رأيك...',
+      'write_comment' => 'اكتب تعليقك هنا...',
+      'fast_shipping' => 'شحن سريع',
+'fast_shipping_desc' => 'توصيل موثوق لباب بيتك أينما كنت',
+
+'high_quality' => 'جودة عالية',
+'high_quality_desc' => 'خامات مختارة بعناية تليق بذوقك',
+'reply' => 'رد',
+'support' => 'دعم على مدار الساعة',
+'support_desc' => 'نحن هنا لخدمتك في أي وقت تحتاجنا',
+    'no_products'      => 'لا توجد منتجات متاحة حالياً.',
+];

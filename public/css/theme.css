@@ -1,0 +1,1068 @@
+/*
+ * ============================================================
+ *  theme.css — Honey Abayah E-Commerce
+ *  Complete Dark / Light Theme System via CSS Custom Properties
+ *  ─────────────────────────────────────────────────────────
+ *  Architecture:
+ *    • All colors live as CSS variables on :root
+ *    • Dark theme is the DEFAULT (applied to [data-theme="dark"] or :root)
+ *    • Light theme overrides are applied to [data-theme="light"]
+ *    • NO duplicate rules — only variable values change
+ *    • Smooth 0.3s transitions on all colour properties
+ *    • Font switching based on [lang] attribute
+ *    • RTL / LTR utility classes
+ * ============================================================
+ */
+
+/* ============================================================
+   1. GOOGLE FONTS
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ============================================================
+   2. DARK THEME VARIABLES (DEFAULT)
+   Applied when: [data-theme="dark"] or no theme set
+   ============================================================ */
+:root,
+[data-theme="dark"] {
+    /* ── Backgrounds ── */
+    --bg-color:        #1A1A1A;
+    --section-bg:      #2C2C2C;
+    --card-bg:         #111111;
+    --navbar-bg:       #111111;
+    --footer-bg:       #111111;
+    --sidebar-bg:      #111111;
+    --modal-bg:        #1A1A1A;
+    --table-bg:        #1A1A1A;
+    --input-bg:        #222222;
+
+    /* ── Typography ── */
+    --text-color:      #FFFFFF;
+    --text-muted:      #AAAAAA;
+    --input-text:      #FFFFFF;
+
+    /* ── Borders & Shadows ── */
+    --border-color:    #3A3A3A;
+    --shadow-color:    rgba(0, 0, 0, 0.6);
+
+    /* ── Brand Palette ── */
+    --primary-color:   #D4AF37;
+    --secondary-color: #B8941E;
+    --hover-color:     #C89B2C;
+
+    /* ── Status Colors ── */
+    --success-color:   #28A745;
+    --danger-color:    #DC3545;
+    --warning-color:   #FFC107;
+    --info-color:      #17A2B8;
+
+    /* ── Component Specifics ── */
+    --dropdown-bg:     #1E1E1E;
+    --badge-bg:        #2C2C2C;
+    --overlay-bg:      rgba(0, 0, 0, 0.75);
+    --skeleton-bg:     #2C2C2C;
+    --skeleton-shine:  #3A3A3A;
+
+    /* ── Scrollbar ── */
+    --scrollbar-track: #1A1A1A;
+    --scrollbar-thumb: #3A3A3A;
+    --scrollbar-hover: #D4AF37;
+
+    /* ── Transition ── */
+    --theme-transition: 0.3s ease;
+}
+
+/* ============================================================
+   3. LIGHT THEME VARIABLES
+   Applied when: [data-theme="light"]
+   ============================================================ */
+[data-theme="light"] {
+    /* ── Backgrounds ── */
+    --bg-color:        #F8F9FA;
+    --section-bg:      #FFFFFF;
+    --card-bg:         #FFFFFF;
+    --navbar-bg:       #FFFFFF;
+    --footer-bg:       #F1F3F5;
+    --sidebar-bg:      #FFFFFF;
+    --modal-bg:        #FFFFFF;
+    --table-bg:        #FFFFFF;
+    --input-bg:        #FFFFFF;
+
+    /* ── Typography ── */
+    --text-color:      #212529;
+    --text-muted:      #6C757D;
+    --input-text:      #212529;
+
+    /* ── Borders & Shadows ── */
+    --border-color:    #DEE2E6;
+    --shadow-color:    rgba(0, 0, 0, 0.10);
+
+    /* ── Brand Palette — same luxury gold ── */
+    --primary-color:   #D4AF37;
+    --secondary-color: #B8941E;
+    --hover-color:     #C89B2C;
+
+    /* ── Status Colors ── */
+    --success-color:   #28A745;
+    --danger-color:    #DC3545;
+    --warning-color:   #FFC107;
+    --info-color:      #17A2B8;
+
+    /* ── Component Specifics ── */
+    --dropdown-bg:     #FFFFFF;
+    --badge-bg:        #E9ECEF;
+    --overlay-bg:      rgba(0, 0, 0, 0.40);
+    --skeleton-bg:     #E9ECEF;
+    --skeleton-shine:  #F8F9FA;
+
+    /* ── Scrollbar ── */
+    --scrollbar-track: #F1F3F5;
+    --scrollbar-thumb: #DEE2E6;
+    --scrollbar-hover: #D4AF37;
+}
+
+/* ============================================================
+   4. GLOBAL TRANSITIONS
+   Smooth color changes on all themed elements
+   ============================================================ */
+*,
+*::before,
+*::after {
+    transition:
+        background-color var(--theme-transition),
+        color            var(--theme-transition),
+        border-color     var(--theme-transition),
+        box-shadow       var(--theme-transition);
+}
+
+/* Exclude transitions that would cause jarring effects */
+img,
+video,
+svg,
+canvas,
+.no-transition,
+.swiper-slide,
+.swiper-wrapper {
+    transition: none !important;
+}
+
+/* ============================================================
+   5. BASE ELEMENT STYLING WITH VARIABLES
+   ============================================================ */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-primary, 'Cairo', sans-serif);
+}
+
+/* ── Headings ── */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-color);
+}
+
+/* ── Links ── */
+a {
+    color: var(--primary-color);
+}
+a:hover {
+    color: var(--hover-color);
+}
+
+/* ── Paragraphs & Muted ── */
+p, small, .text-muted, .muted {
+    color: var(--text-muted);
+}
+
+/* ── Horizontal Rules ── */
+hr {
+    border-color: var(--border-color);
+}
+
+/* ============================================================
+   6. NAVBAR
+   ============================================================ */
+.site-header,
+header,
+.navbar,
+nav.navbar {
+    background-color: var(--navbar-bg) !important;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 12px var(--shadow-color);
+}
+
+.nav-link,
+.navbar-nav .nav-link {
+    color: var(--text-color) !important;
+}
+
+.nav-link:hover,
+.navbar-nav .nav-link:hover {
+    color: var(--primary-color) !important;
+}
+
+/* Active nav link */
+.nav-link.active-gold,
+.nav-link.active {
+    color: var(--primary-color) !important;
+}
+
+/* ============================================================
+   7. SIDEBAR
+   ============================================================ */
+.sidebar,
+#sidebar {
+    background: linear-gradient(180deg, var(--sidebar-bg) 0%, var(--card-bg) 100%) !important;
+    border-inline-end: 1px solid var(--border-color);
+}
+
+.sidebar .nav-link {
+    color: var(--text-muted) !important;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    background: rgba(212, 175, 55, 0.15) !important;
+    color: var(--primary-color) !important;
+}
+
+.sidebar .nav-link i {
+    color: var(--primary-color);
+}
+
+/* ============================================================
+   8. FOOTER
+   ============================================================ */
+footer,
+.footer-full {
+    background-color: var(--footer-bg) !important;
+    color: var(--text-color);
+    border-top: 1px solid var(--border-color);
+}
+
+.footer-full .footer-text,
+.footer-full .footer-subtitle {
+    color: var(--text-muted);
+}
+
+/* ============================================================
+   9. CARDS
+   ============================================================ */
+.card,
+.card-custom,
+.footer-contact-card {
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 4px 20px var(--shadow-color);
+}
+
+.card-body {
+    background-color: transparent;
+}
+
+.card-header,
+.card-footer {
+    background-color: var(--section-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* ── Product Cards ── */
+.product-card,
+.product-item {
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.product-card:hover,
+.product-item:hover {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 8px 30px var(--shadow-color), 0 0 0 1px var(--primary-color);
+}
+
+.product-card .product-title,
+.product-name {
+    color: var(--text-color);
+}
+
+.product-card .product-price,
+.product-price {
+    color: var(--primary-color);
+}
+
+/* ============================================================
+   10. FORMS & INPUTS
+   ============================================================ */
+.form-control,
+.form-select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="search"],
+input[type="url"],
+input[type="date"],
+input[type="time"],
+textarea,
+select {
+    background-color: var(--input-bg) !important;
+    color: var(--input-text) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    background-color: var(--input-bg) !important;
+    color: var(--input-text) !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.20) !important;
+    outline: none;
+}
+
+.form-control::placeholder,
+input::placeholder,
+textarea::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 0.7;
+}
+
+label,
+.form-label {
+    color: var(--text-color);
+}
+
+.form-check-input {
+    background-color: var(--input-bg);
+    border-color: var(--border-color);
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.input-group-text {
+    background-color: var(--section-bg);
+    border-color: var(--border-color);
+    color: var(--text-muted);
+}
+
+/* ============================================================
+   11. BUTTONS
+   ============================================================ */
+
+/* Primary — Gold */
+.btn-primary,
+.btn-gold {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+    border-color: var(--primary-color) !important;
+    color: #000 !important;
+    font-weight: 600;
+}
+
+.btn-primary:hover,
+.btn-gold:hover {
+    background: linear-gradient(135deg, var(--hover-color), var(--secondary-color)) !important;
+    border-color: var(--hover-color) !important;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4) !important;
+}
+
+/* Outline */
+.btn-outline-primary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color) !important;
+    color: #000 !important;
+}
+
+/* Secondary */
+.btn-secondary {
+    background-color: var(--section-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-color) !important;
+}
+
+/* Danger */
+.btn-danger {
+    background-color: var(--danger-color) !important;
+    border-color: var(--danger-color) !important;
+    color: #fff !important;
+}
+
+/* Success */
+.btn-success {
+    background-color: var(--success-color) !important;
+    border-color: var(--success-color) !important;
+    color: #fff !important;
+}
+
+/* ============================================================
+   12. TABLES
+   ============================================================ */
+.table,
+table {
+    background-color: var(--table-bg);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+.table th,
+.table td,
+th, td {
+    color: var(--text-color);
+    border-color: var(--border-color) !important;
+}
+
+.table thead th {
+    background-color: var(--section-bg) !important;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color) !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--text-color);
+}
+
+.table-hover > tbody > tr:hover > * {
+    background-color: rgba(212, 175, 55, 0.08);
+    color: var(--text-color);
+}
+
+/* ============================================================
+   13. DROPDOWNS
+   ============================================================ */
+.dropdown-menu,
+.custom-dropdown-menu,
+.user-menu {
+    background-color: var(--dropdown-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 8px 30px var(--shadow-color) !important;
+}
+
+.dropdown-item,
+.user-item,
+.category-box button {
+    color: var(--text-color) !important;
+    background-color: transparent;
+}
+
+.dropdown-item:hover,
+.user-item:hover,
+.category-box button:hover {
+    background-color: rgba(212, 175, 55, 0.12) !important;
+    color: var(--primary-color) !important;
+}
+
+.dropdown-divider {
+    border-color: var(--border-color);
+}
+
+/* ============================================================
+   14. MODALS
+   ============================================================ */
+.modal-content,
+.modal-body,
+.logo-modal-pro {
+    background-color: var(--modal-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-color);
+}
+
+.modal-header,
+.modal-header-pro {
+    background-color: var(--section-bg) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    color: var(--text-color);
+}
+
+.modal-footer {
+    background-color: var(--section-bg) !important;
+    border-top: 1px solid var(--border-color) !important;
+}
+
+.modal-backdrop {
+    background-color: var(--overlay-bg);
+}
+
+/* ============================================================
+   15. ALERTS
+   ============================================================ */
+.alert {
+    border: 1px solid var(--border-color);
+}
+
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.12) !important;
+    border-color: rgba(40, 167, 69, 0.35) !important;
+    color: var(--success-color) !important;
+}
+
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.12) !important;
+    border-color: rgba(220, 53, 69, 0.35) !important;
+    color: var(--danger-color) !important;
+}
+
+.alert-warning {
+    background-color: rgba(255, 193, 7, 0.12) !important;
+    border-color: rgba(255, 193, 7, 0.35) !important;
+    color: var(--warning-color) !important;
+}
+
+.alert-info {
+    background-color: rgba(23, 162, 184, 0.12) !important;
+    border-color: rgba(23, 162, 184, 0.35) !important;
+    color: var(--info-color) !important;
+}
+
+/* ============================================================
+   16. BADGES
+   ============================================================ */
+.badge.bg-secondary {
+    background-color: var(--badge-bg) !important;
+    color: var(--text-muted) !important;
+}
+
+/* ============================================================
+   17. PAGINATION
+   ============================================================ */
+.pagination .page-link {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+.pagination .page-link:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #000;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: #000 !important;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: var(--section-bg);
+    border-color: var(--border-color);
+    color: var(--text-muted);
+}
+
+/* ============================================================
+   18. SEARCH
+   ============================================================ */
+.search-box,
+.search-wrapper,
+[class*="search"] input {
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--input-text);
+}
+
+.search-results,
+[class*="search-result"] {
+    background-color: var(--dropdown-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 30px var(--shadow-color);
+}
+
+/* ============================================================
+   19. ADMIN DASHBOARD
+   ============================================================ */
+.stat-card,
+.card-stat {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+.stat-card .number,
+.stat-card .label {
+    color: var(--text-color);
+}
+
+.stat-card .icon {
+    color: var(--primary-color);
+}
+
+.small-golden {
+    color: var(--primary-color);
+}
+
+/* Charts */
+canvas {
+    transition: none !important;
+}
+
+/* ============================================================
+   20. SECTIONS & CONTAINERS
+   ============================================================ */
+section,
+.section,
+.section-bg,
+.bg-section {
+    background-color: var(--section-bg);
+}
+
+.main-content {
+    background-color: var(--bg-color);
+}
+
+/* ============================================================
+   21. SCROLLBAR STYLING
+   ============================================================ */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-hover);
+}
+
+/* ============================================================
+   22. SELECTION COLOR
+   ============================================================ */
+::selection {
+    background-color: rgba(212, 175, 55, 0.35);
+    color: var(--text-color);
+}
+
+/* ============================================================
+   23. FONT SWITCHING BY LANGUAGE
+   Applied when html[lang="ar"] / html[lang="en"] / html[lang="fr"]
+   ============================================================ */
+:root {
+    --font-primary:   'Cairo', sans-serif;    /* Default Arabic */
+    --font-heading:   'Cairo', sans-serif;
+}
+
+html[lang="en"],
+html[lang="fr"] {
+    --font-primary: 'Poppins', sans-serif;
+    --font-heading: 'Poppins', sans-serif;
+}
+
+html[lang="ar"] {
+    --font-primary: 'Cairo', sans-serif;
+    --font-heading: 'Cairo', sans-serif;
+}
+
+body {
+    font-family: var(--font-primary);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+}
+
+/* ============================================================
+   24. RTL / LTR DIRECTIONAL UTILITIES
+   ============================================================ */
+
+/* Icon flip for RTL arrow icons */
+html[dir="rtl"] .fa-arrow-right,
+html[dir="rtl"] .bi-arrow-right {
+    transform: scaleX(-1);
+}
+
+/* Header content: logo right in RTL, logo left in LTR */
+html[dir="rtl"] .header-content {
+    direction: rtl !important;
+}
+
+html[dir="ltr"] .header-content {
+    direction: ltr !important;
+}
+
+html[dir="rtl"] .fa-arrow-left,
+html[dir="rtl"] .bi-arrow-left {
+    transform: scaleX(-1);
+}
+
+/* Dropdown menus — flip alignment in RTL */
+html[dir="rtl"] .dropdown-menu {
+    left: auto;
+    right: 0;
+    text-align: right;
+}
+
+html[dir="ltr"] .dropdown-menu {
+    right: auto;
+    left: 0;
+    text-align: left;
+}
+
+/* Sidebar: RTL = right side, LTR = left side */
+html[dir="rtl"] .sidebar {
+    right: 0;
+    left: auto;
+    border-right: none;
+    border-left: 1px solid var(--border-color);
+}
+
+html[dir="ltr"] .sidebar {
+    left: 0;
+    right: auto;
+    border-left: none;
+    border-right: 1px solid var(--border-color);
+}
+
+/* Breadcrumbs */
+html[dir="rtl"] .breadcrumb-item + .breadcrumb-item::before {
+    content: "\\";
+    float: right;
+    padding: 0 8px 0 0;
+}
+
+/* Input icons inside input groups */
+html[dir="rtl"] .input-group > .form-control:not(:last-child) {
+    border-radius: 0 0.375rem 0.375rem 0;
+}
+
+/* ============================================================
+   25. FLOATING THEME TOGGLE BUTTON
+   ============================================================ */
+#theme-toggle-btn {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;          /* LTR default */
+    z-index: 9999;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #000;
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.5), 0 2px 8px var(--shadow-color);
+    overflow: hidden;
+    outline: none;
+    /* Entrance animation */
+    animation: theme-btn-enter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s both;
+}
+
+html[dir="rtl"] #theme-toggle-btn {
+    left: auto;
+    right: 24px;
+}
+
+#theme-toggle-btn:hover {
+    transform: scale(1.12) rotate(15deg);
+    box-shadow: 0 6px 28px rgba(212, 175, 55, 0.65), 0 4px 12px var(--shadow-color);
+}
+
+#theme-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+#theme-toggle-btn .btn-icon {
+    pointer-events: none;
+    line-height: 1;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+}
+
+/* Ripple effect */
+#theme-toggle-btn .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(0);
+    animation: ripple-expand 0.6s ease-out;
+    pointer-events: none;
+}
+
+@keyframes ripple-expand {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+@keyframes theme-btn-enter {
+    from {
+        opacity: 0;
+        transform: scale(0) rotate(-180deg);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* ============================================================
+   26. LANGUAGE SWITCHER COMPONENT
+   ============================================================ */
+.lang-switcher {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.lang-switcher-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-size: 13px;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lang-switcher-btn:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.15);
+}
+
+.lang-switcher-btn .lang-flag {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.lang-switcher-btn .lang-label {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.lang-switcher-btn .lang-chevron {
+    font-size: 10px;
+    color: var(--text-muted);
+    transition: transform 0.3s ease;
+}
+
+.lang-switcher.open .lang-chevron {
+    transform: rotate(180deg);
+}
+
+.lang-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    min-width: 160px;
+    background-color: var(--dropdown-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px var(--shadow-color);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 10000;
+}
+
+/* RTL: open to the right */
+html[dir="rtl"] .lang-dropdown {
+    right: 0;
+    left: auto;
+}
+
+html[dir="ltr"] .lang-dropdown {
+    left: 0;
+    right: auto;
+}
+
+.lang-switcher.open .lang-dropdown {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.lang-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-family: var(--font-primary);
+    font-weight: 500;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: start;
+}
+
+.lang-option:hover {
+    background-color: rgba(212, 175, 55, 0.10);
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.lang-option.active-lang {
+    background-color: rgba(212, 175, 55, 0.15);
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.lang-option .lang-opt-flag {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.lang-option .lang-opt-name {
+    flex: 1;
+}
+
+.lang-option .lang-opt-check {
+    color: var(--primary-color);
+    font-size: 12px;
+    opacity: 0;
+}
+
+.lang-option.active-lang .lang-opt-check {
+    opacity: 1;
+}
+
+/* ============================================================
+   27. LIGHT THEME — Override dark-hardcoded elements
+   Forces elements with hardcoded dark colors to follow theme
+   ============================================================ */
+[data-theme="light"] .footer-full {
+    --f-bg:        var(--footer-bg);
+    --f-surface:   #F1F3F5;
+    --f-ink:       var(--text-color);
+    --f-ink-muted: var(--text-muted);
+    --f-ink-faint: var(--text-muted);
+}
+
+[data-theme="light"] .site-header,
+[data-theme="light"] header {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .card {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .sidebar {
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .modal-content {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Auth page background */
+[data-theme="light"] body.auth-page,
+[data-theme="light"] .auth-container {
+    background-color: var(--bg-color);
+}
+
+[data-theme="light"] .auth-container .card {
+    background: rgba(0, 0, 0, 0.03) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="light"] input {
+    background: var(--input-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--input-text) !important;
+}
+
+/* Admin panel specific */
+[data-theme="light"] .main-content {
+    background-color: var(--bg-color);
+}
+
+[data-theme="light"] .sidebar .nav-link {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+/* ============================================================
+   28. REDUCED MOTION ACCESSIBILITY
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+/* ============================================================
+   29. MOBILE RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+    #theme-toggle-btn {
+        width: 46px;
+        height: 46px;
+        font-size: 18px;
+        bottom: 16px;
+        left: 16px;
+    }
+
+    html[dir="rtl"] #theme-toggle-btn {
+        left: auto;
+        right: 16px;
+    }
+
+    .lang-dropdown {
+        min-width: 140px;
+    }
+
+
+
+
+.container {
+    padding-inline: 20px;   /* بيطبق مسافة متناظرة يمين وشمال بكل الاتجاهات */
+}
+
+.header-content {
+    padding-inline: 0;      /* تلافي أي تعارض مضاعف مع الـ container */
+}
+
+
+
+
+
+
+
+
+}
+body,
+header,
+section,
+.card,
+.product-card,
+.category-card,
+.info-card,
+footer,
+.modal-content {
+    transition: background-color .3s ease, color .3s ease;
+}

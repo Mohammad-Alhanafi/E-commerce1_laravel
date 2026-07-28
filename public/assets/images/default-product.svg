@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800" role="img" aria-labelledby="title desc">
+  <title id="title">Product image placeholder</title>
+  <desc id="desc">A dark placeholder image with gold product icon and Arabic text.</desc>
+  <rect width="600" height="800" fill="#111111"/>
+  <rect x="24" y="24" width="552" height="752" rx="36" fill="#171717" stroke="#d4af37" stroke-opacity=".45" stroke-width="3"/>
+  <circle cx="300" cy="320" r="96" fill="none" stroke="#d4af37" stroke-width="10" stroke-opacity=".85"/>
+  <path d="M238 358c38-62 78-94 124-94 36 0 62 21 62 51 0 42-51 66-124 66-24 0-45-8-62-23Z" fill="#d4af37" fill-opacity=".78"/>
+  <path d="M232 420h136c36 0 65 29 65 65v36H167v-36c0-36 29-65 65-65Z" fill="none" stroke="#d4af37" stroke-width="10" stroke-linejoin="round"/>
+  <text x="300" y="610" text-anchor="middle" fill="#d4af37" font-family="Arial, Tahoma, sans-serif" font-size="36" font-weight="700">'D5H1) :J1 E*HA1)</text>
+  <text x="300" y="660" text-anchor="middle" fill="#b8a07c" font-family="Arial, Tahoma, sans-serif" font-size="24">BE (1A9 5H1) 'DEF*,</text>
+</svg>
