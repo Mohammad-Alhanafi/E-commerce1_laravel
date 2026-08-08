@@ -62,9 +62,23 @@
             flex: 1; text-align: center; padding: 8px; border-radius: 6px;
             text-decoration: none; font-size: 13px; font-weight: 600; cursor: pointer; border: none;
         }
-        .btn-activate { background: #28A745; color: #fff; }
-        .btn-edit { background: var(--gold); color: #000; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--ink); }
+        
+.btn-activate { background: #28A745; color: #fff; }
+.btn-edit { background: var(--gold); color: #000; }
+
+.btn-action.no-hover:hover {
+    background: var(--gold) !important;
+    color: #000 !important;
+    opacity: 1 !important;
+    filter: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--ink); }
+
+
+
         .btn-outline:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
 
         .badge-active {
@@ -148,7 +162,7 @@
                             <button type="submit" class="btn-action btn-activate" style="width: 100%;"><i class="fas fa-check"></i> تفعيل</button>
                         </form>
                     @endif
-                    <a href="{{ route('admin.themes.show', $t) }}" class="btn-action btn-edit"><i class="fas fa-edit"></i> تعديل</a>
+                    <a href="{{ route('admin.themes.show', $t) }}" class="btn-action btn-edit no-hover"><i class="fas fa-edit"></i> تعديل</a>
                     
                     <div style="position: relative; flex: 1;">
                         <button onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'block' ? 'none' : 'block'" class="btn-action btn-outline" style="width: 100%;"><i class="fas fa-ellipsis-h"></i></button>
