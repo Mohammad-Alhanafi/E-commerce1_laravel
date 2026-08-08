@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 <head>
+    @include('components.theme-head')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -14,31 +15,30 @@
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="{{ asset('css/adminpanel.css') }}">
-<link rel="stylesheet" href="{{ asset('css/header.css') }}">
-
+    <link rel="stylesheet" href="{{ asset('css/header.css') }}">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         :root {
-            --black-primary: #0a0a0a;
-            --black-secondary: #1a1a1a;
-            --black-light: #2a2a2a;
-            --gold-primary: #D4AF37;
-            --gold-secondary: #FFD700;
-            --gold-light: #FFF8DC;
-            --white: #ffffff;
-            --gray: #888888;
-            --success: #28a745;
-            --danger: #dc3545;
-            --warning: #ffc107;
-            --info: #17a2b8;
+            --black-primary: var(--bg-color, #0a0a0a);
+            --black-secondary: var(--card-bg, #1a1a1a);
+            --black-light: var(--border-color, #2a2a2a);
+            --gold-primary: var(--primary-color, #D4AF37);
+            --gold-secondary: var(--secondary-color, #FFD700);
+            --gold-light: var(--accent-color, #FFF8DC);
+            --white: var(--text-color, #ffffff);
+            --gray: var(--text-muted, #888888);
+            --success: var(--success-color, #28a745);
+            --danger: var(--danger-color, #dc3545);
+            --warning: var(--warning-color, #ffc107);
+            --info: var(--info-color, #17a2b8);
         }
         
         body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            color: var(--white);
-            font-family: 'Segoe UI', 'Cairo', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-color, #0a0a0a) !important;
+            color: var(--text-color, #ffffff);
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
             animation: fadeIn 0.8s ease-out;
         }
@@ -85,7 +85,7 @@
         }
         
         .stat-card {
-            background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+            background: linear-gradient(145deg, var(--card-bg), var(--bg-color));
             border-left: 4px solid var(--gold-primary);
             transition: all 0.4s ease;
             position: relative;
@@ -207,10 +207,7 @@
             transition: all 0.3s ease;
         }
         
-        .table tbody tr:hover {
-            background: rgba(212, 175, 55, 0.1);
-            transform: translateX(5px);
-        }
+
         
         .status-badge {
             padding: 8px 15px;
@@ -223,13 +220,13 @@
         
         .status-active {
             background: linear-gradient(45deg, rgba(40, 167, 69, 0.2), rgba(40, 167, 69, 0.1));
-            color: #28a745;
+            color: var(--success-color, #28a745);
             border: 1px solid rgba(40, 167, 69, 0.3);
         }
         
         .status-inactive {
             background: linear-gradient(45deg, rgba(220, 53, 69, 0.2), rgba(220, 53, 69, 0.1));
-            color: #dc3545;
+            color: var(--danger-color, #dc3545);
             border: 1px solid rgba(220, 53, 69, 0.3);
         }
         
@@ -289,14 +286,14 @@
         
         .alert-success {
             background: linear-gradient(45deg, rgba(40, 167, 69, 0.2), rgba(40, 167, 69, 0.1));
-            color: #28a745;
-            border-left: 4px solid #28a745;
+            color: var(--success-color, #28a745);
+            border-left: 4px solid var(--success-color, #28a745);
         }
         
         .alert-danger {
             background: linear-gradient(45deg, rgba(220, 53, 69, 0.2), rgba(220, 53, 69, 0.1));
-            color: #dc3545;
-            border-left: 4px solid #dc3545;
+            color: var(--danger-color, #dc3545);
+            border-left: 4px solid var(--danger-color, #dc3545);
         }
         
         .search-box {
@@ -453,7 +450,7 @@
 
 
 .bg-black {
-    background-color: #0c0c0c !important;
+    background-color: var(--bg-color) !important;
 }
 
 .rounded-4 {
@@ -461,55 +458,55 @@
 }
 
 .border-gold {
-    border-color: #d4af37 !important;
+    border-color: var(--primary-color) !important;
 }
 
 .btn-gold {
-    background-color: #d4af37;
-    color: #000;
+    background-color: var(--primary-color);
+    color: var(--bg-color);
     font-weight: bold;
     border: none;
 }
 
 .btn-gold:hover {
-    background-color: #b8860b;
-    color: #fff;
+    background-color: var(--hover-color);
+    color: var(--text-color);
 }
 
 
 
 
     .pagination-gold .page-link {
-        background-color: #0c0c0c; 
-        border-color: #333;       
-        color: #d4af37;           
+        background-color: var(--bg-color);
+        border-color: var(--border-color);
+        color: var(--primary-color);
         font-size: 0.85rem;
         padding: 0.5rem 0.75rem;
     }
 
     .pagination-gold .page-item.active .page-link {
-        background-color: #d4af37; 
-        border-color: #d4af37;
-        color: #000;              
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: var(--bg-color);
         font-weight: bold;
     }
 
     .pagination-gold .page-link:hover {
-        background-color: #1a1a1a;
-        color: #fcf6ba;
-        border-color: #d4af37;
+        background-color: var(--card-bg);
+        color: var(--accent-color, var(--primary-color));
+        border-color: var(--primary-color);
     }
 
     .pagination-gold .page-item.disabled .page-link {
-        background-color: #050505;
-        color: #555;
-        border-color: #222;
+        background-color: var(--bg-color);
+        color: var(--text-muted);
+        border-color: var(--border-color);
     }
 
 
 
 .custom-pagination .pagination {
-    gap: 8px; 
+    gap: 8px;
     margin-bottom: 0;
 }
 
@@ -518,38 +515,38 @@
 }
 
 .custom-pagination .page-link {
-    width: 40px;           
-    height: 40px;          
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px !important; 
-    background-color: #1a1a1a;    
-    border: 1px solid #333;       
-    color: #adb5bd;               
+    border-radius: 8px !important;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
     transition: all 0.3s ease;
 }
 
 /* المربع النشط (الصفحة الحالية) */
 .custom-pagination .page-item.active .page-link {
-    background-color: #d4af37 !important; 
-    border-color: #d4af37 !important;
-    color: #000 !important;              
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: var(--bg-color) !important;
     font-weight: bold;
-    box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3); 
+    box-shadow: 0 4px 10px color-mix(in srgb, var(--primary-color) 30%, transparent);
 }
 
 .custom-pagination .page-link:hover {
-    background-color: #d4af37;
-    color: #000;
-    border-color: #d4af37;
-    transform: translateY(-3px); 
+    background-color: var(--primary-color);
+    color: var(--bg-color);
+    border-color: var(--primary-color);
+    transform: translateY(-3px);
 }
 
 .custom-pagination .page-item.disabled .page-link {
-    background-color: #0a0a0a;
-    color: #444;
-    border-color: #222;
+    background-color: var(--bg-color);
+    color: var(--text-muted);
+    border-color: var(--border-color);
 }
 
 
@@ -627,19 +624,19 @@
 
         <!-- Statistics Cards -->
         <div class="row mb-4">
-            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="col-lg-3 col-md-6 mb-3">
                 <div class="card stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title mb-2" style="color: #b89a30;">{{ __('admin.categories') }}</h6>
+                                <h6 class="card-title mb-2" style="color: var(--secondary-color);">{{ __('admin.categories') }}</h6>
 
-                                <h2 class="mb-0 glow" style="color: #FFD700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);">
+                                <h2 class="mb-0 glow" style="color: var(--primary-color); text-shadow: 0 0 10px color-mix(in srgb, var(--primary-color) 50%, transparent);">
                                     {{ $categories->count() }}
                                    </h2>
                             </div>
 
-                            <i class="bi bi-tag-fill fs-1" style="color: #c5a059; opacity: 0.7;"></i>
+                            <i class="bi bi-tag-fill fs-1" style="color: var(--primary-color); opacity: 0.7;"></i>
                         </div>
                     </div>
                 </div>
@@ -650,10 +647,10 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title text-gold mb-2"  style="color: #b89a30;">{{ __('admin.active') }}</h6>
-                                <h2 class="mb-0 glow" style="color: #28a745">{{ $categories->where('is_active', 1)->count() }}</h2>
+                                <h6 class="card-title text-gold mb-2"  style="color: var(--secondary-color);">{{ __('admin.active') }}</h6>
+                                <h2 class="mb-0 glow" style="color: var(--success-color)">{{ $categories->where('is_active', 1)->count() }}</h2>
                             </div>
-                            <i class="bi bi-check-circle-fill fs-1" style="color: #28a745"></i>
+                            <i class="bi bi-check-circle-fill fs-1" style="color: var(--success-color)"></i>
                         </div>
                     </div>
                 </div>
@@ -664,10 +661,10 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title text-gold mb-2" style="color: #b89a30;">{{ __('admin.requested_products') }}</h6>
-                                <h2 class="mb-0 glow" style="color: #17a2b8">{{ $totalProducts ?? 0 }}</h2>
+                                <h6 class="card-title text-gold mb-2" style="color: var(--secondary-color);">{{ __('admin.requested_products') }}</h6>
+                                <h2 class="mb-0 glow" style="color: var(--info-color)">{{ $totalProducts ?? 0 }}</h2>
                             </div>
-                            <i class="bi bi-box-fill fs-1" style="color: #17a2b8"></i>
+                            <i class="bi bi-box-fill fs-1" style="color: var(--info-color)"></i>
                         </div>
                     </div>
                 </div>
@@ -678,10 +675,10 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title text-gold mb-2" style="color: #b89a30;">{{ __('admin.featured') }}</h6>
-                                <h2 class="mb-0 glow" style="color: var(--gold-primary)">{{ $categories->where('is_featured', 1)->count() }}</h2>
+                                <h6 class="card-title text-gold mb-2" style="color: var(--secondary-color);">{{ __('admin.featured') }}</h6>
+                                <h2 class="mb-0 glow" style="color: var(--primary-color)">{{ $categories->where('is_featured', 1)->count() }}</h2>
                             </div>
-                            <i class="bi bi-star-fill fs-1" style="color: var(--gold-primary)"></i>
+                            <i class="bi bi-star-fill fs-1" style="color: var(--primary-color)"></i>
                         </div>
                     </div>
                 </div>
@@ -703,10 +700,9 @@
                         <div class="d-flex">
                           <div class="search-box me-3">
                           <input type="text" 
-                         class="form-control form-control-sm bg-dark text-white border-secondary" 
+                         class="form-control form-control-sm" 
                          placeholder="{{ __('admin.search') }}" 
-                          id="searchInput"
-                           style="--bs-body-color: white; --bs-secondary-color: white;">
+                          id="searchInput">
                        <i class="bi bi-search"></i>
                                  </div>
 
@@ -721,7 +717,7 @@
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-dark table-hover mb-0" id="categoriesTable">
+                            <table class="table mb-0" id="categoriesTable">
                                  <thead>
                                      <tr>
                                          <th width="50">#</th>
@@ -825,62 +821,21 @@
     @endforelse
 </tbody>
                             </table>
-
-                            <div class="card-footer border-secondary bg-dark d-flex justify-content-center py-3" id="variantsPagination">
-                                   <nav class="custom-square-pagination">
-                             {{ $categories->links('pagination::bootstrap-5') }}
-                          </nav>
-                          </div>
-
-    
-                                
-                           <div class="pagination-gold">
-                               {{ $categories->links('pagination::bootstrap-5') }}
-                           </div>
-
-                          </div>
-
-
                         </div>
-                    </div>
-                    @if($categories->hasPages())
-                    <div class="card-footer bg-transparent">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-center mb-0">
-                                @if ($categories->onFirstPage())
-                                    <li class="page-item disabled">
-                                        <span class="page-link bg-dark border-dark">السابق</span>
-                                    </li>
-                                @else
-                                    <li class="page-item">
-                                        <a class="page-link bg-dark border-dark text-gold" href="{{ $categories->previousPageUrl() }}">السابق</a>
-                                    </li>
-                                @endif
 
-                                @for ($i = 1; $i <= $categories->lastPage(); $i++)
-                                    <li class="page-item {{ $categories->currentPage() == $i ? 'active' : '' }}">
-                                        <a class="page-link {{ $categories->currentPage() == $i ? 'bg-gold border-gold text-dark' : 'bg-dark border-dark text-gold' }}" 
-                                           href="{{ $categories->url($i) }}">{{ $i }}</a>
-                                    </li>
-                                @endfor
+                        {{-- Pagination موحّد ونظيف --}}
+                        @if($categories->hasPages())
+                        <div class="d-flex justify-content-center py-3">
+                            <nav class="admin-pagination">
+                                {{ $categories->links('pagination::bootstrap-5') }}
+                            </nav>
+                        </div>
+                        @endif
 
-                                @if ($categories->hasMorePages())
-                                    <li class="page-item">
-                                        <a class="page-link bg-dark border-dark text-gold" href="{{ $categories->nextPageUrl() }}">التالي</a>
-                                    </li>
-                                @else
-                                    <li class="page-item disabled">
-                                        <span class="page-link bg-dark border-dark">التالي</span>
-                                    </li>
-                                @endif
-                            </ul>
-                        </nav>
                     </div>
-                    @endif
                 </div>
             </div>
         </div>
-    </div>
 
    <!-- Add Category Modal -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
@@ -1029,9 +984,9 @@
 
 <div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark border-gold shadow-lg" style="border-radius: 20px;">
+        <div class="modal-content shadow-lg" style="border-radius: 20px;">
             <div class="modal-header border-0 pb-0">
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body pt-0">
                 <div class="text-center mb-4">
@@ -1043,27 +998,27 @@
 
                 <div class="row g-3">
                     <div class="col-6">
-                        <div class="p-3 rounded-4 bg-black border border-secondary h-100 text-center">
+                        <div class="p-3 rounded-4 card h-100 text-center">
                             <i class="bi bi-shield-check text-gold fs-4"></i>
-                            <small class="d-block text-muted mt-1" style="color: #d4af37 !important;">{{ __('admin.status') }}</small>
+                            <small class="d-block text-muted mt-1" style="color: var(--primary-color) !important;">{{ __('admin.status') }}</small>
                             <div id="view_status_val" class="fw-bold mt-1"></div>
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="p-3 rounded-4 bg-black border border-secondary h-100 text-center">
+                        <div class="p-3 rounded-4 card h-100 text-center">
                             <i class="bi bi-star text-warning fs-4"></i>
-                            <small class="d-block mt-1 text-gold" style="color: #d4af37 !important;">{{ __('admin.featured') }}</small>
+                            <small class="d-block mt-1 text-gold" style="color: var(--primary-color) !important;">{{ __('admin.featured') }}</small>
                             <div id="view_featured_val" class="fw-bold mt-1"></div>
                         </div>
                     </div>
                     <div class="col-12">
-                        <div class="p-3 rounded-4 bg-black border border-secondary">
-                            <small class="d-block mb-2 text-end" style="color: #adb5bd; font-weight: 500;">
-                             <i class="bi bi-card-text me-1" style="color: #d4af37;"></i> {{ __('admin.description') }}</small>
+                        <div class="p-3 rounded-4 card">
+                            <small class="d-block mb-2 text-end" style="color: var(--text-muted); font-weight: 500;">
+                             <i class="bi bi-card-text me-1" style="color: var(--primary-color);"></i> {{ __('admin.description') }}</small>
 
 
          
-                            <p id="view_desc" class="m-0 text-end text-light" style="font-size: 0.95rem;"></p>
+                            <p id="view_desc" class="m-0 text-end" style="font-size: 0.95rem; color: var(--text-color);"></p>
                         </div>
                     </div>
                 </div>
@@ -1108,15 +1063,7 @@ window.AppLocale = '{{ app()->getLocale() }}';
                 return new bootstrap.Tooltip(tooltipTriggerEl)
             });
             
-            // Add animation to table rows on hover
-            $('#categoriesTable tbody tr').hover(
-                function() {
-                    $(this).addClass('animate__animated animate__pulse');
-                },
-                function() {
-                    $(this).removeClass('animate__animated animate__pulse');
-                }
-            );
+
         });
         
 $('.edit-category').on('click', function() {
@@ -1155,16 +1102,16 @@ $('.edit-category').on('click', function() {
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <div class="form-check form-switch p-3 bg-dark rounded border border-secondary shadow-sm">
+                    <div class="form-check form-switch p-3 rounded border shadow-sm">
                         <input class="form-check-input ms-0" type="checkbox" name="is_active" value="1" id="editIsActive" ${isActive == 1 ? 'checked' : ''}>
-                        <label class="form-check-label me-4 text-white" for="editIsActive"> ${window.AppTrans.active}</label>
+                        <label class="form-check-label me-4" for="editIsActive"> ${window.AppTrans.active}</label>
                     </div>
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <div class="form-check form-switch p-3 bg-dark rounded border border-secondary shadow-sm">
+                    <div class="form-check form-switch p-3 rounded border shadow-sm">
                         <input class="form-check-input ms-0" type="checkbox" name="is_featured" value="1" id="editIsFeatured" ${isFeatured == 1 ? 'checked' : ''}>
-                        <label class="form-check-label me-4 text-white" for="editIsFeatured">${window.AppTrans.featured}</label>
+                        <label class="form-check-label me-4" for="editIsFeatured">${window.AppTrans.featured}</label>
                     </div>
                 </div>
             </div>

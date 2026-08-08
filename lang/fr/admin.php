@@ -220,4 +220,5 @@ return [
     'update_btn'            => 'Mettre à jour',
     'add_btn'               => 'Ajouter',
     'orders_count_label'    => 'Nombre',
+    'axios_missing'         => 'Axios est indisponible. Veuillez recharger la page puis réessayer.',
 ];

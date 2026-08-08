@@ -10,38 +10,37 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
-        body { background: #0f0f0f; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        body { background: var(--bg-color); color: var(--text-color); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
         
         .auth-container { width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; }
-        .brand-logo { text-align: center; color: #d4af37; font-size: 28px; font-weight: bold; margin-bottom: 30px; text-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+        .brand-logo { text-align: center; color: var(--primary-color); font-size: 28px; font-weight: bold; margin-bottom: 30px; text-shadow: 0 0 15px color-mix(in srgb, var(--primary-color) 30%, transparent); }
         .brand-logo i { margin-left: 8px; }
 
-        .card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 20px; padding: 35px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 35px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px var(--shadow-color, rgba(0,0,0,0.5)); position: relative; overflow: hidden; }
         
         /* ألسنة التبديل العلوي */
-        .auth-tabs { display: flex; margin-bottom: 30px; border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
-        .tab-btn { flex: 1; padding: 12px; text-align: center; color: #b8a07c; cursor: pointer; transition: 0.3s; font-size: 16px; font-weight: 500; }
-        .tab-btn.active { color: #d4af37; border-bottom: 3px solid #d4af37; font-weight: bold; }
+        .auth-tabs { display: flex; margin-bottom: 30px; border-bottom: 1px solid var(--border-color); }
+        .tab-btn { flex: 1; padding: 12px; text-align: center; color: var(--text-muted); cursor: pointer; transition: 0.3s; font-size: 16px; font-weight: 500; }
+        .tab-btn.active { color: var(--primary-color); border-bottom: 3px solid var(--primary-color); font-weight: bold; }
         
         /* حقول الإدخال */
         .form-group { margin-bottom: 20px; position: relative; }
-        label { display: block; margin-bottom: 8px; color: #b8a07c; font-size: 14px; }
-        .input-wrapper { position: relative; }
-        .input-wrapper i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: rgba(212, 175, 55, 0.5); }
-        input { width: 100%; padding: 12px 40px 12px 12px; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(212, 175, 55, 0.3); color: #fff; border-radius: 10px; outline: none; box-sizing: border-box; font-size: 15px; }
-        input:focus { border-color: #d4af37; box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
-        
-        /* خيارات إضافية */
-        .form-options { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 25px; color: #b8a07c; }
-        .form-options a { color: #d4af37; text-decoration: none; transition: 0.2s; }
-        .form-options a:hover { text-decoration: underline; }
-        .checkbox-label { display: flex; align-items: center; gap: 6px; cursor: pointer; margin-bottom: 0; }
-        .checkbox-label input { width: auto; margin: 0; cursor: pointer; }
+label { display: block; margin-bottom: 8px; color: var(--text-muted, #b8a07c); font-size: 14px; }
+.input-wrapper { position: relative; }
+.input-wrapper i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: color-mix(in srgb, var(--primary-color) 50%, transparent); }
+input { width: 100%; padding: 12px 40px 12px 12px; background: var(--input-bg, rgba(0, 0, 0, 0.5)); border: 1px solid color-mix(in srgb, var(--primary-color) 30%, transparent); color: var(--input-text, #fff); border-radius: 10px; outline: none; box-sizing: border-box; font-size: 15px; }
+input:focus { border-color: var(--primary-color, #d4af37); box-shadow: 0 0 10px color-mix(in srgb, var(--primary-color) 20%, transparent); }
 
+        /* خيارات إضافية */
+        .form-options { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 25px; color: var(--text-muted, #b8a07c); }
+.form-options a { color: var(--primary-color, #d4af37); text-decoration: none; transition: 0.2s; }
+.form-options a:hover { text-decoration: underline; }
+.checkbox-label { display: flex; align-items: center; gap: 6px; cursor: pointer; margin-bottom: 0; }
+.checkbox-label input { width: auto; margin: 0; cursor: pointer; }
         /* الأزرار */
-        .auth-btn { width: 100%; background: linear-gradient(135deg, #d4af37 0%, #b4941c 100%); color: #000; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 40px; cursor: pointer; transition: 0.3s; }
-        .auth-btn:hover { opacity: 0.9; box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
-        
+        .auth-btn { width: 100%; background: linear-gradient(135deg, var(--primary-color, #d4af37) 0%, var(--secondary-color, #b4941c) 100%); color: var(--btn-text-color, #000); border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 40px; cursor: pointer; transition: 0.3s; }
+
+        .auth-btn:hover { opacity: 0.9; box-shadow: 0 0 15px color-mix(in srgb, var(--primary-color) 40%, transparent); }        
         /* إخفاء النماذج تلقائياً */
         .auth-form { display: none; }
         .auth-form.active { display: block; animation: fadeIn 0.4s ease-in-out; }
@@ -369,8 +368,8 @@
     <div class="card">
         <!-- ألسنة التحكم بالتبديل -->
         <div class="auth-tabs">
-            <div class="tab-btn active" onclick="switchForm('login')">تسجيل الدخول</div>
-            <div class="tab-btn" onclick="switchForm('register')">إنشاء حساب</div>
+            <div class="tab-btn active" onclick="switchForm('login')">{{ __('auth.login') }}</div>
+            <div class="tab-btn" onclick="switchForm('register')">{{ __('auth.register') }}</div>
         </div>
 <div id="register-error-msg" style="display: none; color: #ff4a5a; background: rgba(255, 74, 90, 0.1); border: 1px solid #ff4a5a; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; text-align: right;">
     </div>
@@ -378,7 +377,7 @@
         <form id="login-form" class="auth-form active" action="{{ route('client.login') }}" method="POST">
             @csrf
             <div class="form-group">
-                <label>البريد الإلكتروني أو اسم المستخدم</label>
+                <label>{{ __('auth.login_identifier') }}</label>
                 <div class="input-wrapper">
                     <i class="fas fa-envelope"></i>
                     <input type="text" name="login_field" placeholder="example@mail.com" required>
@@ -386,7 +385,7 @@
             </div>
 
             <div class="form-group">
-                <label>كلمة المرور</label>
+                <label>{{ __('auth.password') }}</label>
                 <div class="input-wrapper">
                     <i class="fas fa-lock"></i>
                     <input type="password" name="password" placeholder="••••••••" required>
@@ -395,12 +394,12 @@
 
             <div class="form-options">
                 <label class="checkbox-label">
-                    <input type="checkbox" name="remember"> تذكرني دائماً
+                    <input type="checkbox" name="remember"> {{ __('remember me') }}
                 </label>
-                <a href="#" class="forgot-password-link">نسيت كلمة المرور؟</a>
+                <a href="#" class="forgot-password-link">{{ __('forgot password') }}</a>
             </div>
 
-            <button type="submit" class="auth-btn">دخول الحساب <i class="fas fa-sign-in-alt"></i></button>
+            <button type="submit" class="auth-btn">{{ __('Login') }} <i class="fas fa-sign-in-alt"></i></button>
         </form>
 
         <!-- ثانياً: نموذج إنشاء حساب جديد -->
@@ -408,15 +407,15 @@
         <form id="register-form" class="auth-form" action="{{ route('client.register') }}" method="POST">
             @csrf
             <div class="form-group">
-                <label>الاسم الكامل</label>
+                <label>{{ __('auth.name') }}</label>
                 <div class="input-wrapper">
                     <i class="fas fa-user"></i>
-                    <input type="text" name="name" placeholder="أدخل اسمك الثلاثي" required>
+                    <input type="text" name="name" placeholder="{{ __('Enter Your Full Name') }}" required>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>البريد الإلكتروني</label>
+                <label>{{ __('auth.email') }}</label>
                 <div class="input-wrapper">
                     <i class="fas fa-envelope"></i>
                     <input type="email" name="email" placeholder="example@mail.com" required>
@@ -424,7 +423,7 @@
             </div>
 
         <div class="form-group phone-group">
-    <label>رقم الهاتف</label>
+    <label>{{ __('auth.phone') }}</label>
 
     <div class="phone-wrapper">
 
@@ -442,7 +441,7 @@
 </div>
 
       <div class="form-group">
-    <label>كلمة المرور</label>
+    <label>{{ __('auth.password') }}</label>
     <div class="input-wrapper-custom">
         <i class="fas fa-lock input-icon-right" style="color:#b4941c"></i>
         <input type="password" name="password" id="reg-password" class="neon-input" placeholder="••••••••" required>
@@ -451,7 +450,7 @@
 </div>
 
 <div class="form-group">
-    <label>تأكيد كلمة المرور</label>
+    <label>{{ __('auth.confirm_password') }}</label>
     <div class="input-wrapper-custom">
         <i class="fas fa-shield-alt input-icon-right" style="color:#b4941c"></i>
         <input type="password" name="password_confirmation" id="reg-password-confirm" class="neon-input" placeholder="••••••••" required>
@@ -459,7 +458,7 @@
     </div>
 </div>
 
-            <button type="submit" class="auth-btn">إنشاء حساب جديد <i class="fas fa-user-plus"></i></button>
+            <button type="submit" class="auth-btn">{{ __('register') }} <i class="fas fa-user-plus"></i></button>
         </form>
     </div>
 </div>
@@ -512,10 +511,47 @@ const iti = window.intlTelInput(input, {
 </script>
 
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
+@php
+    $authTrans = [
+        'checking_account' => __('auth.checking_account'),
+        'welcome_back' => __('auth.welcome_back'),
+        'account_verified' => __('auth.account_verified'),
+        'login_failed' => __('auth.login_failed'),
+        'retry' => __('auth.retry'),
+        'invalid_phone_title' => __('auth.invalid_phone_title'),
+        'invalid_phone_text' => __('auth.invalid_phone_text'),
+        'ok' => __('buttons.ok'),
+        'creating_account' => __('auth.creating_account'),
+        'account_created' => __('auth.account_created'),
+        'reset_password' => __('auth.reset_password'),
+        'reset_password_label' => __('auth.reset_password_label'),
+        'send_code' => __('auth.send_code'),
+        'cancel' => __('buttons.cancel'),
+        'enter_email' => __('auth.enter_email'),
+        'send_code_failed' => __('auth.send_code_failed'),
+        'code_sent_title' => __('auth.code_sent_title'),
+        'code_sent_text' => __('auth.code_sent_text'),
+        'continue' => __('auth.continue'),
+        'reset_password_title' => __('auth.reset_password_title'),
+        'verification_code' => __('auth.verification_code'),
+        'new_password' => __('auth.new_password'),
+        'new_password_confirm' => __('auth.new_password_confirm'),
+        'change_password' => __('auth.change_password'),
+        'fill_required_fields' => __('auth.fill_required_fields'),
+        'password_min_length' => __('auth.password_min_length'),
+        'password_require_small_number' => __('auth.password_require_small_number'),
+        'password_mismatch' => __('auth.password_mismatch'),
+        'invalid_or_expired_code' => __('auth.invalid_or_expired_code'),
+        'password_changed_title' => __('auth.password_changed_title'),
+        'password_changed_text' => __('auth.password_changed_text'),
+        'login_now' => __('auth.login_now'),
+    ];
+@endphp
 <script>
 $(document).ready(function() {
+    const authTrans = @json($authTrans);
 
     // دالة التبديل السلس بين اللوحات
     window.switchForm = function(type) {
@@ -541,8 +577,7 @@ $(document).ready(function() {
 
     // إظهار نافذة التحميل بالثيم الذهبي
     Swal.fire({
-        title: 'جاري التحقق من الحساب...',
-        background: '#0a0a0f',
+        title: authTrans.checking_account,
         allowOutsideClick: false,
         customClass: { 
             popup: 'swal-neon-popup', 
@@ -562,9 +597,8 @@ $(document).ready(function() {
 
             Swal.fire({
                 icon: 'success',
-                title: 'أهلاً وسهلاً بك!',
-                text: 'تم التحقق من حسابك بنجاح',
-                background: '#0a0a0f',
+                title: authTrans.welcome_back,
+                text: authTrans.account_verified,
                 showConfirmButton: false,
                 timer: 1300,
                 timerProgressBar: true,
@@ -591,10 +625,9 @@ $(document).ready(function() {
             // عرض رسالة الخطأ بالثيم الذهبي الفخم
             Swal.fire({
                 icon: 'error',
-                title: 'تعذر تسجيل الدخول',
+                title: authTrans.login_failed,
                 html: `<span style="color: #f3e9dc;">${message}</span>`,
-                background: '#0a0a0f',
-                confirmButtonText: 'حاول مجددا',
+                confirmButtonText: authTrans.retry,
                 customClass: {
                     popup: 'swal-neon-popup',
                     title: 'swal-neon-title',
@@ -618,14 +651,9 @@ if (!iti.isValidNumber()) {
 
     Swal.fire({
     icon: 'error',
-    title: 'رقم الهاتف غير صحيح',
-    text: 'يرجى إدخال رقم هاتف صالح حسب الدولة المختارة',
-
-    background: '#FFD700',
-    color: '#000',
-
-    confirmButtonText: 'حسناً',
-    confirmButtonColor: '#000',
+    title: authTrans.invalid_phone_title,
+    text: authTrans.invalid_phone_text,
+    confirmButtonText: authTrans.ok,
 
     customClass: {
         popup: 'swal-gold-popup',
@@ -682,8 +710,7 @@ console.log(fullNumber);
 
         // إذا كانت كل الفحوصات سليمة، نبدأ عملية الإرسال عبر Ajax
         Swal.fire({
-            title: 'جاري تسجيل حسابك',
-            background: '#FFD700',
+            title: authTrans.creating_account,
             allowOutsideClick: false,
             customClass: { popup: 'swal-neon-popup', title: 'swal-neon-title' },
             didOpen: () => { Swal.showLoading(); }
@@ -696,8 +723,7 @@ console.log(fullNumber);
             success: function(response) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'تم إنشاء حسابك بنجاح!',
-                    background: '#FFD700',
+                    title: authTrans.account_created,
                     showConfirmButton: false,
                     timer: 1200,
                     timerProgressBar: true,
@@ -766,14 +792,13 @@ console.log(fullNumber);
         e.preventDefault();
 
         Swal.fire({
-            title: 'استعادة كلمة المرور',
+            title: authTrans.reset_password,
             input: 'email',
-            inputLabel: 'أدخل بريدك الإلكتروني وسيصلك كود التحقق',
+            inputLabel: authTrans.reset_password_label,
             inputPlaceholder: 'example@mail.com',
-            background: '#0a0a0f',
-            confirmButtonText: 'إرسال الكود',
+            confirmButtonText: authTrans.send_code,
             showCancelButton: true,
-            cancelButtonText: 'إلغاء',
+            cancelButtonText: authTrans.cancel,
             showLoaderOnConfirm: true,
             customClass: {
                 popup: 'swal-neon-popup',
@@ -784,7 +809,7 @@ console.log(fullNumber);
             },
             preConfirm: (email) => {
                 if (!email) {
-                    Swal.showValidationMessage('الرجاء إدخال البريد الإلكتروني');
+                    Swal.showValidationMessage(authTrans.enter_email);
                     return false;
                 }
                 return $.ajax({
@@ -797,7 +822,7 @@ console.log(fullNumber);
                 }).then(function() {
                     return email; 
                 }).catch(function(xhr) {
-                    Swal.showValidationMessage(xhr.responseJSON.message || 'حدث خطأ أثناء إرسال الكود');
+                    Swal.showValidationMessage(xhr.responseJSON.message || authTrans.send_code_failed);
                 });
             }
         }).then((result) => {
@@ -811,10 +836,9 @@ console.log(fullNumber);
     function showResetCodeStep(email) {
         Swal.fire({
             icon: 'success',
-            title: 'تم إرسال الكود!',
-            text: 'تفقد بريدك الإلكتروني وأدخل الكود المكون من 6 أرقام',
-            background: '#0a0a0f',
-            confirmButtonText: 'متابعة',
+            title: authTrans.code_sent_title,
+            text: authTrans.code_sent_text,
+            confirmButtonText: authTrans.continue,
             customClass: {
                 popup: 'swal-neon-popup',
                 title: 'swal-neon-title',
@@ -823,23 +847,22 @@ console.log(fullNumber);
             }
         }).then(() => {
             Swal.fire({
-                title: 'إعادة تعيين كلمة المرور',
-                background: '#0a0a0f',
+                title: authTrans.reset_password_title,
                 // تم تعديل الـ HTML لإضافة أيقونات العين المخصصة لكشف الباسوورد
                 html: `
                     <div style="margin-bottom: 15px;">
-                        <input id="swal-code" class="swal2-input" placeholder="كود التحقق" style="text-align: center;">
+                        <input id="swal-code" class="swal2-input" placeholder="${authTrans.verification_code}" style="text-align: center;">
                     </div>
                     <div class="input-wrapper-custom" style="position: relative; margin-bottom: 15px;">
-                        <input id="swal-password" type="password" class="swal2-input neon-input" placeholder="كلمة المرور الجديدة" style="width: 100%; padding-left: 45px; box-sizing: border-box;">
+                        <input id="swal-password" type="password" class="swal2-input neon-input" placeholder="${authTrans.new_password}" style="width: 100%; padding-left: 45px; box-sizing: border-box;">
                         <i class="fas fa-eye swal-toggle-password" data-target="#swal-password" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888; z-index: 10;"></i>
                     </div>
                     <div class="input-wrapper-custom" style="position: relative; margin-bottom: 15px;">
-                        <input id="swal-password-confirm" type="password" class="swal2-input neon-input" placeholder="تأكيد كلمة المرور الجديدة" style="width: 100%; padding-left: 45px; box-sizing: border-box;">
+                        <input id="swal-password-confirm" type="password" class="swal2-input neon-input" placeholder="${authTrans.new_password_confirm}" style="width: 100%; padding-left: 45px; box-sizing: border-box;">
                         <i class="fas fa-eye swal-toggle-password" data-target="#swal-password-confirm" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888; z-index: 10;"></i>
                     </div>
                 `,
-                confirmButtonText: 'تغيير كلمة المرور',
+                confirmButtonText: authTrans.change_password,
                 focusConfirm: false,
                 showLoaderOnConfirm: true,
                 customClass: {
@@ -866,25 +889,25 @@ console.log(fullNumber);
                     const passwordConfirm = $('#swal-password-confirm').val();
 
                     if (!code || !password || !passwordConfirm) {
-                        Swal.showValidationMessage('الرجاء تعبئة جميع الحقول المطلوبة');
+                        Swal.showValidationMessage(authTrans.fill_required_fields);
                         return false;
                     }
 
                     // 1. فحص الطول (يجب ألا تقل عن 8 خانات)
                     if (password.length < 8) {
-                        Swal.showValidationMessage('يجب أن تتكون كلمة المرور من 8 خانات على الأقل');
+                        Swal.showValidationMessage(authTrans.password_min_length);
                         return false;
                     }
 
                     // 2. فحص وجود حروف وأرقام معاً بناءً على قواعد الباك-إند
                     if (!/[a-z]/.test(password) || !/[0-9]/.test(password)) {
-                        Swal.showValidationMessage('يجب أن تحتوي كلمة المرور على حرف صغير ورقم واحد على الأقل');
+                        Swal.showValidationMessage(authTrans.password_require_small_number);
                         return false;
                     }
 
                     // 3. فحص تطابق كلمتي المرور
                     if (password !== passwordConfirm) {
-                        Swal.showValidationMessage('كلمتا المرور غير متطابقتين');
+                        Swal.showValidationMessage(authTrans.password_mismatch);
                         return false;
                     }
 
@@ -900,17 +923,16 @@ console.log(fullNumber);
                             _token: $('input[name="_token"]').val()
                         }
                     }).fail(function(xhr) {
-                        Swal.showValidationMessage(xhr.responseJSON.message || 'الكود غير صحيح أو منتهي الصلاحية');
+                        Swal.showValidationMessage(xhr.responseJSON.message || authTrans.invalid_or_expired_code);
                     });
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'تم تغيير كلمة المرور بنجاح!',
-                        text: 'يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة',
-                        background: '#0a0a0f',
-                        confirmButtonText: 'تسجيل الدخول',
+                        title: authTrans.password_changed_title,
+                        text: authTrans.password_changed_text,
+                        confirmButtonText: authTrans.login_now,
                         customClass: {
                             popup: 'swal-neon-popup',
                             title: 'swal-neon-title',

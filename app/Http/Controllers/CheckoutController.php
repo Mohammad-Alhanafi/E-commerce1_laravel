@@ -19,16 +19,19 @@ class CheckoutController extends Controller
         $subtotal += $item['price'] * $item['quantity'];
     }
 
-    $shipping_type = DB::table('settings')->where('key', 'shipping_type')->value('value');
+    $settings = \Illuminate\Support\Facades\Cache::remember('global_app_settings', 86400, function () {
+        return DB::table('settings')->pluck('value', 'key')->toArray();
+    });
+
+    $shipping_type = $settings['shipping_type'] ?? null;
 
     $regions = [];
     if ($shipping_type === 'region') {
-        $regionsData = DB::table('settings')->where('key', 'shipping_regions')->value('value');
+        $regionsData = $settings['shipping_regions'] ?? null;
         $regions = $regionsData ? json_decode($regionsData, true) : [];
     }
 
-    // لو النظام "حسب المنطقة"، السعر الابتدائي بيصير 0 لحد ما يختار العميل منطقته (بيتحدث عبر JS أو عند الإرسال)
-    $ship_fee = ($shipping_type === 'region') ? 0 : $this->calculateShippingFee('delivery');
+    $ship_fee = ($shipping_type === 'region') ? 0 : $this->calculateShippingFee('delivery', null, $settings);
 
     return view('frontend.checkout', compact('cart', 'subtotal', 'ship_fee', 'shipping_type', 'regions'));
 }
@@ -49,9 +52,13 @@ class CheckoutController extends Controller
         'notes'           => 'nullable|string|max:1000',
     ]);
 
+    $settings = \Illuminate\Support\Facades\Cache::remember('global_app_settings', 86400, function () {
+        return DB::table('settings')->pluck('value', 'key')->toArray();
+    });
+
     try {
-        $result = DB::transaction(function () use ($request, $cart) {
-            $ship_fee = $this->calculateShippingFee($request->shipping_method, $request->city);
+        $result = DB::transaction(function () use ($request, $cart, $settings) {
+            $ship_fee = $this->calculateShippingFee($request->shipping_method, $request->city, $settings);
             $subtotal = 0;
             $orderItems = [];
 
@@ -134,8 +141,8 @@ class CheckoutController extends Controller
         ], 422);
     }
 
-    $whatsapp_data = DB::table('settings')->where('key', 'whatsapp_numbers')->value('value');
-    $numbers = json_decode($whatsapp_data, true);
+    $whatsapp_data = $settings['whatsapp_numbers'] ?? null;
+    $numbers = $whatsapp_data ? json_decode($whatsapp_data, true) : [];
     $adminPhone = !empty($numbers) ? $numbers[0] : '96100000000';
 
     $message = "*طلب جديد -  *\n";
@@ -182,21 +189,26 @@ class CheckoutController extends Controller
     ]);
 }
 
-private function calculateShippingFee(string $shippingMethod, ?string $city = null): float
+private function calculateShippingFee(string $shippingMethod, ?string $city = null, ?array $settings = null): float
 {
-    // استلام من المحل = بدون شحن دائماً
     if ($shippingMethod !== 'delivery') {
         return 0;
     }
 
-    $shipping_type = DB::table('settings')->where('key', 'shipping_type')->value('value');
+    if (!$settings) {
+        $settings = \Illuminate\Support\Facades\Cache::remember('global_app_settings', 86400, function () {
+            return DB::table('settings')->pluck('value', 'key')->toArray();
+        });
+    }
+
+    $shipping_type = $settings['shipping_type'] ?? null;
 
     if ($shipping_type === 'free') {
         return 0;
     }
 
     if ($shipping_type === 'region') {
-        $regionsData = DB::table('settings')->where('key', 'shipping_regions')->value('value');
+        $regionsData = $settings['shipping_regions'] ?? null;
         $regions = $regionsData ? json_decode($regionsData, true) : [];
 
         if (!$city) {
@@ -210,7 +222,6 @@ private function calculateShippingFee(string $shippingMethod, ?string $city = nu
         return $match ? (float) $match['fee'] : 0;
     }
 
-    // fixed (أو أي قيمة افتراضية أخرى)
-    return (float) (DB::table('settings')->where('key', 'shipping_fee')->value('value') ?? 0);
+    return (float) ($settings['shipping_fee'] ?? 0);
 }
 }

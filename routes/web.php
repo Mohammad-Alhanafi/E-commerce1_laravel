@@ -46,6 +46,15 @@ Route::prefix('admin')->group(function () {
     Route::post('/settings/update', [SettingController::class, 'update'])->name('admin.settings.update');
     Route::delete('/settings/delete-number', [SettingController::class, 'deleteNumber'])->name('admin.settings.delete_number');
 
+    // Theme Management Routes
+    Route::post('/themes/generate-colors', [App\Http\Controllers\Admin\ThemeController::class, 'generateColors'])->name('admin.themes.generate');
+    Route::post('/themes/generate-from-background', [App\Http\Controllers\Admin\ThemeController::class, 'generateFromBackground'])->name('admin.themes.generate.background');
+    Route::post('/themes/import', [App\Http\Controllers\Admin\ThemeController::class, 'import'])->name('admin.themes.import');
+    Route::post('/themes/{theme}/activate', [App\Http\Controllers\Admin\ThemeController::class, 'activate'])->name('admin.themes.activate');
+    Route::post('/themes/{theme}/duplicate', [App\Http\Controllers\Admin\ThemeController::class, 'duplicate'])->name('admin.themes.duplicate');
+    Route::get('/themes/{theme}/export', [App\Http\Controllers\Admin\ThemeController::class, 'export'])->name('admin.themes.export');
+    Route::resource('themes', App\Http\Controllers\Admin\ThemeController::class)->names('admin.themes');
+
     Route::get('/ajax/sales-chart', [AdminPanelController::class, 'ajaxChart']);
     Route::get('/ajax/status', [AdminPanelController::class, 'ajaxStatus']);
     Route::get('/ajax/top-products', [AdminPanelController::class, 'ajaxTopProducts']);
@@ -81,24 +90,19 @@ Route::prefix('comments')->group(function () {
 
     Route::post('/{id}/like', [CommentController::class, 'like'])->name('comments.like');
 
-    Route::delete('/{id}', [CommentController::class, 'delete'])->name('comments.delete');
+    Route::delete('/{id}', [CommentController::class, 'destroy'])->name('comments.delete');
 });
 
 /* =========================
    ORDERS
 ========================= */
 Route::resource('orders', OrderController::class);
-
-Route::post('/orders/store', [OrderController::class, 'store'])
-    ->name('orders.store');
-Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
 Route::get('/admin/ajax/latest-orders', [OrderController::class, 'latestOrdersData']);
 
 /* =========================
    USERS
 ========================= */
 Route::prefix('users')->group(function () {
-
     Route::get('/', [UserController::class, 'index'])->name('users.index');
     Route::get('/filter', [UserController::class, 'filter'])->name('users.filter');
     Route::post('/', [UserController::class, 'store'])->name('users.store');
@@ -122,12 +126,13 @@ Route::patch('/cart/update', [CartController::class, 'update'])->name('cart.upda
 Route::delete('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 
 /* =========================
-   CHECKOUT
+   CHECKOUT & ACCOUNT
 ========================= */
 Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout/store', [CheckoutController::class, 'store'])->name('checkout.store');
 });
+
 Route::get('/account', function () {
     if (! Auth::check()) {
         return redirect()->route('login.page');
@@ -144,85 +149,29 @@ Route::get('/account', function () {
     ]);
 })->name('account');
 
-
-
-
-
-
-
 Route::post('/account', [AccountController::class, 'update'])->name('account.update');
-
-
-
-
-
-
-
-
-
-
-/* =========================
- 
-/* =========================
-   COMMENTS (CLEAN)
-========================= */
-Route::prefix('comments')->group(function () {
-
-    Route::post('/store', [CommentController::class, 'store'])
-        ->name('comments.store');
-
-    Route::post('/{id}/reply', [CommentController::class, 'reply'])
-        ->name('comments.reply');
-
-    Route::post('/{id}/like', [CommentController::class, 'like'])
-        ->name('comments.like');
-
-    Route::delete('/{id}', [CommentController::class, 'destroy'])
-        ->name('comments.delete');
-}); //   
 
 /* =========================
    AUTH PAGE (صفحة الدخول والتسجيل)
-|---------------------------
-| 
-|---------------------------
-*/
+========================= */
 Route::get('/auth-page', function () {
     return view('auth.register'); 
 })->name('auth.page');
 
-
-/*
-|---------------------------
-| صفحات العرض (GET)
-|---------------------------
-*/
 Route::get('/login-client', function () {
-    return view('auth.register'); // أو نفس الصفحة الموحدة عندك
+    return view('auth.register');
 })->name('login.page');
 
 Route::get('/register-client', function () {
     return view('auth.register');
 })->name('register.page');
 
-
-/*
-|---------------------------
-| تسجيل الدخول / التسجيل (POST)
-|---------------------------
-*/
 Route::post('/login-client', [UserController::class, 'loginClient'])
-->name('client.login');
+    ->name('client.login');
 
 Route::post('/register-client', [UserController::class, 'registerClient'])
-->name('client.register');
+    ->name('client.register');
 
-
-/*
-|---------------------------
-| تسجيل الخروج
-|---------------------------
-*/
 Route::post('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
@@ -230,45 +179,21 @@ Route::post('/logout', function () {
     return redirect('/');
 })->name('logout');
 
-
-
-
 Route::get('/comments/fetch', [CommentController::class, 'fetch']);
-
 Route::put('/comments/{id}', [CommentController::class, 'update']);
-
-
-
 Route::post('/account/avatar', [AccountController::class, 'updateAvatar'])->name('account.avatar.update');
 
-
-
-
-
 Route::prefix('variants')->group(function () {
-
     Route::get('/product/{product}', [VariantController::class, 'index']);
-
     Route::post('/', [VariantController::class, 'store']);
-
     Route::put('/{variant}', [VariantController::class, 'update']);
-
-Route::delete('/{variant}', [VariantController::class, 'destroy']);
+    Route::delete('/{variant}', [VariantController::class, 'destroy']);
 });
 
-
-
-
-
-
-
-Route::post('/forgot-password/send-code', [App\Http\Controllers\UserController::class, 'sendResetCode'])->name('password.send-code');
-Route::post('/forgot-password/reset', [App\Http\Controllers\UserController::class, 'resetPasswordWithCode'])->name('password.reset');
-
-
-
 Route::post('/forgot-password/send-code', [UserController::class, 'sendResetCode'])
+    ->name('password.send-code')
     ->middleware('throttle:3,1'); 
 
 Route::post('/forgot-password/reset', [UserController::class, 'resetPasswordWithCode'])
+    ->name('password.reset')
     ->middleware('throttle:5,1');

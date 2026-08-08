@@ -220,4 +220,5 @@ return [
     'update_btn'            => 'Update',
     'add_btn'               => 'Add',
     'orders_count_label'    => 'Count',
+    'axios_missing'         => 'Axios is unavailable. Please reload the page and try again.',
 ];

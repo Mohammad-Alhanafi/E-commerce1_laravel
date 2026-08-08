@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 <head>
+    @include('components.theme-head')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ __('admin.sliders') }}</title>
@@ -13,105 +14,102 @@
 
     
     <style>
-        /* الخلفية السوداء الفخمة */
+        /* الخلفية الفخمة */
         body { 
-            background-color: #0b0b0b; 
-            color: #e0e0e0; 
+            background-color: var(--bg-color);
+            color: var(--text-color);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding-top: 30px;
         }
 
-        /* الكارد الرئيسي بالأسود والذهبي */
+        /* الكارد الرئيسي */
         .main-card { 
-            background-color: #161616;
-            border: 1px solid #d4af37; /* حد ذهبي خفيف */
+            background-color: var(--card-bg);
+            border: 1px solid var(--primary-color);
             border-radius: 15px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px var(--shadow-color);
             overflow: hidden;
         }
 
         .card-header { 
-            background-color: #1a1a1a !important; 
-            border-bottom: 1px solid #d4af37 !important;
+            background-color: var(--card-bg) !important; 
+            border-bottom: 1px solid var(--primary-color) !important;
             padding: 20px;
         }
 
-        .gold-title { color: #d4af37; font-weight: bold; }
+        .gold-title { color: var(--primary-color); font-weight: bold; }
 
-  /* 1. تجبير الخلفية السوداء على الكارد والجدول */
+  /* 1. تجبير الخلفية على الكارد والجدول */
 .main-card {
-    background-color: #000000 !important; /* أسود فاحم */
-    border: 1px solid #d4af37;
+    background-color: var(--bg-color) !important;
+    border: 1px solid var(--primary-color);
 }
 
-/* 2. جعل الجدول شفاف ليظهر سواد الكارد خلفه */
+/* 2. جعل الجدول شفاف ليظهر لون الكارد خلفه */
 .table {
     background-color: transparent !important;
-    color: #e0e0e0 !important;
+    color: var(--text-color) !important;
     margin-bottom: 0;
 }
 
 .table thead {
-    background-color: #111111 !important;
+    background-color: var(--card-bg) !important;
 }
 
 .table thead th {
-    color: #d4af37 !important; 
-    border-bottom: 1px solid #d4af37 !important;
-    background-color: #111111 !important;
+    color: var(--primary-color) !important; 
+    border-bottom: 1px solid var(--primary-color) !important;
+    background-color: var(--card-bg) !important;
 }
 
 .table td {
-    background-color: #000000 !important;
-    border-bottom: 1px solid #222 !important; 
-    color: #ffffff !important;
+    background-color: var(--bg-color) !important;
+    border-bottom: 1px solid var(--border-color) !important; 
+    color: var(--text-color) !important;
 }
 
-.table-hover tbody tr:hover td {
-    background-color: #121212 !important;
-    color: #d4af37 !important; 
-}
+
 
 .table-responsive {
-    background-color: #000000 !important;
+    background-color: var(--bg-color) !important;
     border: none !important;
 }
      
 
         /* أزرار ذهبية */
         .btn-gold {
-            background-color: #d4af37;
-            color: #000;
+            background-color: var(--primary-color);
+            color: var(--bg-color);
             font-weight: bold;
             border-radius: 50px;
             padding: 8px 25px;
             border: none;
             transition: 0.3s;
         }
-        .btn-gold:hover { background-color: #b8962e; color: #000; transform: translateY(-2px); }
+        .btn-gold:hover { background-color: var(--hover-color); color: var(--bg-color); transform: translateY(-2px); }
 
         /* المودال */
-        .modal-content { background-color: #1a1a1a; color: white; border: 1px solid #d4af37; border-radius: 15px; }
-        .modal-header { border-bottom: 1px solid #333; }
-        .form-control { background-color: #222; border: 1px solid #444; color: white; border-radius: 8px; }
-        .form-control:focus { background-color: #222; border-color: #d4af37; color: white; box-shadow: none; }
+        .modal-content { background-color: var(--card-bg); color: var(--text-color); border: 1px solid var(--primary-color); border-radius: 15px; }
+        .modal-header { border-bottom: 1px solid var(--border-color); }
+        .form-control { background-color: var(--input-bg); border: 1px solid var(--border-color); color: var(--input-text); border-radius: 8px; }
+        .form-control:focus { background-color: var(--input-bg); border-color: var(--primary-color); color: var(--input-text); box-shadow: none; }
 
 
 
 
         .btn-outline-warning {
-    border-color: #d4af37;
-    color: #d4af37;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 .btn-outline-warning:hover {
-    background-color: #d4af37;
-    color: #000;
-    border-color: #d4af37;
+    background-color: var(--primary-color);
+    color: var(--bg-color);
+    border-color: var(--primary-color);
 }
 
 .btn-outline-info {
-    border-color: #0dcaf0; /* أو لون فضي إذا حبيت: #C0C0C0 */
-    color: #0dcaf0;
+    border-color: var(--info-color, #0dcaf0);
+    color: var(--info-color, #0dcaf0);
 }
 
 .btn-sm.rounded-circle {
@@ -125,23 +123,23 @@
 
 .btn-sm.rounded-circle:hover {
     transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 8px var(--shadow-color);
 }
 
 .gold-btn {
-    background-color: #d4af37; 
-    color: #000 !important;    
-    border: 1px solid #b8962e;
-    border-radius: 8px;        
+    background-color: var(--primary-color);
+    color: var(--bg-color) !important;
+    border: 1px solid var(--secondary-color);
+    border-radius: 8px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--primary-color) 20%, transparent);
 }
 
 .gold-btn:hover {
-    background-color: #b8962e; 
-    color: #000 !important;
-    transform: translateY(-2px); 
-    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+    background-color: var(--hover-color);
+    color: var(--bg-color) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--primary-color) 40%, transparent);
 }
 
 .gold-btn:active {
@@ -149,8 +147,8 @@
 }
 
 #editSliderModal .modal-content {
-    border: 2px solid #d4af37; /* إطار ذهبي للمودال */
-    box-shadow: 0 0 25px rgba(212, 175, 55, 0.1);
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 25px color-mix(in srgb, var(--primary-color) 10%, transparent);
 }
 
 
@@ -158,13 +156,11 @@
 .media-preview { 
     width: 85px; 
     height: 55px; 
-    /* contain تضمن ظهور الفيديو الطولي كاملاً داخل المربع مع ترك فراغات سوداء جانبية */
     object-fit: contain !important; 
-    background-color: #000 !important; 
-    border: 1px solid #d4af37;
+    background-color: var(--bg-color) !important; 
+    border: 1px solid var(--primary-color);
     border-radius: 8px;
 }
-
 
 
 /* تنسيق إزاحة المحتوى ليظهر بجانب السايدبار تماماً وبشكل متناسق */
@@ -200,7 +196,7 @@
             
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle text-center">
+                    <table class="table align-middle text-center">
                         <thead>
                             <tr>
                                 <th>{{ __('admin.order') }}</th>
@@ -225,7 +221,7 @@
                                             <video class="media-preview" muted onmouseover="this.play()" onmouseout="this.pause(); this.currentTime=0;">
                                                 <source src="{{ asset('storage/'.$slider->image) }}">
                                             </video>
-                                        <small class="position-absolute bottom-0 end-0 bg-dark text-warning px-1" style="font-size: 8px; border-radius: 4px;">{{ __('admin.video') }}</small>
+                                        <small class="position-absolute bottom-0 end-0 text-warning px-1" style="font-size: 8px; border-radius: 4px; background-color: var(--input-bg);">{{ __('admin.video') }}</small>
                                         </div>
                                     @else
                                         <img src="{{ asset('storage/'.$slider->image) }}" class="media-preview">
@@ -272,9 +268,19 @@
                     </table>
                 </div>
             </div>
+
+            {{-- Pagination --}}
+            @if($sliders->hasPages())
+            <div class="d-flex justify-content-center py-3">
+                <nav class="admin-pagination">
+                    {{ $sliders->links('pagination::bootstrap-5') }}
+                </nav>
+            </div>
+            @endif
+
         </div>
     </div>
-</div> <!-- إغلاق الغلاف -->
+</div> {{-- إغلاق الغلاف --}}
 
 <!-- Add Modal -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
@@ -318,8 +324,8 @@
 <!-- Edit Modal -->
 <div class="modal fade" id="editSliderModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="background-color: #121212; border: 1px solid #d4af37;">
-            <div class="modal-header" style="border-bottom: 1px solid #333;">
+        <div class="modal-content" style="background-color: var(--card-bg); border: 1px solid var(--primary-color);">
+            <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
                 <h5 class="modal-title gold-title">{{ __('admin.edit') }}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>

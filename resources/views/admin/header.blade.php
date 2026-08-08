@@ -1,7 +1,9 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&family=Almarai:wght@400;700&family=Amiri:wght@400;700&family=Changa:wght@400;700&family=Lalezar&family=Reem+Kufi:wght@400;700&family=Marhey:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=El+Messiri:wght@400;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ asset('css/header.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/theme.css') }}">
+    {{-- theme.css is already loaded by @include('components.theme-head') — do NOT load it again here --}}
 
 
 @php
@@ -19,7 +21,7 @@
             <div class="logo" id="adminLogo" style="{{ (Auth::check() && Auth::user()->role === 'admin') ? 'cursor: pointer;' : '' }}">
                 <span class="logo-icon-wrap" id="headerLogoWrap">
                     @if(!empty($settings['logo_path']))
-                        <img 
+                        <img
                             src="{{ asset('storage/' . $settings['logo_path']) }}"
                             id="headerLogoImg"
                             alt="Logo"
@@ -30,18 +32,18 @@
                             "
                         >
                     @else
-                        <i 
+                        <i
                             id="headerLogoIcon"
                             class="fas fa-crown logo-icon"
                             style="
-                                color: {{ $settings['text_color'] ?? '#D4AF37' }};
+                                color: {{ !empty($settings['text_color']) ? $settings['text_color'] : 'var(--primary-color)' }};
                                 font-size: {{ ($settings['logo_size'] ?? 50) / 1.5 }}px;
                             ">
                         </i>
                     @endif
                 </span>
-                
-                <div class="logo-text" id="headerStoreName" style="color: {{ $settings['text_color'] ?? '#D4AF37' }}; font-family: {{ $settings['font_family'] ?? "'Cairo', sans-serif" }}; font-size: {{ $settings['text_size'] ?? 24 }}px;">
+
+                <div class="logo-text notranslate" translate="no" id="headerStoreName" style="color: {{ !empty($settings['text_color']) ? $settings['text_color'] : 'var(--primary-color)' }}; font-family: {{ $settings['font_family'] ?? "'Cairo', sans-serif" }}; font-size: {{ $settings['text_size'] ?? 24 }}px;">
                     {{ $settings['store_name'] ?? 'الوقار' }}
                 </div>
             </div>
@@ -51,18 +53,25 @@
                 <ul>
                     <li>
                         <a href="{{ route('home') }}" class="{{ request()->is('/') ? 'active-gold' : 'nav-link-white' }}">
-                             <i class="fas fa-home"></i> {{ __('navbar.home') }}
+                             <i class="fas fa-home"></i> <span class="nav-text-home" data-ar="الرئيسية">{{ __('navbar.home') }}</span>
                         </a>
                     </li>
                     <li class="custom-dropdown">
                         <a href="#" class="nav-link-white" id="categoriesBtn">
-                            <i class="fas fa-layer-group"></i> {{ __('navbar.categories') }}
+                            <i class="fas fa-layer-group"></i> <span class="nav-text-cat" data-ar="الأقسام">{{ __('navbar.categories') }}</span>
                         </a>
                         <div class="custom-dropdown-menu d-none" id="categoriesMenu">
                             @php
-                                if (!isset($categories)) {
-                                    // جلب آمن للأقسام لضمان عملها في كل الصفحات
-                                    $categories = \App\Models\Category::with('products')->get();
+                                if (!isset($categories) || $categories->isEmpty()) {
+                                    $categories = \Illuminate\Support\Facades\Cache::remember('header_categories_tree', 86400, function () {
+                                        return \App\Models\Category::select('id', 'name', 'is_active', 'sort_order')
+                                            ->where('is_active', 1)
+                                            ->orderBy('sort_order', 'asc')
+                                            ->with(['products' => function ($q) {
+                                                $q->select('id', 'name', 'category_id')->where('status', 'active');
+                                            }])
+                                            ->get();
+                                    });
                                 }
                             @endphp
                             @foreach($categories as $cat)
@@ -84,9 +93,6 @@
             <div class="header-icons">
                 {{-- USER --}}
 
-
-
-
                 @include('components.language-switcher')
 
 
@@ -104,7 +110,7 @@
                         @endphp
                     @endauth
 
-                    <button type="button" class="header-icon-btn user-avatar-btn" id="userBtn" aria-label="حساب المستخدم">
+                    <button type="button" class="header-icon-btn user-avatar-btn" id="userBtn" aria-label="{{ __('navbar.account') }}">
                         @auth
                             @if($avatarUrl)
                                 <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="header-avatar" onerror="this.remove(); this.parentElement.classList.add('show-initials');">
@@ -131,16 +137,27 @@
                     </div>
                 </div>
 
-                {{-- CART --}}
-                <a href="#" id="open-cart" class="header-icon-btn cart-btn">
+                {{-- CART: يظهر في جميع صفحات المستخدم، لا في لوحة الإدارة --}}
+                @php
+                    $isAdminRoute = request()->is('admin') || request()->is('admin/*')
+                        || request()->is('category') || request()->is('category/*')
+                        || request()->is('products') || request()->is('products/create') || request()->is('products/*/edit')
+                        || request()->is('sliders') || request()->is('sliders/*')
+                        || request()->is('orders') || request()->is('orders/*')
+                        || request()->is('users') || request()->is('users/*')
+                        || request()->is('variants') || request()->is('variants/*');
+                @endphp
+                @if(!$isAdminRoute)
+                <a href="#" id="open-cart" class="header-icon-btn cart-btn" aria-label="{{ __('navbar.cart') }}" title="{{ __('navbar.cart') }}">
                     <i class="fas fa-shopping-bag"></i>
                     <span id="cart-count">{{ count(session('cart', [])) }}</span>
                 </a>
+                @endif
             </div>
 
         </div>
     </div>
-</header>   
+</header>
 
 {{-- نافذة إعدادات الهوية البصرية للمشرف --}}
 @if(Auth::check() && Auth::user()->role === 'admin')
@@ -158,7 +175,7 @@
                 <img id="previewLogoImg"
                      src="{{ !empty($settings['logo_path']) ? asset('storage/'.$settings['logo_path']) : '' }}"
                      style="{{ empty($settings['logo_path']) ? 'display:none;' : '' }} height:{{ $settings['logo_size'] ?? 50 }}px; border-radius:{{ $settings['logo_shape'] ?? '0%' }};">
-                <span id="previewText" style="font-size: {{ $settings['text_size'] ?? 24 }}px;">{{ $settings['store_name'] ?? 'الوقار' }}</span>
+                <span id="previewText" class="notranslate" translate="no" style="font-size: {{ $settings['text_size'] ?? 24 }}px;">{{ $settings['store_name'] ?? 'الوقار' }}</span>
             </div>
         </div>
 
@@ -405,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = originalBtnHTML;
-                alert('مكتبة Axios غير معرفة في هذه الصفحة!');
+                alert('{{ __('admin.axios_missing') }}');
             }
         }
     }
@@ -453,94 +470,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
-
-
-
-
-
-
-document.addEventListener('DOMContentLoaded', function(){
-
-    let theme = localStorage.getItem('theme') || 'dark';
-
-    document.documentElement.setAttribute(
-        'data-theme',
-        theme
-    );
-
-
-    const btn = document.getElementById('themeToggle');
-
-    if(btn){
-
-        btn.addEventListener('click', function(){
-
-            let current =
-            document.documentElement.getAttribute('data-theme');
-
-
-            let newTheme =
-            current === 'dark'
-            ? 'light'
-            : 'dark';
-
-
-            document.documentElement.setAttribute(
-                'data-theme',
-                newTheme
-            );
-
-
-            localStorage.setItem(
-                'theme',
-                newTheme
-            );
-
-
-            // تغيير الأيقونة
-            const icon = btn.querySelector('i');
-
-            if(icon){
-
-                if(newTheme === 'dark'){
-                    icon.className = 'fas fa-moon';
-                }
-                else{
-                    icon.className = 'fas fa-sun';
-                }
-
-            }
-
-
-        });
-
-    }
-
-});
-
-
-
-
-
-
-
-
-
-document.getElementById('langBtn').onclick = function(e){
-
-    e.stopPropagation();
-
-    document.getElementById('langList')
-    .classList.toggle('active');
-
-};
-
-
-document.onclick = function(){
-
-    document.getElementById('langList')
-    .classList.remove('active');
-
-};
 </script>
+
+{{-- Side Cart: يظهر في جميع صفحات المستخدم، لا في صفحات الإدارة --}}
+@if(!$isAdminRoute)
+    @include('components.side-cart')
+@endif

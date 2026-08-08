@@ -12,16 +12,16 @@
        signature motif — the clasp — echoed here as a top seam.
     ========================================================= */
     .footer-full{
-        --f-bg:        #0b0b0d;
-        --f-surface:   #141416;
-        --f-border:    rgba(201,162,39,.16);
-        --f-border-s:  rgba(201,162,39,.34);
-        --f-gold:      #c9a227;
-        --f-gold-light:#e8cc6b;
-        --f-gold-dim:  #8a7328;
-        --f-ink:       #f3efe4;
-        --f-ink-muted: #a8a297;
-        --f-ink-faint: #6f6a60;
+        --f-bg:        var(--footer-bg);
+        --f-surface:   color-mix(in srgb, var(--card-bg) 85%, var(--footer-bg) 15%);
+        --f-border:    color-mix(in srgb, var(--primary-color) 16%, transparent);
+        --f-border-s:  color-mix(in srgb, var(--primary-color) 34%, transparent);
+        --f-gold:      var(--primary-color);
+        --f-gold-light:color-mix(in srgb, var(--accent-color, var(--primary-color)) 75%, white 25%);
+        --f-gold-dim:  color-mix(in srgb, var(--primary-color) 65%, var(--border-color) 35%);
+        --f-ink:       var(--text-color);
+        --f-ink-muted: var(--footer-text, var(--text-muted));
+        --f-ink-faint: color-mix(in srgb, var(--footer-text, var(--text-muted)) 72%, transparent);
         --f-whatsapp:  #2fbf60;
         --f-ease: cubic-bezier(.4,0,.2,1);
  
@@ -117,10 +117,10 @@
     }
     .qr-code-zone:hover{
         border-color: var(--f-border-s);
-        background: #17171a;
+        background: color-mix(in srgb, var(--f-surface) 88%, var(--f-gold) 12%);
     }
     .qr-code-wrapper{
-        background: #0f0f10;
+        background: color-mix(in srgb, var(--f-bg) 92%, #000 8%);
         padding: 6px;
         border-radius: 9px;
         border: 1px solid rgba(255,255,255,.06);
@@ -171,7 +171,7 @@
     }
     .social-icons a:hover{
         background: var(--f-gold);
-        color: #0b0b0d;
+        color: var(--btn-text-color, #000);
         transform: translateY(-2px);
     }
     .social-icons a:focus-visible{
@@ -209,7 +209,7 @@
     }
     .developer-phone:hover{
         background: var(--f-whatsapp);
-        color: #0b0b0d;
+        color: var(--btn-text-color, #000);
     }
     .developer-phone:focus-visible{
         outline: 2px solid var(--f-gold-light);
@@ -254,7 +254,7 @@
                     {{ __('footer.tagline') }}
                 </span>
 
-                <h5 class="footer-title" id="footerStoreName">
+                <h5 class="footer-title notranslate" translate="no" id="footerStoreName">
                     {{ $settings['store_name'] ?? __('footer.store_name') }}
                 </h5>
 
@@ -350,8 +350,8 @@ document.addEventListener('DOMContentLoaded', function() {
         text: window.location.origin,
         width: 58,
         height: 58,
-        colorDark: "#c9a227",
-        colorLight: "#0f0f10",
+        colorDark: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#c9a227',
+        colorLight: getComputedStyle(document.documentElement).getPropertyValue('--footer-bg').trim() || '#0f0f10',
         correctLevel: QRCode.CorrectLevel.H
     });
 });

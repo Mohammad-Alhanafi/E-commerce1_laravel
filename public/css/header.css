@@ -13,10 +13,11 @@ header {
 
 
 .header-content {
-    display: flex;
-    direction: rtl !important;   /* يثبت الترتيب البصري بكل اللغات متل العربي */
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
+    gap: 20px;
+    min-height: 54px;
 }
 
 
@@ -26,6 +27,7 @@ header {
     display: flex;
     align-items: center;
     gap: 10px;
+    justify-self: start;
 }
 
 
@@ -92,9 +94,10 @@ nav a:hover::after {
 /* Header Icons */
 
 .header-icons {
-    direction: rtl !important;
     display: flex;
-    gap: 20px;
+    align-items: center;
+    gap: 12px;
+    justify-self: end;
 }
 
 
@@ -125,12 +128,12 @@ nav a:hover::after {
     position: absolute;
     top: 45px;
     left: 0;
-    background: #111;
-    border: 1px solid #d4af37;
+    background: var(--dropdown-bg, var(--card-bg, #111));
+    border: 1px solid var(--border-color, var(--primary-color, #d4af37));
     border-radius: 12px;
     min-width: 220px;
     overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    box-shadow: 0 10px 25px var(--shadow-color, rgba(0,0,0,0.4));
     z-index: 9999;
     
     /* --- الإخفاء والتأثيرات --- */
@@ -167,8 +170,17 @@ nav a:hover::after {
 }
 
 
+.main-nav {
+    justify-self: center;
+}
+
 .main-nav ul {
-    direction: rtl !important;
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
 }
 
 
@@ -183,8 +195,8 @@ nav a:hover::after {
     position: absolute;
     top: 100%;
     right: 0;
-    background: #111;
-    border: 1px solid #d4af37;
+    background: var(--dropdown-bg, var(--card-bg, #111));
+    border: 1px solid var(--border-color, var(--primary-color, #d4af37));
     border-radius: 12px;
     min-width: 200px;
     z-index: 9999;
@@ -204,11 +216,11 @@ nav a:hover::after {
     align-items: center;
     gap: 10px;
     padding: 14px 18px;
-    color: white;
+    color: var(--text-color, white);
     text-decoration: none;
     transition: 0.3s;
     font-size: 15px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.05));
 }
 
 
@@ -218,7 +230,7 @@ nav a:hover::after {
 
 
 .user-item i {
-    color:#d4af37;
+    color: var(--primary-color, #d4af37);
     width:20px;
     text-align:center;
     font-size:14px;
@@ -226,14 +238,14 @@ nav a:hover::after {
 
 
 .user-item:hover {
-    background:#d4af37;
-    color:black;
+    background: var(--primary-color, #d4af37);
+    color: var(--btn-text-color, black);
     padding-right:25px;
 }
 
 
 .user-item:hover i {
-    color:black;
+    color: var(--btn-text-color, black);
 }
 
 
@@ -241,19 +253,19 @@ nav a:hover::after {
 /* Admin Link */
 
 .admin-link {
-    color:#d4af37 !important;
+    color: var(--primary-color, #d4af37) !important;
     font-weight:bold;
 }
 
 
 .admin-link:hover {
-    background-color:rgba(212,175,55,0.1) !important;
-    color:white !important;
+    background-color: color-mix(in srgb, var(--primary-color) 15%, transparent) !important;
+    color: var(--text-color, white) !important;
 }
 
 
 .admin-link i {
-    color:#d4af37;
+    color: var(--primary-color, #d4af37);
 }
 
 
@@ -276,10 +288,14 @@ nav a:hover::after {
 @media (max-width:768px){
 
     .header-content{
-        flex-direction:column;
-        gap:20px;
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 15px;
     }
 
+    .logo, .main-nav, .header-icons {
+        justify-self: center;
+    }
 
     nav ul{
         flex-wrap:wrap;
@@ -318,12 +334,12 @@ nav ul li .dropdown {
     position: absolute;
     top: 100%;
     right: 0;
-    background-color: #111;
-    border: 1px solid #d4af37;
+    background-color: var(--dropdown-bg, var(--card-bg, #111));
+    border: 1px solid var(--border-color, var(--primary-color, #d4af37));
     border-radius: 10px;
     padding: 10px 0;
     min-width: 180px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 16px var(--shadow-color, rgba(0,0,0,0.5));
     z-index: 9999;
 }
 
@@ -338,7 +354,7 @@ nav ul li .dropdown-menu a {
 nav ul li ul li a {
     padding: 8px 15px;
     font-size: 0.95rem;
-    color: #fff;
+    color: var(--text-color, #fff);
 }
 
 /* 4. إظهار القائمة فقط عند تحريك الماوس فوق القسم الرئيسي */
@@ -372,12 +388,12 @@ nav ul li:hover > .dropdown {
     position: absolute;
     top: 100%;
     right: 0;
-    background: #111;
-    border: 1px solid #d4af37;
+    background: var(--dropdown-bg, var(--card-bg, #111));
+    border: 1px solid var(--border-color, var(--primary-color, #d4af37));
     border-radius: 12px;
     min-width: 230px;
     padding: 10px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 25px var(--shadow-color, rgba(0, 0, 0, 0.5));
     z-index: 9999;
 }
 
@@ -393,9 +409,9 @@ nav ul li:hover > .dropdown {
 
 .category-toggle {
     width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(212, 175, 55, 0.2);
-    color: #fff;
+    background: color-mix(in srgb, var(--primary-color) 10%, transparent);
+    border: 1px solid var(--border-color, rgba(212, 175, 55, 0.2));
+    color: var(--text-color, #fff);
     padding: 8px 12px;
     border-radius: 8px;
     cursor: pointer;
@@ -405,8 +421,8 @@ nav ul li:hover > .dropdown {
 }
 
 .category-toggle:hover {
-    background: #d4af37;
-    color: #000;
+    background: var(--primary-color, #d4af37);
+    color: var(--btn-text-color, #000);
 }
 
 .products-list {
@@ -416,7 +432,7 @@ nav ul li:hover > .dropdown {
 
 .product-link {
     display: block;
-    color: #ccc;
+    color: var(--text-muted, #ccc);
     text-decoration: none;
     font-size: 14px;
     padding: 4px 0;
@@ -424,7 +440,7 @@ nav ul li:hover > .dropdown {
 }
 
 .product-link:hover {
-    color: #d4af37;
+    color: var(--primary-color, #d4af37);
 }
 
 
@@ -441,9 +457,9 @@ nav ul li:hover > .dropdown {
 
     border-radius:50%;
 
-    background: linear-gradient(135deg,#D4AF37,#B8941E);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
 
-    color:#000;
+    color: var(--btn-text-color, #000);
 
     border:none;
 
@@ -465,13 +481,14 @@ nav ul li:hover > .dropdown {
     top: 45px;
     right: 0;
 
-    background: black;
+    background: var(--dropdown-bg, var(--card-bg));
+    border: 1px solid var(--border-color);
     width: 50px;
 
     border-radius: 10px;
     padding: 8px;
 
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.038);
+    box-shadow: 0 5px 20px var(--shadow-color, rgba(0, 0, 0, 0.4));
 }
 
 #langList a {
@@ -493,7 +510,7 @@ nav ul li:hover > .dropdown {
 
 #langBtn:hover {
 
-    color: #FFD700;
+    color: var(--accent-color, var(--primary-color));
 
     transform: scale(1.55);
 
@@ -519,10 +536,10 @@ nav ul li:hover > .dropdown {
     max-width: 480px;
     max-height: 90vh;
     overflow-y: auto;
-    background: linear-gradient(180deg, #141414, #0a0a0a);
-    border: 1px solid rgba(212, 160, 23, 0.25);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card-bg) 90%, #000 10%), var(--card-bg));
+    border: 1px solid color-mix(in srgb, var(--primary-color) 25%, transparent);
     border-radius: 22px;
-    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 30px 70px var(--shadow-color, rgba(0,0,0,0.6));
     animation: modalPop 0.25s ease;
 }
 
@@ -537,7 +554,7 @@ nav ul li:hover > .dropdown {
     align-items: center;
     justify-content: space-between;
     padding: 20px 24px;
-    border-bottom: 1px solid rgba(212, 160, 23, 0.18);
+    border-bottom: 1px solid color-mix(in srgb, var(--primary-color) 18%, transparent);
 }
 
 .modal-header-pro h3 {
@@ -547,7 +564,7 @@ nav ul li:hover > .dropdown {
     margin: 0;
     font-family: 'Amiri', serif;
     font-size: 1.3rem;
-    color: #ffd700;
+    color: var(--primary-color);
 }
 
 .modal-header-pro .close {
@@ -557,7 +574,7 @@ nav ul li:hover > .dropdown {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    color: #ccc;
+    color: var(--text-muted);
     font-size: 1.4rem;
     line-height: 1;
     cursor: pointer;
@@ -565,8 +582,8 @@ nav ul li:hover > .dropdown {
 }
 
 .modal-header-pro .close:hover {
-    background: rgba(212, 160, 23, 0.15);
-    color: #ffd700;
+    background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+    color: var(--primary-color);
     transform: rotate(90deg);
 }
 
@@ -583,13 +600,13 @@ nav ul li:hover > .dropdown {
     padding: 26px;
     border-radius: 16px;
     background:
-        radial-gradient(circle at 30% 20%, rgba(212, 160, 23, 0.12), transparent 55%),
-        #050505;
-    border: 1px dashed rgba(212, 160, 23, 0.3);
+        radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--primary-color) 12%, transparent), transparent 55%),
+        var(--bg-color);
+    border: 1px dashed color-mix(in srgb, var(--primary-color) 30%, transparent);
 }
 
 .live-preview-box i#previewIcon {
-    color: #d4af37;
+    color: var(--primary-color);
 }
 
 .live-preview-box img#previewLogoImg {
@@ -600,7 +617,7 @@ nav ul li:hover > .dropdown {
 .live-preview-box span#previewText {
     font-family: 'Amiri', serif;
     font-weight: 700;
-    color: #d4af37;
+    color: var(--primary-color);
 }
 
 /* ---- Body / form ---- */
@@ -618,43 +635,43 @@ nav ul li:hover > .dropdown {
     align-items: center;
     gap: 8px;
     font-size: 0.88rem;
-    color: #cfcfcf;
+    color: var(--text-color);
     font-weight: 600;
 }
 
-.setting-group-pro label i { color: #d4af37; width: 16px; text-align: center; }
+.setting-group-pro label i { color: var(--primary-color); width: 16px; text-align: center; }
 
 .setting-group-pro input[type="text"] {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(212, 160, 23, 0.2);
+    background: var(--input-bg);
+    border: 1px solid color-mix(in srgb, var(--primary-color) 20%, transparent);
     border-radius: 10px;
     padding: 10px 14px;
-    color: #fff;
+    color: var(--text-color);
     font-size: 0.92rem;
     transition: border-color .2s, background .2s;
 }
 
 .setting-group-pro input[type="text"]:focus {
     outline: none;
-    border-color: #d4af37;
-    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--primary-color);
+    background: color-mix(in srgb, var(--input-bg) 85%, var(--primary-color) 15%);
 }
 
 .setting-group-pro select {
     width: 100%;
-    background: #111 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%23d4af37' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E") no-repeat left 14px center;
-    border: 1px solid rgba(212, 160, 23, 0.2);
+    background: var(--input-bg);
+    border: 1px solid color-mix(in srgb, var(--primary-color) 20%, transparent);
     border-radius: 10px;
     padding: 10px 14px;
-    color: #fff;
+    color: var(--text-color);
     font-size: 0.9rem;
     appearance: none;
     cursor: pointer;
     transition: border-color .2s;
 }
 
-.setting-group-pro select:focus { outline: none; border-color: #d4af37; }
-.setting-group-pro select option { background: #111; color: #fff; }
+.setting-group-pro select:focus { outline: none; border-color: var(--primary-color); }
+.setting-group-pro select option { background: var(--card-bg); color: var(--text-color); }
 
 /* range sliders */
 .setting-group-pro input[type="range"] {
@@ -685,7 +702,7 @@ nav ul li:hover > .dropdown {
     width: 44px;
     height: 34px;
     padding: 0;
-    border: 1px solid rgba(212, 160, 23, 0.25);
+    border: 1px solid color-mix(in srgb, var(--primary-color) 25%, transparent);
     border-radius: 8px;
     background: none;
     cursor: pointer;
@@ -712,9 +729,9 @@ nav ul li:hover > .dropdown {
     gap: 10px;
     width: 100%;
     padding: 14px;
-    border: 1px dashed rgba(212, 160, 23, 0.35);
+    border: 1px dashed color-mix(in srgb, var(--primary-color) 35%, transparent);
     border-radius: 12px;
-    color: #d4af37;
+    color: var(--primary-color);
     font-size: 0.88rem;
     font-weight: 600;
     cursor: pointer;
@@ -722,8 +739,8 @@ nav ul li:hover > .dropdown {
 }
 
 .upload-label:hover {
-    background: rgba(212, 160, 23, 0.08);
-    border-color: #d4af37;
+    background: color-mix(in srgb, var(--primary-color) 8%, transparent);
+    border-color: var(--primary-color);
 }
 
 .upload-label i { font-size: 1.1rem; }
@@ -742,8 +759,8 @@ nav ul li:hover > .dropdown {
     padding: 13px;
     border: none;
     border-radius: 12px;
-    background: linear-gradient(135deg, #ffd700, #d4a017);
-    color: #0a0a0a;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--btn-text-color, #000);
     font-weight: 800;
     font-size: 0.95rem;
     cursor: pointer;
@@ -752,7 +769,7 @@ nav ul li:hover > .dropdown {
 
 .btn-save-pro:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(212, 160, 23, 0.35);
+    box-shadow: 0 10px 25px color-mix(in srgb, var(--primary-color) 35%, transparent);
 }
 
 .btn-save-pro:disabled {

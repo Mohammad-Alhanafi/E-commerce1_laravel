@@ -220,4 +220,7 @@ return [
     'update_btn'            => 'تحديث',
     'add_btn'               => 'إضافة',
     'orders_count_label'    => 'العدد',
+    'axios_missing'         => 'مكتبة Axios غير متوفرة. يرجى إعادة تحميل الصفحة والمحاولة مجددًا.',
+
+      
 ];

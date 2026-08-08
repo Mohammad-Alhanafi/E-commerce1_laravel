@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" dir="{{ in_array(app()->getLocale(), ['ar']) ? 'rtl' : 'ltr' }}">
 <head>
+    @include('components.theme-head')
     <meta charset="UTF-8">
     <title>{{ __('admin.manage_orders') }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,29 +22,29 @@
     
     <style>
     :root {
-    --black-primary: #0a0a0a;
-    --black-secondary: #1a1a1a;
-    --black-light: #2a2a2a;
-    --gold-primary: #D4AF37;
-    --gold-secondary: #FFD700;
-    --gold-light: #FFF8DC;
-    --white: #ffffff;
-    --gray: #888888;
-    --success: #28a745;
-    --warning: #ffc107;
-    --info: #17a2b8;
-    --danger: #dc3545;
+    --black-primary: var(--bg-color, #0a0a0a);
+    --black-secondary: var(--card-bg, #1a1a1a);
+    --black-light: var(--border-color, #2a2a2a);
+    --gold-primary: var(--primary-color, #D4AF37);
+    --gold-secondary: var(--secondary-color, #FFD700);
+    --gold-light: var(--accent-color, #FFF8DC);
+    --white: var(--text-color, #ffffff);
+    --gray: var(--text-muted, #888888);
+    --success: var(--success-color, #28a745);
+    --warning: var(--warning-color, #ffc107);
+    --info: var(--info-color, #17a2b8);
+    --danger: var(--danger-color, #dc3545);
 }
 
 body {
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-    color: var(--white);
+    background: var(--bg-color);
+    color: var(--text-color);
     font-family: 'Segoe UI', 'Cairo', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
     animation: fadeIn 0.8s ease-out;
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* يمنع ظهور شريط التمرير العرضي في الصفحة كاملة */
+    overflow-x: hidden;
 }
 
 @keyframes fadeIn {
@@ -238,7 +239,7 @@ body {
 
 .status-cancelled {
     background: linear-gradient(45deg, rgba(220, 53, 69, 0.2), rgba(220, 53, 69, 0.1)) !important;
-    color: #ff6b6b !important;
+    color: var(--danger-color, #ff6b6b) !important;
     border: 1px solid rgba(220, 53, 69, 0.5) !important;
     padding: 5px 12px;
     border-radius: 15px;
@@ -307,8 +308,8 @@ body {
 }
 
 .text-danger {
-    color: #ff6b6b !important;
-    text-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+    color: var(--danger-color, #ff6b6b) !important;
+    text-shadow: 0 0 5px color-mix(in srgb, var(--danger-color, #ff6b6b) 50%, transparent);
 }
 
 ::-webkit-scrollbar {
@@ -365,54 +366,54 @@ body {
 }
 
 .pagination .page-item.active .page-link {
-    background-color: #d4af37 !important; 
-    border-color: #d4af37 !important;
-    color: #000 !important; 
+    background-color: var(--primary-color) !important; 
+    border-color: var(--primary-color) !important;
+    color: var(--btn-text-color, #000) !important; 
 }
 
 .pagination .page-link {
-    background-color: #1a1a1a !important; 
-    border-color: #d4af37 !important; 
-    color: #d4af37 !important; 
+    background-color: var(--card-bg) !important; 
+    border-color: var(--border-color) !important; 
+    color: var(--primary-color) !important; 
 }
 
 .pagination .page-link:hover {
-    background-color: #d4af37 !important;
-    color: #000 !important;
+    background-color: var(--primary-color) !important;
+    color: var(--btn-text-color, #000) !important;
 }
 
 .pagination .page-item.disabled .page-link {
-    background-color: #111 !important;
-    border-color: #444 !important;
-    color: #666 !important;
+    background-color: var(--section-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-muted) !important;
 }
 
 ::placeholder {
-    color: rgba(212, 175, 55, 0.6) !important;
+    color: color-mix(in srgb, var(--primary-color) 60%, transparent) !important;
     opacity: 1;
 }
 
 :-ms-input-placeholder {
-    color: rgba(212, 175, 55, 0.6) !important;
+    color: color-mix(in srgb, var(--primary-color) 60%, transparent) !important;
 }
 
 ::-ms-input-placeholder {
-    color: rgba(212, 175, 55, 0.6) !important;
+    color: color-mix(in srgb, var(--primary-color) 60%, transparent) !important;
 }
 
 .form-control::placeholder {
-    color: rgba(212, 175, 55, 0.6) !important;
+    color: color-mix(in srgb, var(--primary-color) 60%, transparent) !important;
     font-weight: 500;
     transition: all 0.3s ease;
 }
 
 .form-control:focus::placeholder {
-    color: rgba(212, 175, 55, 0.4) !important;
+    color: color-mix(in srgb, var(--primary-color) 40%, transparent) !important;
     transform: translateX(-5px);
 }
 
 .gold-header {
-    background: linear-gradient(45deg, var(--gold-primary), var(--gold-secondary), var(--gold-light), var(--gold-primary));
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color), var(--primary-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -425,7 +426,7 @@ body {
 }
 
 .text-gold {
-    color: #c5a059 !important;
+    color: var(--primary-color) !important;
 }
 
 .gold-header::after {
@@ -552,7 +553,7 @@ table {
                         <h5 class="mb-0 gold-header">
                             <i class="bi bi-table me-2"></i>{{ __('admin.orders_list') }}
                         </h5>
-                        <span class="badge bg-dark text-gold border border-gold" id="orders-count">
+                        <span class="badge text-gold border border-gold" id="orders-count" style="background-color: color-mix(in srgb, var(--primary-color) 12%, var(--card-bg));">
                             <i class="bi bi-cart me-1"></i> {{ __('admin.orders_count_label') }}: {{ $orders->total() }}
                         </span>
                     </div>
@@ -662,7 +663,7 @@ table {
 
                             <div class="col-12">
                                 <label class="text-gold mb-2">{{ __('admin.products') }}:</label>
-                                <table class="table table-dark table-bordered">
+                                <table class="table table-bordered">
                                     <tbody id="modalProductsList"></tbody>
                                 </table>
                                 <button type="button" class="btn btn-sm btn-outline-warning" id="addNewProductRow">
@@ -711,7 +712,6 @@ window.AppLocale = '{{ app()->getLocale() }}';
 // ─────────────────────────────────────────────────────────────────────────────
 
   
-
 
 
 
@@ -781,7 +781,7 @@ $(document).ready(function() {
         let row = `
         <tr class="product-row align-middle">
             <td>
-                <select name="products[]" class="form-select bg-dark text-white border-secondary" required>
+                <select name="products[]" class="form-select" required>
                     <option value="" selected disabled>{{ __('admin.choose_product') }}</option>
                     @foreach($products as $product)
                         <option value="{{ $product->id }}" ${productId == {{ $product->id }} ? 'selected' : ''}>
@@ -791,7 +791,7 @@ $(document).ready(function() {
                 </select>
             </td>
             <td>
-                <input type="number" name="quantities[]" class="form-control bg-dark text-white border-secondary" value="${quantity}" min="1">
+                <input type="number" name="quantities[]" class="form-control" value="${quantity}" min="1">
             </td>
             <td class="text-center">
                 <button type="button" class="btn btn-outline-danger btn-sm remove-row">
@@ -919,8 +919,8 @@ $(document).ready(function() {
                 icon: 'error',
                 title: window.AppTrans.save_error_title,
                 text: errorMsg,
-                background: '#1a1a1a',
-                color: '#fff'
+                background: getComputedStyle(document.documentElement).getPropertyValue('--card-bg').trim() || '#1a1a1a',
+                color: getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim() || '#fff'
             });
         }
     });
@@ -954,12 +954,12 @@ $(document).on('click', '#createNewOrderBtn', function() {
             text: window.AppTrans.delete_order_confirm,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
+            confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--danger-color').trim() || '#dc3545',
+            cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || '#6c757d',
             confirmButtonText: window.AppTrans.yes_delete,
             cancelButtonText: window.AppTrans.cancel,
-            background: '#1a1a1a',
-            color: '#fff'
+            background: getComputedStyle(document.documentElement).getPropertyValue('--card-bg').trim() || '#1a1a1a',
+            color: getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim() || '#fff'
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({

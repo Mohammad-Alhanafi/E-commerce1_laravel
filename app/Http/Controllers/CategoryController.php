@@ -11,7 +11,7 @@ class CategoryController extends Controller
     // عرض كل الفئات
     public function index()
     {
-        $categories = Category::latest()->paginate(10);
+        $categories = Category::latest()->paginate(10)->withQueryString();
         $totalProducts = \App\Models\Product::count();
 
         return view('admin.categories.index', compact('categories', 'totalProducts'));
@@ -148,29 +148,53 @@ public function updateImage(Request $request, $id) {
 
 
 
+public function updateText(Request $request, $id)
+{
+    $request->validate([
+        'field' => 'required|in:name,description',
+        'value' => 'required|string|max:1000',
+    ]);
+
+    $category = Category::findOrFail($id);
+    $category->{$request->field} = $request->value;
+    $category->save();
+
+    \Illuminate\Support\Facades\Cache::forget('header_categories_tree');
+    \Illuminate\Support\Facades\Cache::forget('home_categories_tree');
+
+    return response()->json([
+        'success' => true,
+        'message' => 'تم تحديث النص بنجاح'
+    ]);
+}
+
 public function show($id)
 {
-    $category = \App\Models\Category::where('is_active', 1)->findOrFail($id);
+    $category = Category::select('id', 'name', 'description', 'image', 'is_active')
+        ->where('is_active', 1)
+        ->findOrFail($id);
 
-    $products = \App\Models\Product::where('category_id', $id)
-                                   ->where('status', 'active')
-                                   ->paginate(12); // عرض 12 منتج في الصفحة
+    $products = \App\Models\Product::select('id', 'name', 'price', 'image', 'status', 'category_id', 'created_at')
+        ->where('category_id', $id)
+        ->where('status', 'active')
+        ->latest()
+        ->paginate(12)
+        ->withQueryString();
 
     return view('frontend.category_products', compact('category', 'products'));
 }
 
-
-
-
-
 public function storeFast() {
-        Category::create([
-            'name' => 'قسم جديد (اضغط للتعديل)',
-            'description' => 'وصف القسم هنا بقليل من التفاصيل',
-            'image' => 'assets/images/default-cat.jpg', // تأكد أن هذه الصورة موجودة أو ضع مسار صورة افتراضية
-            'is_active' => 1
-        ]);
+    Category::create([
+        'name' => 'قسم جديد (اضغط للتعديل)',
+        'description' => 'وصف القسم هنا بقليل من التفاصيل',
+        'image' => 'assets/images/default-cat.jpg',
+        'is_active' => 1
+    ]);
 
-        return back()->with('success', 'تم إضافة قسم جديد بنجاح!');
-    }
+    \Illuminate\Support\Facades\Cache::forget('header_categories_tree');
+    \Illuminate\Support\Facades\Cache::forget('home_categories_tree');
+
+    return back()->with('success', 'تم إضافة قسم جديد بنجاح!');
+}
 }

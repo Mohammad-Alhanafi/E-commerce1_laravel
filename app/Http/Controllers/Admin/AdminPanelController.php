@@ -20,16 +20,21 @@ class AdminPanelController extends Controller
             $totalProducts = Product::count();
 
             // ===== المنتجات منخفضة المخزون =====
-            $lowStockProducts = Product::where('stock', '<=', 5)->get();
+            $lowStockProducts = Product::select('id', 'name', 'stock', 'image')
+                ->where('stock', '<=', 5)
+                ->take(10)
+                ->get();
 
             // ===== آخر الطلبات =====
-            $latestOrders = Order::with('user')
+            $latestOrders = Order::select('id', 'user_id', 'customer_name', 'customer_phone', 'total_price', 'status', 'created_at')
+                ->with('user:id,name,email')
                 ->orderBy('created_at', 'desc')
                 ->take(5)
                 ->get();
 
             // ===== أفضل المنتجات مبيعاً =====
-            $topProducts = Product::withCount('orders')
+            $topProducts = Product::select('id', 'name')
+                ->withCount('orders')
                 ->orderBy('orders_count', 'desc')
                 ->take(5)
                 ->get()
@@ -41,15 +46,18 @@ class AdminPanelController extends Controller
                 });
 
             // ===== الرسم البياني للمبيعات حسب الحالة =====
-            $salesChart = Order::selectRaw('status, COUNT(*) as total')
-                ->groupBy('status')
-                ->pluck('total', 'status');
+            $salesChartData = $this->getChartDataFormatted();
+            $salesChart = $salesChartData;
 
         } catch (Exception $e) {
             // قيم افتراضية في حال فشل قاعدة البيانات حتى لا تنهار الصفحة
             $orderCount = $newOrders = $numOfNewCustomers = $totalProducts = 0;
             $lowStockProducts = $latestOrders = $topProducts = collect([]);
-            $salesChart = collect([]);
+            $salesChartData = [
+                'labels' => ['قيد الانتظار', 'جاري المعالجة', 'مكتمل', 'تم الشحن', 'ملغي'],
+                'data'   => [0, 0, 0, 0, 0]
+            ];
+            $salesChart = $salesChartData;
         }
 
         // ===== بيانات واجهة المستخدم الإضافية =====
@@ -68,6 +76,7 @@ class AdminPanelController extends Controller
             'latestOrders',
             'topProducts',
             'salesChart',
+            'salesChartData',
             'percetnofCustomer',
             'cutomersPeriod',
             'salesPercent',
@@ -89,10 +98,18 @@ class AdminPanelController extends Controller
         }
     }
 
-    // function Ajax for a Chart
-    public function ajaxChart()
+    // Helper formatting function for Chart Data
+    private function getChartDataFormatted()
     {
         try {
+            $statusLabelsMap = [
+                'pending'    => 'قيد الانتظار',
+                'processing' => 'جاري المعالجة',
+                'completed'  => 'مكتمل',
+                'shipped'    => 'تم الشحن',
+                'canceled'   => 'ملغي',
+            ];
+
             $allStatuses = [
                 'pending'    => 0,
                 'processing' => 0,
@@ -115,16 +132,27 @@ class AdminPanelController extends Controller
                 }
             }
 
-            return response()->json([
-                'labels' => array_keys($allStatuses),
+            $translatedLabels = [];
+            foreach (array_keys($allStatuses) as $key) {
+                $translatedLabels[] = $statusLabelsMap[$key] ?? ucfirst($key);
+            }
+
+            return [
+                'labels' => $translatedLabels,
                 'data'   => array_values($allStatuses),
-            ]);
+            ];
         } catch (Exception $e) {
-            return response()->json([
-                'labels' => ['pending', 'processing', 'completed', 'shipped', 'canceled'],
+            return [
+                'labels' => ['قيد الانتظار', 'جاري المعالجة', 'مكتمل', 'تم الشحن', 'ملغي'],
                 'data'   => [0, 0, 0, 0, 0]
-            ]);
+            ];
         }
+    }
+
+    // function Ajax for a Chart
+    public function ajaxChart()
+    {
+        return response()->json($this->getChartDataFormatted());
     }
 
     public function ajaxLatestOrders() {

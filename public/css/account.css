@@ -1,150 +1,153 @@
- body {
-            background: #050505;
-            color: #fff;
-            font-family: 'Cairo', sans-serif;
-            min-height: 100vh;
-        }
+body {
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Cairo', sans-serif;
+    min-height: 100vh;
+}
 
-        .account-page {
-            padding: 60px 0;
-        }
+.account-page {
+    padding: 60px 0;
+}
 
-        .account-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-            border: 1px solid rgba(212, 175, 55, 0.25);
-            border-radius: 26px;
-            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
-            overflow: hidden;
-        }
+.account-card {
+    background: linear-gradient(145deg,
+        color-mix(in srgb, var(--text-color) 5%, transparent),
+        color-mix(in srgb, var(--text-color) 2%, transparent));
+    border: 1px solid color-mix(in srgb, var(--primary-color) 25%, transparent);
+    border-radius: 26px;
+    box-shadow: 0 18px 45px var(--shadow-color);
+    overflow: hidden;
+}
 
-        .account-hero {
-            padding: 32px;
-            background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.18), transparent 42%);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.16);
-        }
+.account-hero {
+    padding: 32px;
+    background: radial-gradient(circle at top right,
+        color-mix(in srgb, var(--primary-color) 18%, transparent), transparent 42%);
+    border-bottom: 1px solid color-mix(in srgb, var(--primary-color) 16%, transparent);
+}
 
-        .account-avatar {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            overflow: hidden;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #ffd700, #d4a017);
-            color: #050505;
-            font-weight: 800;
-            font-size: 2rem;
-            box-shadow: 0 12px 28px rgba(212, 175, 55, 0.24);
-        }
+.account-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--accent-color, var(--primary-color)), var(--secondary-color));
+    color: var(--bg-color);
+    font-weight: 800;
+    font-size: 2rem;
+    box-shadow: 0 12px 28px color-mix(in srgb, var(--primary-color) 24%, transparent);
+}
 
-        .account-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+.account-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
-        .account-title {
-            color: #ffd700;
-            font-family: 'Amiri', serif;
-            margin: 0;
-        }
+.account-title {
+    color: var(--primary-color);
+    font-family: 'Amiri', serif;
+    margin: 0;
+}
 
-        .muted-gold {
-            color: #b8a07c;
-        }
+.muted-gold {
+    color: var(--text-muted);
+}
 
-        .order-row {
-            padding: 18px 22px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
+.order-row {
+    padding: 18px 22px;
+    border-bottom: 1px solid color-mix(in srgb, var(--text-color) 6%, transparent);
+}
 
-        .order-row:last-child {
-            border-bottom: 0;
-        }
+.order-row:last-child {
+    border-bottom: 0;
+}
 
-        .status-pill {
-            display: inline-flex;
-            padding: 5px 12px;
-            border-radius: 999px;
-            background: rgba(212, 175, 55, 0.12);
-            color: #ffd700;
-            border: 1px solid rgba(212, 175, 55, 0.22);
-            font-size: 0.82rem;
-        }
+.status-pill {
+    display: inline-flex;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+    color: var(--primary-color);
+    border: 1px solid color-mix(in srgb, var(--primary-color) 22%, transparent);
+    font-size: 0.82rem;
+}
 
-        .profile-form {
-            padding: 24px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
+.profile-form {
+    padding: 24px;
+    border-bottom: 1px solid color-mix(in srgb, var(--text-color) 6%, transparent);
+}
 
-        .profile-form .form-control {
-            background: #111;
-            border: 1px solid rgba(212, 175, 55, 0.22);
-            color: #fff;
-            border-radius: 14px;
-            padding: 12px 14px;
-        }
+.profile-form .form-control {
+    background: var(--input-bg);
+    border: 1px solid color-mix(in srgb, var(--primary-color) 22%, transparent);
+    color: var(--input-text);
+    border-radius: 14px;
+    padding: 12px 14px;
+}
 
-        .profile-form .form-control:focus {
-            background: #111;
-            border-color: #d4af37;
-            color: #fff;
-            box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.12);
-        }
+.profile-form .form-control:focus {
+    background: var(--input-bg);
+    border-color: var(--primary-color);
+    color: var(--input-text);
+    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--primary-color) 12%, transparent);
+}
 
-        .btn-gold-account {
-            border: 0;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #ffd700, #d4a017);
-            color: #050505;
-            font-weight: 800;
-            padding: 12px 24px;
-        }
+.btn-gold-account {
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--bg-color);
+    font-weight: 800;
+    padding: 12px 24px;
+}
 
-        .file-upload-box {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            min-height: 50px;
-            padding: 6px 6px 6px 14px;
-            border: 1px solid rgba(212, 175, 55, 0.22);
-            border-radius: 14px;
-            background: #111;
-        }
+.file-upload-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 50px;
+    padding: 6px 6px 6px 14px;
+    border: 1px solid color-mix(in srgb, var(--primary-color) 22%, transparent);
+    border-radius: 14px;
+    background: var(--input-bg);
+}
 
-        .file-upload-box input[type="file"] {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-            pointer-events: none;
-        }
+.file-upload-box input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
 
-        .file-upload-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #ffd700, #d4a017);
-            color: #050505;
-            font-weight: 800;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
+.file-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--bg-color);
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
-        .file-upload-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 22px rgba(212, 175, 55, 0.22);
-        }
+.file-upload-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px color-mix(in srgb, var(--primary-color) 22%, transparent);
+}
 
-        .file-name {
-            color: #b8a07c;
-            font-size: 0.92rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+.file-name {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

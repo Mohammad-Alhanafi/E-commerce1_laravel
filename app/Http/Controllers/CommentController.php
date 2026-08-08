@@ -52,7 +52,7 @@ class CommentController extends Controller
     public function reply(Request $request, $id)
     {
         $reply = Comment::create([
-            'name' => Auth::check() ? Auth::user()->name : 'زائر',
+            'name' => null,
             'comment' => $request->comment,
             'parent_id' => $id,
         ]);
@@ -98,7 +98,11 @@ class CommentController extends Controller
             return response()->json(['error' => 'غير مسموح'], 403);
         }
 
-        if (Auth::user()->role !== 'admin' && $comment->name !== Auth::user()->name) {
+        $user = Auth::user();
+        $isAdmin = in_array(strtolower($user->role ?? ''), ['admin', 'superadmin']);
+        $isOwner = $comment->name && $comment->name === $user->name;
+
+        if (!$isAdmin && !$isOwner) {
             return response()->json(['error' => 'غير مسموح'], 403);
         }
 
@@ -109,11 +113,24 @@ class CommentController extends Controller
         ]);
     }
 
+    public function delete($id)
+    {
+        return $this->destroy($id);
+    }
+
     public function update(Request $request, $id)
     {
         $comment = Comment::findOrFail($id);
 
-        if (!Auth::check() || $comment->name !== Auth::user()->name) {
+        if (!Auth::check()) {
+            return response()->json(['error' => 'غير مسموح'], 403);
+        }
+
+        $user = Auth::user();
+        $isAdmin = in_array(strtolower($user->role ?? ''), ['admin', 'superadmin']);
+        $isOwner = $comment->name && $comment->name === $user->name;
+
+        if (!$isAdmin && !$isOwner) {
             return response()->json(['error' => 'غير مسموح'], 403);
         }
 

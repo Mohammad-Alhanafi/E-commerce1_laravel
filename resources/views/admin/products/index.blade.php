@@ -2,6 +2,7 @@
 <html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
+    @include('components.theme-head')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ __('admin.manage_products') }}</title>
@@ -35,23 +36,23 @@
 }
       
         :root {
-            --black-primary: #0a0a0a;
-            --black-secondary: #1a1a1a;
-            --black-light: #2a2a2a;
-            --gold-primary: #D4AF37;
-            --gold-secondary: #FFD700;
-            --gold-light: #FFF8DC;
-            --white: #ffffff;
-            --gray: #888888;
-            --success: #28a745;
-            --danger: #dc3545;
-            --warning: #ffc107;
-            --info: #17a2b8;
+            --black-primary: var(--bg-color, #0a0a0a);
+            --black-secondary: var(--card-bg, #1a1a1a);
+            --black-light: var(--border-color, #2a2a2a);
+            --gold-primary: var(--primary-color, #D4AF37);
+            --gold-secondary: var(--secondary-color, #FFD700);
+            --gold-light: var(--accent-color, #FFF8DC);
+            --white: var(--text-color, #ffffff);
+            --gray: var(--text-muted, #888888);
+            --success: var(--success-color, #28a745);
+            --danger: var(--danger-color, #dc3545);
+            --warning: var(--warning-color, #ffc107);
+            --info: var(--info-color, #17a2b8);
         }
 
         body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            color: var(--white);
+            background: var(--bg-color);
+            color: var(--text-color);
             font-family: 'Segoe UI', 'Cairo', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
             animation: fadeIn 0.8s ease-out;
@@ -102,8 +103,8 @@
         #variantForm input, 
         #variantForm select, 
         #variantForm textarea {
-            color: #ffffff !important;
-            background-color: #2a2a2a !important;
+            color: var(--text-color) !important;
+            background-color: var(--input-bg) !important;
             pointer-events: auto !important;
             cursor: text;
         }
@@ -136,15 +137,15 @@
         }
 
         .products-table th {
-            background-color: #121212;
-            color: var(--gold-primary);
+            background-color: var(--bg-color);
+            color: var(--primary-color);
             padding: 15px;
-            border-bottom: 2px solid var(--gold-primary);
+            border-bottom: 2px solid var(--primary-color);
         }
 
         .products-table td {
             padding: 12px;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--border-color);
         }
 
         /* --- Status Badges --- */
@@ -207,22 +208,20 @@
 
 /* تنسيق الأيقونات بجانب الذهب لتبدو متناسقة */
 .label-gradient i {
-    -webkit-text-fill-color: #D4AF37; /* جعل الأيقونة ذهبية ثابتة */
+    -webkit-text-fill-color: var(--primary-color);
     font-size: 1.2rem;
 }
 
-/* تعديل الـ Input ليتماشى مع الذهب */
 #productForm .form-control, 
 #variantForm .form-control {
-    border: 1px solid rgba(212, 175, 55, 0.3) !important;
-    background-color: #1a1a1a !important;
-    color: #ffffff !important;
+    border: 1px solid var(--border-color) !important;
+    background-color: var(--input-bg) !important;
+    color: var(--input-text) !important;
 }
 
-/* عند الضغط على الحقل يصبح الذهب أقوى */
 #productForm .form-control:focus {
-    border-color: #D4AF37 !important;
-    box-shadow: 0 0 8px rgba(212, 175, 55, 0.4) !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 8px color-mix(in srgb, var(--primary-color) 40%, transparent) !important;
 }
 
 
@@ -231,16 +230,15 @@
 
 /* تعديل عنوان إضافة منتج جديد */
 .card-header {
-    /* أولاً: نحدد الخلفية كخلفية داكنة ثابتة */
-    background: #1a1a1a !important; 
-    border-bottom: 2px solid #D4AF37 !important;
+    background: var(--card-bg) !important;
+    border-bottom: 2px solid var(--primary-color) !important;
     padding: 15px 20px;
 }
 
-/* ثانياً: نطبق الذهب المتدرج على النص والأيقونة بداخل الـ Header */
+/* apply gradient gold on text & icon inside header */
 .card-header, 
 .card-header i {
-    background: linear-gradient(45deg, #D4AF37, #FFD700, #FFF8DC, #D4AF37) !important;
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color, #FFD700), var(--primary-color)) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     background-clip: text !important;
@@ -257,13 +255,13 @@
 
 
 .badge.text-gold {
-    background: #0a0a0a !important; 
-    border: 1px solid #D4AF37 !important; 
+    background: var(--bg-color) !important;
+    border: 1px solid var(--primary-color) !important;
     padding: 8px 15px !important;
     font-size: 1rem !important;
     font-weight: 800 !important;
     
-    background: linear-gradient(45deg, #D4AF37, #FFD700, #FFF8DC, #D4AF37) !important;
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color, #FFD700), var(--primary-color)) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     background-clip: text !important;
@@ -273,12 +271,12 @@
     animation: gradientLabel 3s ease infinite;
     
     display: inline-block;
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--primary-color) 20%, transparent);
 }
 
 /* لضمان أن الحدود تظل ذهبية ولا تختفي مع التدرج */
 .badge.border-gold {
-    border-color: #D4AF37 !important;
+    border-color: var(--primary-color) !important;
 }
 
 
@@ -289,8 +287,8 @@
 .btn-details, 
 .btn-outline-gold {
     background: transparent !important;
-    color: #D4AF37 !important; /* لون ذهبي للنص */
-    border: 2px solid #D4AF37 !important; /* إطار ذهبي */
+    color: var(--primary-color) !important;
+    border: 2px solid var(--primary-color) !important;
     font-weight: 700 !important;
     border-radius: 8px !important;
     padding: 6px 15px !important;
@@ -303,9 +301,9 @@
 
 .btn-details:hover, 
 .btn-outline-gold:hover {
-    background: linear-gradient(45deg, #D4AF37, #FFD700) !important; 
-    color: #0a0a0a !important; 
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5) !important;
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color, var(--primary-color))) !important;
+    color: var(--bg-color) !important;
+    box-shadow: 0 0 15px color-mix(in srgb, var(--primary-color) 50%, transparent) !important;
     transform: translateY(-2px);
 }
 
@@ -319,24 +317,21 @@
 
 
 .table thead tr th {
-    color: #D4AF37 !important; 
-    border-bottom: 2px solid #D4AF37 !important; 
+    color: var(--primary-color) !important;
+    border-bottom: 2px solid var(--primary-color) !important;
     text-align: center;
     font-weight: bold;
     text-transform: uppercase;
-    background-color: #0a0a0a !important; 
+    background-color: var(--bg-color) !important;
 }
 
 
-.table thead tr th:hover {
-    color: #FFD700 !important; 
-    text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-}
+
 
 
 .table tbody tr td:nth-child(4), 
 .table tbody tr td:nth-child(5) { 
-    color: #FFD700 !important;
+    color: var(--accent-color, var(--primary-color)) !important;
     font-weight: bold;
 }
 
@@ -357,7 +352,7 @@
 
 
 .table tbody td {
-    color: #ffffff; 
+    color: var(--text-color);
     padding: 12px 8px !important;
 }
 
@@ -454,25 +449,25 @@
 
 /* حالة: نشط (Active) - توهج أخضر */
 .status-active {
-    background: rgba(40, 167, 69, 0.1) !important;
-    color: #28a745 !important;
-    border-color: rgba(40, 167, 69, 0.5) !important;
-    box-shadow: 0 0 8px rgba(40, 167, 69, 0.2);
+    background: color-mix(in srgb, var(--success-color) 10%, transparent) !important;
+    color: var(--success-color) !important;
+    border-color: color-mix(in srgb, var(--success-color) 50%, transparent) !important;
+    box-shadow: 0 0 8px color-mix(in srgb, var(--success-color) 20%, transparent);
 }
 
 /* حالة: غير نشط (Inactive) - توهج رمادي */
 .status-inactive {
-    background: rgba(108, 117, 125, 0.1) !important;
-    color: #adb5bd !important;
-    border-color: rgba(108, 117, 125, 0.5) !important;
+    background: color-mix(in srgb, var(--text-muted) 10%, transparent) !important;
+    color: var(--text-muted) !important;
+    border-color: color-mix(in srgb, var(--text-muted) 50%, transparent) !important;
 }
 
 /* حالة: نفذ من المخزون (Out of Stock) - توهج أحمر */
 .status-outofstock {
-    background: rgba(220, 53, 69, 0.1) !important;
-    color: #dc3545 !important;
-    border-color: rgba(220, 53, 69, 0.5) !important;
-    box-shadow: 0 0 8px rgba(220, 53, 69, 0.2);
+    background: color-mix(in srgb, var(--danger-color) 10%, transparent) !important;
+    color: var(--danger-color) !important;
+    border-color: color-mix(in srgb, var(--danger-color) 50%, transparent) !important;
+    box-shadow: 0 0 8px color-mix(in srgb, var(--danger-color) 20%, transparent);
 }
 
 /* إضافة نقطة صغيرة مضيئة بجانب الكلمة */
@@ -522,66 +517,66 @@
 }
 
 .pagination-gold .page-link {
-    background-color: #1a1d20 !important;
-    border: 1px solid #d4af37 !important;
-    color: #d4af37 !important;
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--primary-color) !important;
+    color: var(--primary-color) !important;
     border-radius: 4px;
     padding: 5px 12px;
 }
 
 .pagination-gold .page-item.active .page-link {
-    background-color: #d4af37 !important;
-    color: #000 !important;
+    background-color: var(--primary-color) !important;
+    color: var(--bg-color) !important;
 }
 
 .pagination-gold .page-link:hover {
-    background-color: #d4af37;
-    color: #000 !important;
+    background-color: var(--primary-color);
+    color: var(--bg-color) !important;
 }
 
 .pagination-gold .page-item.disabled .page-link {
-    border-color: #444 !important;
-    color: #666 !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-muted) !important;
 }
 
 
 
 
 .pagination-gold .page-link {
-    background-color: #1a1d20 !important;
-    border: 1px solid #d4af37 !important;
-    color: #d4af37 !important;
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--primary-color) !important;
+    color: var(--primary-color) !important;
     margin: 0 2px;
 }
 
 .pagination-gold .page-item.active .page-link {
-    background-color: #d4af37 !important;
-    color: #000 !important;
-    border-color: #d4af37 !important;
+    background-color: var(--primary-color) !important;
+    color: var(--bg-color) !important;
+    border-color: var(--primary-color) !important;
 }
 
 .pagination-gold .page-item.disabled .page-link {
-    border-color: #444 !important;
-    color: #666 !important;
-    background-color: #111 !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-muted) !important;
+    background-color: var(--bg-color) !important;
 }
 
 
 
 /* تغيير لون الـ Placeholder لكل الحقول */
 ::placeholder {
-    color: white !important;
+    color: var(--text-muted) !important;
     opacity: 1; /* المتصفحات مثل Firefox بتقلل الشفافية تلقائياً، هيك بنثبتها */
 }
 
 /* للمتصفحات القديمة مثل Internet Explorer */
 :-ms-input-placeholder {
-    color: white !important;
+    color: var(--text-muted) !important;
 }
 
 /* لمتصفح Microsoft Edge */
 ::-ms-input-placeholder {
-    color: white !important;
+    color: var(--text-muted) !important;
 }
 
 
@@ -593,9 +588,9 @@
 }
 
 .custom-pagination .page-item .page-link {
-    background-color: #121212; /* أسود غامق */
-    border: 1px solid #d4af37;  /* إطار ذهبي */
-    color: #d4af37;             /* نص ذهبي */
+    background-color: var(--bg-color); /* أسود غامق */
+    border: 1px solid var(--primary-color);  /* إطار ذهبي */
+    color: var(--primary-color);             /* نص ذهبي */
     width: 38px;
     height: 38px;
     display: flex;
@@ -608,23 +603,23 @@
 
 /* حالة المرور بالماوس (Hover) */
 .custom-pagination .page-item .page-link:hover {
-    background-color: #d4af37;
-    color: #000;
+    background-color: var(--primary-color);
+    color: var(--btn-text-color, #000);
 }
 
 /* الصفحة الحالية (Active) */
 .custom-pagination .page-item.active .page-link {
-    background-color: #d4af37 !important;
-    border-color: #d4af37 !important;
-    color: #000 !important;
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: var(--btn-text-color, #000) !important;
     font-weight: bold;
 }
 
 /* الصفحات المعطلة (Disabled) */
 .custom-pagination .page-item.disabled .page-link {
-    background-color: #080808;
-    border-color: #444;
-    color: #555;
+    background-color: var(--bg-color);
+    border-color: var(--border-color);
+    color: var(--text-muted);
 }
 
 .custom-pagination nav .flex.items-center.justify-between,
@@ -790,7 +785,7 @@
                                         {{ __('admin.price') }} <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
-                                        <span class="input-group-text bg-dark border-dark text-gold">$</span>
+                                        <span class="input-group-text text-gold" style="background-color: var(--input-bg); border-color: var(--border-color);">$</span>
                                         <input type="number" step="0.01" name="price" class="form-control" required>
                                     </div>
                                 </div>
@@ -840,8 +835,8 @@
                                         {{ __('admin.image') }}
                                     </label>
     <input type="file" name="image" id="productImage" 
-           class="form-control bg-dark text-white border-secondary shadow-none">
-    <div class="form-text" style="font-size: 0.8rem; color: #888;">{{ __('admin.image_optional_hint2') }}</div>
+           class="form-control shadow-none">
+    <div class="form-text" style="font-size: 0.8rem; color: var(--text-muted);">{{ __('admin.image_optional_hint2') }}</div>
 </div>
 
                                 <div class="col-12">
@@ -858,17 +853,17 @@
 
 
 
-<div class="card mb-4 bg-dark border-secondary">
+<div class="card mb-4">
     <div class="card-body">
         <form id="filterForm">
             <div class="row g-3">
                 <div class="col-md-5">
                     <input type="text" id="searchName" name="name" value="{{ request('name') }}" 
-                           class="form-control bg-dark text-white border-secondary" 
+                           class="form-control" 
                            placeholder="{{ __('admin.search_product_placeholder') }}">
                 </div>
                 <div class="col-md-4">
-                    <select id="searchCategory" name="category_id" class="form-control bg-dark text-white border-secondary">
+                    <select id="searchCategory" name="category_id" class="form-control">
                         <option value="">{{ __('admin.all_categories') }}</option>
                         @foreach($categories as $cat)
                             <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>
@@ -884,21 +879,21 @@
 </div>
 <div id="alert-container" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;"></div>
 
-<div class="row animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+         <div class="row animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
     <div class="col-12">
-        <div class="card bg-dark border-secondary">
-            <div class="card-header d-flex justify-content-between align-items-center border-secondary">
-                <h5 class="mb-0 text-white">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
                     <i class="bi bi-table me-2 text-gold"></i>{{ __('admin.products_list') }}
                 </h5>
-                <span class="badge bg-dark text-gold border border-gold total-products-count">
+                <span class="badge text-gold border border-gold total-products-count" style="background-color: color-mix(in srgb, var(--primary-color) 12%, var(--card-bg));">
                     <i class="bi bi-box me-1"></i> {{ __('admin.total_count') }}: {{ $products->total() }}
                 </span>
             </div>
             
             <div class="card-body p-0">
                 <div class="table-responsive" style="overflow-x: auto !important; -webkit-overflow-scrolling: touch;">
-                    <table class="table table-dark table-hover mb-0" id="productsTable" style="min-width: 900px; table-layout: fixed;">
+                    <table class="table mb-0" id="productsTable" style="min-width: 900px; table-layout: fixed;">
                        <thead>
                        <tr class="text-gold">
                        <th width="30" class="text-center">#</th>
@@ -924,29 +919,28 @@
                                             <img src="{{ asset('storage/' . $product->image) }}"
                                                  alt="{{ $product->name }}"
                                                  class="rounded-circle border border-gold shadow-sm"
-                                                 style="width: 45px; height: 45px; object-fit: cover; background-color: #2a2a2a;">
+                                                 style="width: 45px; height: 45px; object-fit: cover; background-color: var(--input-bg);">
                                         @elseif($product->image && (str_starts_with($product->image, 'http://') || str_starts_with($product->image, 'https://')))
                                             <img src="{{ $product->image }}"
                                                  alt="{{ $product->name }}"
                                                  class="rounded-circle border border-gold shadow-sm"
-                                                 style="width: 45px; height: 45px; object-fit: cover; background-color: #2a2a2a;">
+                                                 style="width: 45px; height: 45px; object-fit: cover; background-color: var(--input-bg);">
                                         @else
-                                            <div class="rounded-circle border border-secondary d-flex align-items-center justify-content-center bg-dark mx-auto"
-                                                 style="width: 45px; height: 45px;">
+                                            <div class="rounded-circle border d-flex align-items-center justify-content-center mx-auto"
+                                                 style="width: 45px; height: 45px; background-color: var(--input-bg); border-color: var(--border-color) !important;">
                                                 <i class="bi bi-image text-muted" style="font-size: 0.8rem;"></i>
                                             </div>
                                         @endif
-                                    </td>
 
                                     <td>
                                         <div class="d-flex flex-column">
-                                            <h6 class="mb-0 text-white text-truncate" style="max-width: 180px;">{{ $product->name }}</h6>
+                                            <h6 class="mb-0 text-truncate" style="max-width: 180px; color: var(--text-color);">{{ $product->name }}</h6>
                                             <small class="sku-golden">{{ $product->sku ?? '-' }}</small>
                                         </div>
                                     </td>
 
                                     <td>
-                                        <span class="badge bg-dark text-gold border border-gold-subtle">
+                                        <span class="badge text-gold border border-gold-subtle" style="background-color: var(--input-bg);">
                                             {{ $product->category->name ?? '-' }}
                                         </span>
                                     </td>
@@ -1026,10 +1020,10 @@
                 </div>
             </div>
 
-            <div class="card-footer bg-dark border-secondary d-flex justify-content-center">
-                <div class="custom-pagination">
+            <div class="card-footer d-flex justify-content-center py-3">
+                <nav class="admin-pagination">
                     {{ $products->links('pagination::bootstrap-5') }}
-                </div>
+                </nav>
             </div>
         </div>
     </div>
@@ -1103,7 +1097,7 @@
     <div class="d-flex align-items-center gap-2">
         <input type="color" name="color" id="color_input" class="form-control form-control-color" value="#000000" title="{{ __('admin.choose_color') }}">
         
-        <input type="text" id="color_text" class="form-control bg-dark text-white border-secondary" placeholder="#000000">
+        <input type="text" id="color_text" class="form-control" placeholder="#000000">
         
         <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearColor()">{{ __('admin.no_color') }}</button>
     </div>
@@ -1157,14 +1151,14 @@
 <!-- Variants List -->
 
 
-<div class="card bg-dark border-secondary">
-    <div class="card-header d-flex justify-content-between align-items-center border-secondary">
-        <span class="text-white">{{ __('admin.variants_list') }}</span>
-        <span class="badge bg-dark text-gold border border-gold" id="variantsCount">0</span>
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>{{ __('admin.variants_list') }}</span>
+        <span class="badge text-gold border border-gold" id="variantsCount" style="background-color: color-mix(in srgb, var(--primary-color) 12%, var(--card-bg));">0</span>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive" style="overflow-x: auto !important; -webkit-overflow-scrolling: touch;">
-            <table class="table table-dark table-hover mb-0" id="variantsTable" style="min-width: 850px; table-layout: fixed;">
+            <table class="table mb-0" id="variantsTable" style="min-width: 850px; table-layout: fixed;">
                 <thead>
                     <tr class="text-gold">
                         <th style="width: 80px;">{{ __('admin.image') }}</th> 
@@ -1185,7 +1179,7 @@
             <p class="text-muted mb-0">{{ __('admin.no_variants') }}</p>
         </div>
     </div>
-    <div class="card-footer border-secondary bg-dark d-flex justify-content-center" id="variantsPagination">
+    <div class="card-footer d-flex justify-content-center" id="variantsPagination">
         </div>
 </div>
 
@@ -1226,7 +1220,7 @@
 
                         <div class="mb-3">
     <label class="form-label text-gold">{{ __('admin.sku') }}</label>
-    <input type="text" name="sku" id="editProductSku" class="form-control bg-dark text-white border-secondary">
+    <input type="text" name="sku" id="editProductSku" class="form-control">
 </div>
                         <div class="col-md-4">
                             <label class="form-label">{{ __('admin.status') }}</label>
@@ -1250,8 +1244,8 @@
                     <div class="mb-3">
     <label for="productImage" class="form-label text-gold">{{ __('admin.product_image') }}</label>
     <input type="file" name="image" id="productImage" 
-           class="form-control bg-dark text-white border-secondary shadow-none">
-    <div class="form-text" style="font-size: 0.8rem; color: #888;">{{ __('admin.image_optional_hint') }}</div>
+           class="form-control shadow-none">
+    <div class="form-text" style="font-size: 0.8rem; color: var(--text-muted);">{{ __('admin.image_optional_hint') }}</div>
 </div>
                 </form>
             </div>
@@ -1416,7 +1410,7 @@ function buildVariantRow(v) {
     let colorDisplay = v.color 
         ? `<div class="d-flex align-items-center gap-2">
              <span style="background-color: ${v.color}; width: 20px; height: 20px; display: inline-block; border-radius: 50%; border: 1px solid #d4af37;"></span>
-             <small class="text-white-50">${v.color}</small>
+             <small style="color: var(--text-muted);">${v.color}</small>
            </div>` 
         : '<span class="text-muted small">---</span>';
 
@@ -1425,7 +1419,7 @@ function buildVariantRow(v) {
     if (v.attributes && v.attributes.length > 0) {
         extraAttributes = '<div class="mt-1">';
         v.attributes.forEach(attr => {
-            extraAttributes += `<span class="badge text-dark me-1" style="font-size: 10px; background-color: #d4af37;">
+            extraAttributes += `<span class="badge me-1" style="font-size: 10px; background-color: var(--primary-color); color: var(--btn-text-color, #000);">
                                  ${attr.name}: ${attr.value}
                                </span>`;
         });
@@ -1454,10 +1448,10 @@ function buildVariantRow(v) {
             
             <td style="width: 150px;">${colorDisplay}</td>
             
-            <td style="width: 130px;"><span class="text-white">${parseFloat(v.additional_price).toFixed(2)} $</span></td>
+            <td style="width: 130px;"><span style="color: var(--text-color);">${parseFloat(v.additional_price).toFixed(2)} $</span></td>
             
             <td style="width: 100px;">
-                <span class="badge bg-dark border ${stockStatusClass}" style="font-size: 0.85rem;">
+                <span class="badge border ${stockStatusClass}" style="font-size: 0.85rem; background-color: var(--input-bg);">
                     ${alertIcon} ${v.stock}
                 </span>
             </td>
@@ -1713,8 +1707,8 @@ $('#productForm').on('submit', function(e) {
                 let p = response.product;
 
                 let imgHtml = p.image 
-                    ? `<img src="/storage/${p.image}" class="rounded-circle border border-gold shadow-sm" style="width: 45px; height: 45px; object-fit: cover; background-color: #2a2a2a;">`
-                    : `<div class="rounded-circle border border-secondary d-flex align-items-center justify-content-center bg-dark mx-auto" style="width: 45px; height: 45px;"><i class="bi bi-image text-muted"></i></div>`;
+                    ? `<img src="/storage/${p.image}" class="rounded-circle border border-gold shadow-sm" style="width: 45px; height: 45px; object-fit: cover; background-color: var(--input-bg);">`
+                    : `<div class="rounded-circle border d-flex align-items-center justify-content-center mx-auto" style="width: 45px; height: 45px; background-color: var(--input-bg); border-color: var(--border-color) !important;"><i class="bi bi-image text-muted"></i></div>`;
 
                 let newRow = `
                 <tr class="animate__animated animate__fadeInRight" style="vertical-align: middle;" data-id="${p.id}">
@@ -1722,11 +1716,11 @@ $('#productForm').on('submit', function(e) {
                     <td class="text-center">${imgHtml}</td>
                     <td>
                         <div class="d-flex flex-column">
-                            <h6 class="mb-0 text-white">${p.name}</h6>
+                            <h6 class="mb-0" style="color: var(--text-color);">${p.name}</h6>
                             <small class="sku-golden">${p.sku}</small>
                         </div>
                     </td>
-                    <td><span class="badge bg-dark text-gold border border-gold-subtle">${response.category_name || 'عام'}</span></td>
+                    <td><span class="badge text-gold border border-gold-subtle" style="background-color: color-mix(in srgb, var(--primary-color) 12%, var(--card-bg));">${response.category_name || 'عام'}</span></td>
                     <td><span class="fw-bold text-success">$${parseFloat(p.price).toFixed(2)}</span></td>
                     <td><span class="fw-bold text-success">${p.stock}</span></td>
                     <td class="text-center"><span class="status-badge status-active">نشط</span></td>
@@ -1753,7 +1747,7 @@ $('#productForm').on('submit', function(e) {
 
                 $('#productsTableBody').prepend(newRow);
 
-                let counterBadge = $('.badge.bg-dark.text-gold.border.border-gold');
+                let counterBadge = $('.badge.text-gold.border.border-gold');
                 let currentCount = parseInt(counterBadge.text().replace(/[^0-9]/g, '')) || 0;
                 counterBadge.html(`<i class="bi bi-table me-2 text-gold"></i>العدد الكلي: ${currentCount + 1}`);
 
@@ -1764,9 +1758,7 @@ $('#productForm').on('submit', function(e) {
                     icon: 'success',
                     title: window.AppTrans.add_success,
                     timer: 2500,
-                    showConfirmButton: false,
-                    background: '#1a1a1a',
-                    color: '#fff'
+                    showConfirmButton: false
                 });
             }
         },
@@ -1778,17 +1770,12 @@ $('#productForm').on('submit', function(e) {
                 Swal.fire({
                     icon: 'warning',
                     title: window.AppTrans.data_error_title,
-                    text: errorMsg,
-                    confirmButtonColor: '#d4af37',
-                    background: '#1a1a1a',
-                    color: '#fff'
+                    text: errorMsg
                 });
             } else {
                 Swal.fire({
                     icon: 'error',
-                    title: window.AppTrans.unexpected_error,
-                    background: '#1a1a1a',
-                    color: '#fff'
+                    title: window.AppTrans.unexpected_error
                 });
             }
         }

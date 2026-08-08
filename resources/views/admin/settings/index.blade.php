@@ -16,25 +16,25 @@
            one signature motif (the "clasp" on each card).
         ========================================================= */
         :root{
-            --bg:            #0b0b0d;
-            --bg-soft:       #121214;
-            --surface:       #17171a;
-            --surface-raised:#1c1c1f;
-            --border:        rgba(201,162,39,.16);
-            --border-strong: rgba(201,162,39,.34);
+            --bg:            var(--bg-color, #0b0b0d);
+            --bg-soft:       var(--section-bg, #121214);
+            --surface:       var(--card-bg, #17171a);
+            --surface-raised:var(--card-bg, #1c1c1f);
+            --border:        var(--border-color, rgba(201,162,39,.16));
+            --border-strong: var(--primary-color, rgba(201,162,39,.34));
 
-            --gold:          #c9a227;
-            --gold-light:    #e8cc6b;
-            --gold-dim:      #8a7328;
+            --gold:          var(--primary-color, #c9a227);
+            --gold-light:    var(--accent-color, #e8cc6b);
+            --gold-dim:      var(--secondary-color, #8a7328);
 
-            --ink:           #f3efe4;
-            --ink-muted:     #a8a297;
-            --ink-faint:     #6f6a60;
+            --ink:           var(--text-color, #f3efe4);
+            --ink-muted:     var(--text-muted, #a8a297);
+            --ink-faint:     var(--text-muted, #6f6a60);
 
-            --success:       #3fb373;
-            --success-bg:    rgba(63,179,115,.12);
-            --danger:        #e5555c;
-            --danger-bg:     rgba(229,85,92,.12);
+            --success:       var(--success-color, #3fb373);
+            --success-bg:    color-mix(in srgb, var(--success-color) 12%, transparent);
+            --danger:        var(--danger-color, #e5555c);
+            --danger-bg:     color-mix(in srgb, var(--danger-color, #e5555c) 12%, transparent);
             --whatsapp:      #2fbf60;
 
             --radius-lg: 18px;
@@ -58,7 +58,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        ::selection{ background: var(--gold); color:#000; }
+        ::selection{ background: var(--gold); color: var(--bg); }
 
         /* focus-visible everywhere — accessibility floor */
         a:focus-visible, button:focus-visible, input:focus-visible,
@@ -126,7 +126,7 @@
         }
         .page-head .back-link:hover{
             background: var(--gold);
-            color: #0b0b0d;
+            color: var(--bg);
         }
         .page-head .back-link i{ font-size: 13px; }
 
@@ -190,7 +190,7 @@
             border-radius: var(--radius-sm);
             background: linear-gradient(150deg, var(--gold) 0%, var(--gold-dim) 100%);
             display:flex; align-items:center; justify-content:center;
-            color: #0b0b0d;
+            color: var(--bg);
             font-size: 16px;
             flex-shrink: 0;
         }
@@ -346,7 +346,7 @@
             background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
             border: none;
             border-radius: 999px;
-            color: #100d02;
+            color: var(--bg);
             font-weight: 700;
             font-size: 14px;
             font-family: inherit;
@@ -455,68 +455,6 @@
 
     <div class="cards-container">
 
-        <!-- محرك المظهر والألوان الديناميكية -->
-        <div class="settings-card">
-            <div class="card-header">
-                <div class="icon-badge"><i class="fas fa-palette"></i></div>
-                <div class="titles">
-                    <h2>{{ __('settings.theme_engine') }}</h2>
-                    <p>{{ __('settings.theme_palette') }}</p>
-                </div>
-            </div>
-            <div class="card-body">
-                <form action="{{ route('admin.settings.update') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="update_theme" value="1">
-
-                    @php
-                        $activeTheme = $theme ?? new \App\Models\Theme(\App\Models\Theme::$defaults);
-                    @endphp
-
-                    <div class="field">
-                        <label>{{ __('settings.primary_color') }}</label>
-                        <div class="color-row">
-                            <input type="color" name="primary_color" value="{{ $activeTheme->primary_color ?? '#D4AF37' }}">
-                            <input type="text" value="{{ $activeTheme->primary_color ?? '#D4AF37' }}" readonly style="width:110px;">
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label>{{ __('settings.secondary_color') }}</label>
-                        <div class="color-row">
-                            <input type="color" name="secondary_color" value="{{ $activeTheme->secondary_color ?? '#B8941E' }}">
-                            <input type="text" value="{{ $activeTheme->secondary_color ?? '#B8941E' }}" readonly style="width:110px;">
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label>{{ __('settings.hover_color') }}</label>
-                        <div class="color-row">
-                            <input type="color" name="hover_color" value="{{ $activeTheme->hover_color ?? '#C89B2C' }}">
-                            <input type="text" value="{{ $activeTheme->hover_color ?? '#C89B2C' }}" readonly style="width:110px;">
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label>{{ __('settings.dark_bg') }}</label>
-                        <div class="color-row">
-                            <input type="color" name="dark_bg" value="{{ $activeTheme->dark_bg ?? '#1A1A1A' }}">
-                            <input type="text" value="{{ $activeTheme->dark_bg ?? '#1A1A1A' }}" readonly style="width:110px;">
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label>{{ __('settings.light_bg') }}</label>
-                        <div class="color-row">
-                            <input type="color" name="light_bg" value="{{ $activeTheme->light_bg ?? '#F8F9FA' }}">
-                            <input type="text" value="{{ $activeTheme->light_bg ?? '#F8F9FA' }}" readonly style="width:110px;">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn-save"><i class="fas fa-save"></i> {{ __('settings.update_theme') }}</button>
-                </form>
-            </div>
-        </div>
 
         <!-- إعدادات الشحن -->
         <div class="settings-card">
@@ -589,8 +527,8 @@
                             @endforelse
                         </div>
 
-                        <button type="button" id="add-region-btn" class="btn-add-region" style="color: #c9a227">
-                            <i class="fas fa-plus" style="color: #c9a227"></i> {{ __('settings.add_region') }}
+                        <button type="button" id="add-region-btn" class="btn-add-region" style="color: var(--primary-color)">
+                            <i class="fas fa-plus" style="color: var(--primary-color)"></i> {{ __('settings.add_region') }}
                         </button>
                     </div>
 

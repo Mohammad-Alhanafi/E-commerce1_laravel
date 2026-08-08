@@ -1,5 +1,5 @@
 <div class="table-responsive custom-table-container">
-    <table class="table table-dark table-hover mb-0 align-middle text-center" id="ordersTable">
+    <table class="table mb-0 align-middle text-center" id="ordersTable">
         <thead>
             <tr>
                 <th style="width: 70px;">#</th>
@@ -28,16 +28,16 @@
                         @endphp
 
                         @if($isSamePerson)
-                            <span class="text-white fw-bold small">
+                            <span class="fw-bold small" style="color: var(--text-color);">
                                 <i class="bi bi-person-fill text-gold me-1"></i>
                                 {{ $userName ?: $customerName ?: __('admin.no_name') }}
                             </span>
                         @else
-                            <span class="text-white fw-bold small" title="{{ __('admin.recipient') }}">
+                            <span class="fw-bold small" style="color: var(--text-color);" title="{{ __('admin.recipient') }}">
                                 <i class="bi bi-person-check-fill text-info me-1"></i>
                                 {{ $customerName }}
                             </span>
-                            <small style="font-size: 0.7rem; color: #d4af37; opacity: 0.8;" title="{{ __('admin.customer') }}">
+                            <small style="font-size: 0.7rem; color: var(--primary-color); opacity: 0.8;" title="{{ __('admin.customer') }}">
                                 <i class="bi bi-person-circle me-1"></i> {{ __('admin.by') }}: {{ $userName }}
                             </small>
                         @endif
@@ -52,19 +52,19 @@
                 <td class="text-start" style="min-width: 180px;">
                     <div class="d-flex flex-wrap gap-1 py-2"> 
                         @forelse($order->products as $product)
-                            <div class="badge bg-dark border border-gold text-gold p-2 w-100" 
-                                 style="font-size: 0.7rem; white-space: normal; text-align: start; line-height: 1.4; display: block;">
+                            <div class="badge p-2 w-100" 
+                                 style="background-color: color-mix(in srgb, var(--primary-color) 12%, var(--card-bg)); border: 1px solid var(--border-color); color: var(--primary-color); font-size: 0.7rem; white-space: normal; text-align: start; line-height: 1.4; display: block;">
                                 
-                                <strong style="color: #d4af37;">{{ $product->name }}</strong>
-                                <span class="text-white ms-1">x{{ $product->pivot->quantity }}</span>
+                                <strong style="color: var(--primary-color);">{{ $product->name }}</strong>
+                                <span class="ms-1" style="color: var(--text-muted);">x{{ $product->pivot->quantity }}</span>
 
                                 @if($product->pivot->variant_id)
                                     @php 
-                                        $variant = \DB::table('variants')->where('id', $product->pivot->variant_id)->first(); 
+                                        $variant = isset($variantsMap) ? ($variantsMap[$product->pivot->variant_id] ?? null) : null; 
                                     @endphp
                                     
                                     @if($variant)
-                                        <div style="color: #fff; font-size: 0.65rem; margin-top: 4px; padding-top: 4px; border-top: 1px dotted rgba(212, 175, 55, 0.4);">
+                                        <div style="color: var(--text-color); font-size: 0.65rem; margin-top: 4px; padding-top: 4px; border-top: 1px dotted color-mix(in srgb, var(--primary-color) 40%, transparent);">
                                             <i class="bi bi-info-circle me-1"></i>
                                             {{ $variant->size ?? '' }} {{ $variant->color ?? '' }}
                                         </div>
@@ -73,8 +73,8 @@
                             </div>
                         @empty
                             <div class="d-flex align-items-center opacity-75">
-                                <i class="bi bi-exclamation-circle me-1" style="color: #ff6b6b; font-size: 0.8rem;"></i>
-                                <small style="color: #ff6b6b; font-size: 0.7rem; font-weight: 500;">{{ __('admin.no_products') }}</small>
+                                <i class="bi bi-exclamation-circle me-1" style="color: var(--danger-color); font-size: 0.8rem;"></i>
+                                <small style="color: var(--danger-color); font-size: 0.7rem; font-weight: 500;">{{ __('admin.no_products') }}</small>
                             </div>
                         @endforelse
                     </div>
@@ -90,7 +90,7 @@
 
                 <td class="text-start">
                     <div class="d-flex flex-column" style="line-height: 1.4;">
-                        <span class="text-white fw-bold small">
+                        <span class="fw-bold small" style="color: var(--text-color);">
                             {{ $order->city ?: __('admin.not_specified') }}
                         </span>
                         
@@ -120,7 +120,7 @@
                 </td>
 
                 <td>
-                    <small class="text-white opacity-75" style="font-size: 0.7rem;">
+                    <small class="opacity-75" style="font-size: 0.7rem; color: var(--text-muted);">
                         {{ $order->notes ?: '---' }}
                     </small>
                 </td>
@@ -145,7 +145,7 @@
 
 {{-- الـ Pagination مدمج هنا لضمان عمل الفلترة عبر الـ Ajax بشكل كامل --}}
 @if($orders->hasPages())
-<div class="card-footer bg-transparent border-top border-secondary mt-3">
+<div class="card-footer bg-transparent border-top mt-3" style="border-color: var(--border-color) !important;">
     <div class="d-flex justify-content-center">
         {!! $orders->links('pagination::bootstrap-5') !!}
     </div>

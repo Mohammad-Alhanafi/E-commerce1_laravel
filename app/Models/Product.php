@@ -52,4 +52,18 @@ public function relatedProducts()
 
 
 
+    protected static function booted(): void
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('header_categories_tree');
+            \Illuminate\Support\Facades\Cache::forget('home_categories_tree');
+            \Illuminate\Support\Facades\Cache::forget('home_featured_products');
+        });
+
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('header_categories_tree');
+            \Illuminate\Support\Facades\Cache::forget('home_categories_tree');
+            \Illuminate\Support\Facades\Cache::forget('home_featured_products');
+        });
+    }
 }

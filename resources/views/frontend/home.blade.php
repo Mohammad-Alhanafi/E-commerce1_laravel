@@ -35,19 +35,19 @@
 
                     @if($isVideo)
                         <div class="video-slider-wrapper">     
-                            <video muted loop playsinline class="video-background">
+                            <video muted loop playsinline preload="metadata" class="video-background">
                                 <source src="{{ asset('storage/'.$slider->image) }}" type="video/{{ $extension }}">
                             </video>
 
                             <!-- إصلاح: إغلاق وسم الفيديو المفتوح هنا -->
-                            <video autoplay muted loop playsinline class="video-main">
+                            <video autoplay muted loop playsinline preload="metadata" class="video-main">
                                 <source src="{{ asset('storage/'.$slider->image) }}" type="video/{{ $extension }}">
-                                متصفحك لا يدعم تشغيل الفيديو.
+                                {{ __('home.video_not_supported') }}
                             </video>
                         </div>
                     @else
-                        <!-- إصلاح: إغلاق وسم الـ img المفتوح -->
-                        <img src="{{ asset('storage/'.$slider->image) }}" alt="{{ $slider->title }}" class="slider-image">
+                        <!-- إصلاح: تحسين الأداء LCP والتحميل المتأخر -->
+                        <img src="{{ asset('storage/'.$slider->image) }}" alt="{{ $slider->title }}" class="slider-image" {{ $loop->first ? 'fetchpriority=high loading=eager' : 'loading=lazy decoding=async' }}>
                     @endif
 
                     @if($slider->title || $slider->link)
@@ -57,7 +57,7 @@
                             @endif
 
                             @if($slider->link)
-                                <a href="{{ $slider->link }}" class="btn-main">اكتشف المزيد</a>
+                                <a href="{{ $slider->link }}" class="btn-main">{{ __('home.slider_explore') }}</a>
                             @endif
                         </div>
                         
@@ -77,7 +77,6 @@
             <div class="waqar-cat-header">
                 <div>
                     <div class="waqar-cat-eyebrow"></div>
-                    <h2 class="waqar-cat-title" contenteditable="{{ (Auth::check() && Auth::user()->role == 'admin') ? 'true' : 'false' }}"></h2>
                 </div>
                 @if(Auth::check() && Auth::user()->role == 'admin')
                     <a href="{{ route('category.fast_store') }}" class="waqar-add-btn">
@@ -126,7 +125,7 @@
                         @endif
 
                         <div class="waqar-cat-img-wrap">
-                            <img src="{{ $catImageUrl }}" alt="{{ $category->name }}" id="img-{{ $category->id }}">
+                            <img src="{{ $catImageUrl }}" alt="{{ $category->name }}" id="img-{{ $category->id }}" loading="lazy" decoding="async">
                         </div>
 
                         <div class="waqar-cat-overlay"></div>
@@ -160,7 +159,7 @@
             </div>
 <br> <br>
             @auth
-            <button type="button" onclick="toggleCommentModal()" class="comment-add-btn border-0 shadow-sm" title="إضافة تعليق">
+            <button type="button" onclick="toggleCommentModal()" class="comment-add-btn border-0 shadow-sm" title="{{ __('home.add_comment') }}">
     <i class="fas fa-comment-dots"></i>
 </button>
        @endauth
@@ -185,47 +184,70 @@
 
                                 <p class="waqar-com-text">{{ $comment->comment }}</p>
 
+                                @php
+                                    $isAdmin   = Auth::check() && Auth::user()->role === 'admin';
+                                    $isOwner   = Auth::check() && Auth::user()->name === $comment->name;
+                                    $canManage = $isAdmin || $isOwner;
+                                @endphp
+
                                 <div class="waqar-com-actions">
-                                    @if(Auth::check() && Auth::user()->role != 'admin')
+                                    {{-- زر الإعجاب: لكل المستخدمين المسجلين --}}
+                                    @auth
                                     <button class="waqar-action-btn" onclick="likeComment({{ $comment->id }})">
                                         <i class="fas fa-heart"></i>
                                         <span id="like-{{ $comment->id }}">{{ $comment->likes->count() }}</span>
                                     </button>
-                                    @endif
+                                    @endauth
 
-                                    @if(Auth::check() && Auth::user()->role == 'admin')
-                                    <button class="waqar-action-btn" onclick="openEdit({{ $comment->id }}, `{{ $comment->comment }}`)">
+                                    {{-- تعديل وحذف: لصاحب التعليق أو الأدمن --}}
+                                    @if($canManage)
+                                    <button type="button" class="waqar-action-btn" onclick="openEdit({{ $comment->id }}, `{{ addslashes($comment->comment) }}`, 'comment', event)">
                                         <i class="fas fa-pen"></i>
                                     </button>
+                                    <button type="button" class="waqar-action-btn danger" onclick="deleteComment({{ $comment->id }}, event)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    @endif
+
+                                    {{-- رد: للأدمن فقط --}}
+                                    @if($isAdmin)
                                     <button class="waqar-action-btn" onclick="toggleReplyBox({{ $comment->id }})">
                                         <i class="fas fa-reply"></i> {{ __('home.reply') }}
-                                    </button>
-                                    <button class="waqar-action-btn danger" onclick="deleteComment({{ $comment->id }})">
-                                        <i class="fas fa-trash"></i>
                                     </button>
                                     @endif
                                 </div>
 
                                 <div class="waqar-com-divider"></div>
 
-                                <!-- إصلاح: تم حذف التكرار المزدوج لبلوك الـ waqar-replies هنا -->
                                 <div class="waqar-replies" id="replies-{{ $comment->id }}">
     @if($comment->replies && $comment->replies->count())
         @foreach($comment->replies as $reply)
-            <div class="waqar-reply-item">
-                <span class="waqar-reply-name">{{ $reply->name ?? 'الإدارة' }}</span>
-                <span>{{ $reply->comment }}</span>
+            <div class="waqar-reply-item" id="reply-item-{{ $reply->id }}">
+                <div class="waqar-reply-content">
+                    <span class="waqar-reply-text" id="reply-text-{{ $reply->id }}">{{ $reply->comment }}</span>
+                </div>
+                @if(Auth::check() && in_array(strtolower(Auth::user()->role ?? ''), ['admin', 'superadmin']))
+                <div class="waqar-reply-actions">
+                    <button type="button" class="waqar-action-btn" onclick="openEdit({{ $reply->id }}, '{{ addslashes($reply->comment) }}', 'reply', event)" title="تعديل">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                    <button type="button" class="waqar-action-btn danger" onclick="deleteReply({{ $reply->id }}, event)" title="حذف">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                @endif
             </div>
         @endforeach
     @endif
 </div>
 
-                                @if(Auth::check() && Auth::user()->role == 'admin')
+                                @if($isAdmin)
                                     <div class="waqar-reply-box d-none" id="reply-box-{{ $comment->id }}">
                                         <textarea id="reply-{{ $comment->id }}" placeholder="{{ __('home.write_reply') }}" rows="1" oninput="autoResizeTextarea(this)"></textarea>
                                         <button class="waqar-reply-send" onclick="sendReply({{ $comment->id }})"> {{ __('home.send_reply') }}</button>
                                     </div>
                                 @endif
+
 
                             </div>
                         </div>
@@ -237,20 +259,20 @@
     </section>
 
     <!-- Modal التعليقات النظيف والآمن -->
-    <div id="customCommentModal" style="position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(0, 0, 0, 0.8) !important; z-index: 999999 !important; display: none; align-items: center !important; justify-content: center !important;">
-        <div style="background: #ffffff !important; padding: 30px !important; box-shadow: 0px 10px 40px rgba(0,0,0,0.6) !important; border-radius: 15px !important; width: 90% !important; max-width: 450px !important; direction: rtl !important; position: relative !important; z-index: 1000000 !important; border: 1px solid #ffffff !important;">
+    <div id="customCommentModal" style="position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: var(--overlay-bg, rgba(0, 0, 0, 0.8)) !important; z-index: 999999 !important; display: none; align-items: center !important; justify-content: center !important;">
+        <div style="background: var(--card-bg, #17171a) !important; padding: 30px !important; box-shadow: 0px 10px 40px var(--shadow-color, rgba(0,0,0,0.6)) !important; border-radius: 15px !important; width: 90% !important; max-width: 450px !important; direction: {{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }} !important; position: relative !important; z-index: 1000000 !important; border: 1px solid var(--border-color, #3A3A3A) !important;">
             <div style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 20px !important;">
-                <h5 style="color: #000000 !important; font-weight: bold !important; margin: 0 !important; font-size: 1.3rem !important; font-family: sans-serif !important;">{{ __('home.share_opinion') }}</h5>
+                <h5 style="color: var(--heading-color, var(--text-color, #ffffff)) !important; font-weight: bold !important; margin: 0 !important; font-size: 1.3rem !important; font-family: inherit !important;">{{ __('home.share_opinion') }}</h5>
             </div>
             <div style="margin-bottom: 20px !important;">
-                <textarea id="newComment" placeholder="{{ __('home.write_comment') }}" style="resize: none !important; border-radius: 10px !important; font-size: 1rem !important; color: #000000 !important; background: #ffffff !important; display: block !important; width: 100% !important; border: 1px solid #cccccc !important; padding: 12px !important; font-family: sans-serif !important; min-height: 100px !important;"></textarea>
+                <textarea id="newComment" placeholder="{{ __('home.write_comment') }}" style="resize: none !important; border-radius: 10px !important; font-size: 1rem !important; color: var(--input-text, #ffffff) !important; background: var(--input-bg, #222222) !important; display: block !important; width: 100% !important; border: 1px solid var(--input-border, #3A3A3A) !important; padding: 12px !important; font-family: inherit !important; min-height: 100px !important;"></textarea>
             </div>
             <div style="display: flex !important; justify-content: flex-end !important; gap: 15px !important;">
-                <button type="button" onclick="toggleCommentModal()" style="width: 45px !important; height: 45px !important; display: flex !important; align-items: center !important; justify-content: center !important; border-radius: 50% !important; border: 1px solid #f8d7da !important; background-color: #fff5f5 !important; cursor: pointer !important;" title="إلغاء">
-                    <i class="bi bi-x-lg" style="color: #dc3545 !important; font-size: 1.2rem !important; font-weight: bold !important;"></i>
+                <button type="button" onclick="toggleCommentModal()" style="width: 45px !important; height: 45px !important; display: flex !important; align-items: center !important; justify-content: center !important; border-radius: 50% !important; border: 1px solid var(--danger-color, #dc3545) !important; background-color: color-mix(in srgb, var(--danger-color, #dc3545) 15%, transparent) !important; cursor: pointer !important;" title="{{ __('home.cancel') }}">
+                    <i class="bi bi-x-lg" style="color: var(--danger-color, #dc3545) !important; font-size: 1.2rem !important; font-weight: bold !important;"></i>
                 </button>
-                <button type="button" onclick="sendComment()" style="width: 45px !important; height: 45px !important; display: flex !important; align-items: center !important; justify-content: center !important; border-radius: 50% !important; border: 1px solid #d1e7dd !important; background-color: #f3fcf7 !important; cursor: pointer !important;" title="إرسال">
-                    <i class="bi bi-check-lg" style="color: #198754 !important; font-size: 1.2rem !important; font-weight: bold !important;"></i>
+                <button type="button" onclick="sendComment()" style="width: 45px !important; height: 45px !important; display: flex !important; align-items: center !important; justify-content: center !important; border-radius: 50% !important; border: 1px solid var(--primary-color, #D4AF37) !important; background-color: var(--primary-color, #D4AF37) !important; cursor: pointer !important;" title="{{ __('home.send') }}">
+                    <i class="bi bi-check-lg" style="color: var(--btn-text-color, #000000) !important; font-size: 1.2rem !important; font-weight: bold !important;"></i>
                 </button>
             </div>
         </div>
@@ -261,16 +283,18 @@
         <div class="edit-modal-content">
             <textarea id="editText" class="edit-textarea"></textarea>
             <input type="hidden" id="editId">
+            <input type="hidden" id="editType" value="comment">
             <div class="edit-modal-actions">
-                <button onclick="updateComment()" class="btn btn-light-success p-2 rounded-circle border-0" title="حفظ">
+                <button onclick="updateComment()" class="btn btn-light-success p-2 rounded-circle border-0" title="{{ __('home.save') }}">
                     <i class="bi bi-check-lg text-success fs-5"></i>
                 </button>
-                <button onclick="closeEdit()" class="btn btn-light-danger p-2 rounded-circle border-0" title="إغلاق">
+                <button onclick="closeEdit()" class="btn btn-light-danger p-2 rounded-circle border-0" title="{{ __('home.close') }}">
                     <i class="bi bi-x-lg text-danger fs-5"></i>
                 </button>
             </div>
         </div>
     </div>
+
 
     <!-- Features Info Section -->
     <section class="waqar-info-section">
@@ -306,17 +330,42 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+@php
+    $homeTrans = [
+        'uploading_image' => __('home.uploading_image'),
+        'image_updated_title' => __('home.image_updated_title'),
+        'image_updated_text' => __('home.image_updated_text'),
+        'image_update_failed_title' => __('home.image_update_failed_title'),
+        'image_update_failed_text' => __('home.image_update_failed_text'),
+        'autosave_success' => __('home.autosave_success'),
+        'update_error' => __('home.update_error'),
+        'delete_category_title' => __('home.delete_category_title'),
+        'delete_category_text' => __('home.delete_category_text'),
+        'delete_confirm' => __('home.delete_confirm'),
+        'cancel' => __('home.cancel'),
+        'deleted_title' => __('home.deleted_title'),
+        'deleted_text' => __('home.deleted_text'),
+        'error_title' => __('home.error_title'),
+        'delete_error_text' => __('home.delete_error_text'),
+        'shape_save_error' => __('home.shape_save_error'),
+        'write_comment_first' => __('home.write_comment_first'),
+        'send_failed' => __('home.send_failed'),
+        'server_error' => __('home.server_error'),
+        'edit_failed' => __('home.edit_failed'),
+        'server_error_short' => __('home.server_error_short'),
+    ];
+@endphp
+window.HomeTrans = @json($homeTrans);
+
 /* ==========================================================
    1) تأثير الهيدر عند التمرير (Scroll)
 ========================================================== */
 window.addEventListener('scroll', function () {
     const header = document.querySelector('header');
     if (!header) return;
-    if (window.scrollY > 50) {
-        header.style.backgroundColor = 'rgba(26, 26, 26, 0.95)';
-    } else {
-        header.style.backgroundColor = 'var(--primary-black)';
-    }
+    const navbarBg = getComputedStyle(document.documentElement).getPropertyValue('--navbar-bg').trim() || 'var(--navbar-bg)';
+    header.style.backgroundColor = navbarBg;
+    header.style.backdropFilter = window.scrollY > 50 ? 'blur(18px)' : '';
 });
 
 /* ==========================================================
@@ -363,7 +412,7 @@ function uploadImage(input) {
     const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
 
     Swal.fire({
-        title: 'جاري رفع الصورة...',
+        title: window.HomeTrans.uploading_image,
         allowOutsideClick: false,
         didOpen: () => { Swal.showLoading(); }
     });
@@ -372,12 +421,12 @@ function uploadImage(input) {
         headers: { 'X-CSRF-TOKEN': token }
     })
     .then(response => {
-        Swal.fire('تم التحديث!', 'تم تغيير صورة القسم بنجاح.', 'success');
+        Swal.fire(window.HomeTrans.image_updated_title, window.HomeTrans.image_updated_text, 'success');
         const imgElement = document.getElementById(`img-${currentCategoryIdForImage}`);
         if (imgElement) imgElement.src = response.data.image_url;
     })
     .catch(() => {
-        Swal.fire('فشل Tعديل', 'تأكد من صلاحيات الآدمن وحجم الملف.', 'error');
+        Swal.fire(window.HomeTrans.image_update_failed_title, window.HomeTrans.image_update_failed_text, 'error');
     });
 }
 
@@ -397,21 +446,21 @@ function updateCategoryText(categoryId, field, updatedText) {
             showConfirmButton: false,
             timer: 2000
         });
-        Toast.fire({ icon: 'success', title: 'تم حفظ التعديل تلقائياً' });
+        Toast.fire({ icon: 'success', title: window.HomeTrans.autosave_success });
     })
-    .catch(error => console.error('حدث خطأ أثناء تحديث البيانات:', error));
+    .catch(error => {
+        console.error(window.HomeTrans.update_error, error);
+    });
 }
 
 function deleteCategory(categoryId) {
     Swal.fire({
-        title: 'هل أنت متأكد من الحذف؟',
-        text: 'لن تتمكن من استعادة هذا القسم بعد الحذف!',
+        title: window.HomeTrans.delete_category_title,
+        text: window.HomeTrans.delete_category_text,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'نعم، احذفه!',
-        cancelButtonText: 'إلغاء'
+        confirmButtonText: window.HomeTrans.delete_confirm,
+        cancelButtonText: window.HomeTrans.cancel
     }).then((result) => {
         if (!result.isConfirmed) return;
 
@@ -421,7 +470,7 @@ function deleteCategory(categoryId) {
             headers: { 'X-CSRF-TOKEN': token }
         })
         .then(() => {
-            Swal.fire('تم الحذف!', 'تم إزالة القسم بنجاح.', 'success');
+            Swal.fire(window.HomeTrans.deleted_title, window.HomeTrans.deleted_text, 'success');
             const element = document.getElementById(`category-item-${categoryId}`);
             if (element) {
                 element.style.transition = 'all 0.5s ease';
@@ -430,7 +479,7 @@ function deleteCategory(categoryId) {
                 setTimeout(() => element.remove(), 500);
             }
         })
-        .catch(() => Swal.fire('خطأ!', 'حدثت مشكلة أثناء الحذف.', 'error'));
+        .catch(() => Swal.fire(window.HomeTrans.error_title, window.HomeTrans.delete_error_text, 'error'));
     });
 }
 
@@ -455,7 +504,7 @@ function setCategoryShape(id, shape) {
         method: 'POST',
         headers: { 'X-CSRF-TOKEN': token },
         body: formData
-    }).catch(() => alert('حدث خطأ أثناء حفظ شكل القسم'));
+    }).catch(() => Swal.fire(window.HomeTrans.error_title, window.HomeTrans.shape_save_error, 'error'));
 }
 
 /* ==========================================================
@@ -477,7 +526,7 @@ function sendComment() {
 
     const value = comment.value.trim();
     if (!value) {
-        alert('اكتب تعليق أولاً');
+        Swal.fire(window.HomeTrans.error_title, window.HomeTrans.write_comment_first, 'warning');
         return; 
     }
 
@@ -496,12 +545,12 @@ function sendComment() {
             toggleCommentModal();
             location.reload();
         } else {
-            alert(data.message || 'فشل الإرسال');
+            Swal.fire(window.HomeTrans.error_title, data.message || window.HomeTrans.send_failed, 'error');
         }
     })
     .catch(err => {
         console.log('ERROR:', err);
-        alert('مشكلة بالسيرفر');
+        Swal.fire(window.HomeTrans.error_title, window.HomeTrans.server_error, 'error');
     });
 }
 
@@ -539,21 +588,82 @@ function sendReply(id) {
     .then(() => location.reload());
 }
 
-function deleteComment(id) {
+function deleteComment(id, e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
     fetch('/comments/' + id, {
         method: 'DELETE',
-        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
     })
     .then(res => res.json())
     .then(data => {
-        if (data.success) document.getElementById('comment-' + id).remove();
+        if (data.success) {
+            const el = document.getElementById('comment-' + id);
+            if (el) {
+                el.classList.add('deleting');
+                setTimeout(() => el.remove(), 350);
+            }
+        } else {
+            if (window.Swal) {
+                Swal.fire(window.HomeTrans ? window.HomeTrans.error_title : 'خطأ', data.error || data.message || 'فشل الحذف', 'error');
+            } else {
+                alert(data.error || data.message || 'فشل الحذف');
+            }
+        }
+    })
+    .catch(err => {
+        console.error('Delete comment error:', err);
     });
 }
 
-function openEdit(id, text) {
+function deleteReply(id, e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    fetch('/comments/' + id, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            const el = document.getElementById('reply-item-' + id);
+            if (el) {
+                el.classList.add('deleting');
+                setTimeout(() => el.remove(), 350);
+            }
+        } else {
+            if (window.Swal) {
+                Swal.fire(window.HomeTrans ? window.HomeTrans.error_title : 'خطأ', data.error || data.message || 'فشل في حذف الرد', 'error');
+            } else {
+                alert(data.error || data.message || 'فشل في حذف الرد');
+            }
+        }
+    })
+    .catch(err => {
+        console.error('Delete reply error:', err);
+    });
+}
+
+// فتح الـ modal للتعديل — يعمل للتعليق والرد معاً
+function openEdit(id, text, type, e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
     document.getElementById('editModal').style.display = 'block';
     document.getElementById('editText').value = text;
     document.getElementById('editId').value = id;
+    document.getElementById('editType').value = type || 'comment';
 }
 
 function closeEdit() {
@@ -561,8 +671,10 @@ function closeEdit() {
 }
 
 function updateComment() {
-    const id = document.getElementById('editId').value;
-    const comment = document.getElementById('editText').value;
+    const id      = document.getElementById('editId').value;
+    const comment = document.getElementById('editText').value.trim();
+    const type    = document.getElementById('editType').value;
+    if (!comment) return;
 
     fetch('/comments/' + id, {
         method: 'PUT',
@@ -575,15 +687,23 @@ function updateComment() {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            document.querySelector('#comment-' + id + ' p').innerText = comment;
+            if (type === 'reply') {
+                // تحديث نص الرد مباشرةً
+                const span = document.getElementById('reply-text-' + id);
+                if (span) span.innerText = comment;
+            } else {
+                // تحديث نص التعليق
+                const p = document.querySelector('#comment-' + id + ' p');
+                if (p) p.innerText = comment;
+            }
             closeEdit();
         } else {
-            alert('فشل التعديل');
+            Swal.fire(window.HomeTrans.error_title, window.HomeTrans.edit_failed, 'error');
         }
     })
     .catch(err => {
         console.log(err);
-        alert('خطأ بالسيرفر');
+        Swal.fire(window.HomeTrans.error_title, window.HomeTrans.server_error_short, 'error');
     });
 }
 

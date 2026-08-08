@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 <head>
+    @include('components.theme-head')
     <meta charset="UTF-8">
     <title>{{ __('admin.manage_users') }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,29 +29,27 @@
 
   <style>
     :root {
-        /* لوحة الألوان الذهبية */
-        --gold-primary: #D4AF37;        /* ذهبي أساسي */
-        --gold-secondary: #FFD700;      /* ذهبي فاتح */
-        --gold-dark: #B8860B;          /* ذهبي داكن */
-        --gold-light: #F5DEB3;         /* ذهبي فاتح جداً */
-        --gold-glow: rgba(212, 175, 55, 0.3); /* توهج ذهبي */
+        /* متغيرات محلية تحويل إلى النظام الديناميكي */
+        --gold-primary:   var(--primary-color,   #D4AF37);
+        --gold-secondary: var(--accent-color,    #FFD700);
+        --gold-dark:      var(--secondary-color,  #B8860B);
+        --gold-light:     var(--accent-color,    #F5DEB3);
+        --gold-glow:      color-mix(in srgb, var(--primary-color, #D4AF37) 30%, transparent);
         
-        /* لوحة الألوان السوداء */
-        --black-primary: #0a0a0a;      /* أسود أساسي */
-        --black-secondary: #1a1a1a;    /* أسود ثانوي */
-        --black-light: #2a2a2a;        /* أسود فاتح */
-        --black-lighter: #3a3a3a;      /* أسود فاتح جداً */
-        --black-glow: rgba(10, 10, 10, 0.8); /* توهج أسود */
+        --black-primary:   var(--bg-color,    #0a0a0a);
+        --black-secondary: var(--card-bg,     #1a1a1a);
+        --black-light:     var(--border-color, #2a2a2a);
+        --black-lighter:   var(--border-color, #3a3a3a);
+        --black-glow:      rgba(10, 10, 10, 0.8);
         
-        /* ألوان داعمة */
-        --white: #ffffff;
-        --gray: #888888;
-        --gray-light: #aaaaaa;
+        --white:      var(--text-color,  #ffffff);
+        --gray:       var(--text-muted,  #888888);
+        --gray-light: var(--text-muted,  #aaaaaa);
     }
     
     body {
-        background: linear-gradient(135deg, var(--black-primary) 0%, var(--black-secondary) 100%);
-        color: var(--white);
+        background: linear-gradient(135deg, var(--bg-color) 0%, var(--card-bg) 100%);
+        color: var(--text-color);
         font-family: 'Cairo', 'Segoe UI', sans-serif;
         min-height: 100vh;
         background-attachment: fixed;
@@ -198,11 +197,7 @@
         transition: all 0.3s ease;
     }
     
-    .table-hover tbody tr:hover {
-        background: rgba(212, 175, 55, 0.1) !important;
-        transform: scale(1.01);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
+
     
     /* تنسيق أزرار الإجراءات الجديدة */
     .btn-action {
@@ -252,16 +247,16 @@
     
     /* زر الحذف مع لمسة ذهبية */
     .btn-action-delete {
-        color: #ff6b6b;
-        border-color: #ff6b6b;
-        background: rgba(255, 107, 107, 0.1);
+        color: var(--danger-color);
+        border-color: var(--danger-color);
+        background: color-mix(in srgb, var(--danger-color) 10%, transparent);
     }
     
     .btn-action-delete:hover {
-        background: #ff6b6b;
-        color: var(--white);
+        background: var(--danger-color);
+        color: #fff;
         transform: rotate(-15deg) scale(1.1);
-        box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+        box-shadow: 0 0 15px color-mix(in srgb, var(--danger-color) 40%, transparent);
     }
     
     /* زر العرض مع لمسة ذهبية */
@@ -291,27 +286,27 @@
     }
     
     .status-active {
-        background: linear-gradient(45deg, rgba(40, 167, 69, 0.2), rgba(40, 167, 69, 0.1));
-        color: #28a745;
-        border: 1px solid rgba(40, 167, 69, 0.3);
+        background: linear-gradient(45deg, color-mix(in srgb, var(--success-color) 20%, transparent), color-mix(in srgb, var(--success-color) 10%, transparent));
+        color: var(--success-color);
+        border: 1px solid color-mix(in srgb, var(--success-color) 30%, transparent);
     }
     
     .status-inactive {
-        background: linear-gradient(45deg, rgba(108, 117, 125, 0.2), rgba(108, 117, 125, 0.1));
-        color: #6c757d;
-        border: 1px solid rgba(108, 117, 125, 0.3);
+        background: linear-gradient(45deg, color-mix(in srgb, var(--text-muted) 20%, transparent), color-mix(in srgb, var(--text-muted) 10%, transparent));
+        color: var(--text-muted);
+        border: 1px solid color-mix(in srgb, var(--text-muted) 30%, transparent);
     }
     
     .status-admin {
-        background: linear-gradient(45deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1));
-        color: var(--gold-primary);
-        border: 1px solid rgba(212, 175, 55, 0.3);
+        background: linear-gradient(45deg, color-mix(in srgb, var(--primary-color) 20%, transparent), color-mix(in srgb, var(--primary-color) 10%, transparent));
+        color: var(--primary-color);
+        border: 1px solid color-mix(in srgb, var(--primary-color) 30%, transparent);
     }
     
     .status-user {
-        background: linear-gradient(45deg, rgba(23, 162, 184, 0.2), rgba(23, 162, 184, 0.1));
-        color: #17a2b8;
-        border: 1px solid rgba(23, 162, 184, 0.3);
+        background: linear-gradient(45deg, color-mix(in srgb, var(--info-color) 20%, transparent), color-mix(in srgb, var(--info-color) 10%, transparent));
+        color: var(--info-color);
+        border: 1px solid color-mix(in srgb, var(--info-color) 30%, transparent);
     }
     
     /* صورة المستخدم */
@@ -497,30 +492,30 @@
                         <input type="hidden" id="formMethod" value="POST">
                         <div class="row">
                             <div class="col-md-6 mb-2">
-                                <label style="color: #D4AF37" >{{ __('admin.name') }}</label>
+                                <label style="color: var(--primary-color)" >{{ __('admin.name') }}</label>
                                 <input type="text" name="name" class="form-control" required>
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label style="color: #D4AF37">{{ __('admin.email_label') }}</label>
+                                <label style="color: var(--primary-color)">{{ __('admin.email_label') }}</label>
                                 <input type="email" name="email" class="form-control" required>
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label style="color: #D4AF37">{{ __('admin.phone_label') }}</label>
+                                <label style="color: var(--primary-color)">{{ __('admin.phone_label') }}</label>
                                 <input type="tel" name="phone_number" class="form-control">
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label style="color: #D4AF37">كلمة المرور</label>
+                                <label style="color: var(--primary-color)">كلمة المرور</label>
                                 <input type="password" name="password" class="form-control" id="passwordField">
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label style="color: #D4AF37">{{ __('admin.permission') }}</label>
+                                <label style="color: var(--primary-color)">{{ __('admin.permission') }}</label>
                                 <select name="role" class="form-select" required>
                                     <option value="user" style="color: white">{{ __('admin.customer_role') }}</option>
                                     <option value="admin" style="color:white">{{ __('admin.admin_role') }}</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label style="color: #D4AF37">{{ __('admin.status') }}</label><br>
+                                <label style="color: var(--primary-color)">{{ __('admin.status') }}</label><br>
                                 <div class="form-check form-check-inline">
                                     <input type="radio" name="status" value="active" class="form-check-input" checked>
                                     <label class="form-check-label">{{ __('admin.active') }}</label>
@@ -531,15 +526,15 @@
                                 </div>
                             </div>
                             <div class="col-12 mb-2">
-                                <label style="color: #D4AF37">{{ __('admin.address') }}</label>
+                                <label style="color: var(--primary-color)">{{ __('admin.address') }}</label>
                                 <textarea name="address" class="form-control"></textarea>
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label style="color: #D4AF37">{{ __('admin.birth_date') }}</label>
+                                <label style="color: var(--primary-color)">{{ __('admin.birth_date') }}</label>
                                 <input type="date" name="birth_date" class="form-control">
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label style="color: #D4AF37">{{ __('admin.gender') }}</label>
+                                <label style="color: var(--primary-color)">{{ __('admin.gender') }}</label>
                                 <select name="gender" class="form-select">
                                     <option value="">{{ __('admin.select') }}</option>
                                     <option value="male">{{ __('admin.male') }}</option>
@@ -560,7 +555,7 @@
                 <div class="card">
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-dark table-hover mb-0">
+                            <table class="table mb-0">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -581,8 +576,10 @@
                 </div>
             </div>
 
-            <div id="paginationContainer" class="mt-3">
-                {{ $users->appends(request()->query())->links('pagination::bootstrap-5') }}
+            <div id="paginationContainer" class="d-flex justify-content-center mt-3">
+                <nav class="admin-pagination">
+                    {{ $users->appends(request()->query())->links('pagination::bootstrap-5') }}
+                </nav>
             </div>
             
             <!-- User Details Modal -->
@@ -593,7 +590,7 @@
                             <h5 class="modal-title">{{ __('admin.user_details') }}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="modal-body" id="userDetailsBody" style="color: #D4AF37"></div>
+                        <div class="modal-body" id="userDetailsBody" style="color: var(--primary-color)"></div>
                     </div>
                 </div>
             </div>
@@ -704,38 +701,38 @@ $(function() {
             <div class="user-details-container text-white p-2">
                 <div class="row g-3">
                     <div class="col-md-6 border-bottom border-secondary pb-2">
-                        <label style="color: #D4AF37;" class="small d-block mb-1">${window.AppTrans.full_name}</label>
+                        <label style="color: var(--primary-color);" class="small d-block mb-1">${window.AppTrans.full_name}</label>
                         <span class="fw-bold">${user.name}</span>
                     </div>
                     <div class="col-md-6 border-bottom border-secondary pb-2">
-                        <label style="color: #D4AF37;" class="small d-block mb-1">${window.AppTrans.email_label}</label>
+                        <label style="color: var(--primary-color);" class="small d-block mb-1">${window.AppTrans.email_label}</label>
                         <span class="fw-bold">${user.email}</span>
                     </div>
                     <div class="col-md-6 border-bottom border-secondary pb-2">
-                        <label style="color: #D4AF37;" class="small d-block mb-1">${window.AppTrans.phone_label}</label>
+                        <label style="color: var(--primary-color);" class="small d-block mb-1">${window.AppTrans.phone_label}</label>
                         <span class="fw-bold">${user.phone_number || '-'}</span>
                     </div>
                     <div class="col-md-6 border-bottom border-secondary pb-2">
-                        <label style="color: #D4AF37;" class="small d-block mb-1">${window.AppTrans.permission}</label>
-                        <span class="badge" style="background-color: #D4AF37; color: #1a1a1a;">${user.role === 'admin' ? window.AppTrans.admin_role : window.AppTrans.customer_role}</span>
+                        <label style="color: var(--primary-color);" class="small d-block mb-1">${window.AppTrans.permission}</label>
+                        <span class="badge" style="background-color: var(--primary-color); color: var(--bg-color);">${user.role === 'admin' ? window.AppTrans.admin_role : window.AppTrans.customer_role}</span>
                     </div>
                     <div class="col-md-6 border-bottom border-secondary pb-2">
-                        <label style="color: #D4AF37;" class="small d-block mb-1">${window.AppTrans.status}</label>
-                        ${user.status === 'active' ? `<span style="color: #28a745;">● ${window.AppTrans.active}</span>` : `<span style="color: #dc3545;">● ${window.AppTrans.inactive}</span>`}
+                        <label style="color: var(--primary-color);" class="small d-block mb-1">${window.AppTrans.status}</label>
+                        ${user.status === 'active' ? `<span style="color: var(--success-color, #28a745);">&#9679; ${window.AppTrans.active}</span>` : `<span style="color: var(--danger-color, #dc3545);">&#9679; ${window.AppTrans.inactive}</span>`}
                     </div>
                     <div class="col-md-6 border-bottom border-secondary pb-2">
-                        <label style="color: #D4AF37;" class="small d-block mb-1">${window.AppTrans.gender}</label>
+                        <label style="color: var(--primary-color);" class="small d-block mb-1">${window.AppTrans.gender}</label>
                         <span>${user.gender === 'male' ? window.AppTrans.male : (user.gender === 'female' ? window.AppTrans.female : '-')}</span>
                     </div>
                     <div class="col-md-12">
-                        <label style="color: #D4AF37;" class="small d-block mb-1">${window.AppTrans.address}</label>
+                        <label style="color: var(--primary-color);" class="small d-block mb-1">${window.AppTrans.address}</label>
                         <span>${user.address || '-'}</span>
                     </div>
                 </div>
             </div>`;
         
         $('#userDetailsBody').html(html);
-        $('#userDetailsModal .modal-content').css({'background-color': '#1a1a1a', 'color': '#fff', 'border': '1px solid #D4AF37'});
+        $('#userDetailsModal .modal-content').css({'background-color': 'var(--card-bg)', 'color': 'var(--text-color)', 'border': '1px solid var(--primary-color)'});
         new bootstrap.Modal(document.getElementById('userDetailsModal')).show();
     });
 
@@ -792,7 +789,7 @@ $(function() {
                 let rowHtml = `
                 <tr id="user-${user.id}" data-user='${userDataAttr}'>
                     <td class="align-middle">${rowNumber}</td>
-                    <td class="align-middle fw-bold" style="color: #D4AF37;">${user.name}</td>
+                    <td class="align-middle fw-bold" style="color: var(--primary-color);">${user.name}</td>
                     <td class="align-middle">
                         <div>${user.email}</div>
                         <small class="text-muted">${user.phone_number || '-'}</small>
@@ -800,15 +797,15 @@ $(function() {
                     <td class="align-middle"><span class="badge bg-secondary">${user.role === 'admin' ? window.AppTrans.admin_role : window.AppTrans.customer_role}</span></td>
                     <td class="align-middle">${statusBadge}</td>
                    
-                    <td class="align-middle" style="font-size: 0.85rem; color: #d1c4a9;">
+                    <td class="align-middle" style="font-size: 0.85rem; color: var(--text-muted);">
                   <i class="bi bi-calendar3 me-1" style="font-size: 0.8rem;"></i>
                                      ${user.created_at || '-'}
                   </td>
                     <td class="align-middle" style="width: 1%; white-space: nowrap;">
                         <div class="d-flex flex-nowrap gap-2 justify-content-center">
-                            <button class="btn btn-action btn-action-edit editUserBtn" title="${window.AppTrans.edit}" style="color: #D4AF37; border: 1px solid #D4AF37;"><i class="bi bi-pencil-square"></i></button>
-                            <button class="btn btn-action btn-action-delete deleteUserBtn" data-id="${user.id}" title="${window.AppTrans.delete}" style="color: #dc3545; border: 1px solid #dc3545;"><i class="bi bi-trash3"></i></button>
-                            <button class="btn btn-action btn-action-view viewUserBtn" title="${window.AppTrans.view}" style="color: #0dcaf0; border: 1px solid #0dcaf0;"><i class="bi bi-eye"></i></button>
+                            <button class="btn btn-action btn-action-edit editUserBtn" title="${window.AppTrans.edit}" style="color: var(--primary-color); border: 1px solid var(--primary-color);"><i class="bi bi-pencil-square"></i></button>
+                            <button class="btn btn-action btn-action-delete deleteUserBtn" data-id="${user.id}" title="${window.AppTrans.delete}" style="color: var(--danger-color); border: 1px solid var(--danger-color);"><i class="bi bi-trash3"></i></button>
+                            <button class="btn btn-action btn-action-view viewUserBtn" title="${window.AppTrans.view}" style="color: var(--info-color); border: 1px solid var(--info-color);"><i class="bi bi-eye"></i></button>
                         </div>
                     </td>
                 </tr>`;

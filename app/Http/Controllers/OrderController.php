@@ -33,16 +33,19 @@ class OrderController extends Controller
         $query->whereDate('created_at', $request->date);
     }
 
-    $orders = $query->latest()->paginate(10);
+    $orders = $query->latest()->paginate(15)->withQueryString();
+
+    $variantIds = $orders->pluck('products')->flatten()->pluck('pivot.variant_id')->filter()->unique()->toArray();
+    $variantsMap = !empty($variantIds) ? \App\Models\Variant::whereIn('id', $variantIds)->get()->keyBy('id') : collect();
 
     if ($request->ajax()) {
-        return view('admin.orders.orders_table', compact('orders'))->render();
+        return view('admin.orders.orders_table', compact('orders', 'variantsMap'))->render();
     }
 
-    $users = User::all();
-    $products = Product::all();
+    $users = User::select('id', 'name')->get();
+    $products = Product::select('id', 'name')->get();
     
-    return view('admin.orders.index', compact('orders', 'users', 'products'));
+    return view('admin.orders.index', compact('orders', 'users', 'products', 'variantsMap'));
 }
 
   public function store(Request $request)
@@ -173,7 +176,7 @@ class OrderController extends Controller
 
     public function show($id)
     {
-        $orders = Order::with('user')->latest()->paginate(10);
+        $orders = Order::with('user')->latest()->paginate(15)->withQueryString();
         $users = User::all();
         $products = Product::all();
         return view('admin.orders.index', compact('orders', 'users', 'products'));

@@ -15,16 +15,18 @@
                 <i class="bi bi-cart"></i> <span>{{ __('admin.orders') ?? 'الطلبات' }}</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link {{ Request::is('admin/products*') ? 'active' : '' }}" href="{{ route('products.index') }}">
-                <i class="bi bi-bag"></i> <span>{{ __('admin.products') ?? 'المنتجات' }}</span>
-            </a>
-        </li>
+
         <li class="nav-item">
             <a class="nav-link {{ Request::is('admin/category*') ? 'active' : '' }}" href="{{ route('category.index') }}">
                 <i class="bi bi-tags"></i> <span>{{ __('admin.categories') ?? 'الأقسام' }}</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link {{ Request::is('admin/products*') ? 'active' : '' }}" href="{{ route('products.index') }}">
+                <i class="bi bi-bag"></i> <span>{{ __('admin.products') ?? 'المنتجات' }}</span>
+            </a>
+        </li>
+        
         <li class="nav-item">
             <a class="nav-link {{ Request::is('admin/users*') ? 'active' : '' }}" href="{{ route('users.index') }}">
                 <i class="bi bi-people"></i> <span>{{ __('admin.users') ?? 'المستخدمين' }}</span>
@@ -38,6 +40,11 @@
         <li class="nav-item">
             <a class="nav-link {{ Request::is('admin/settings*') ? 'active' : '' }}" href="{{ route('admin.settings') }}">
                 <i class="bi bi-gear"></i> <span>{{ __('admin.settings') ?? 'الإعدادات' }}</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ Request::is('admin/themes*') ? 'active' : '' }}" href="{{ route('admin.themes.index') }}">
+                <i class="bi bi-palette"></i> <span>{{ __('اعدادات المظهر ') ?? 'إعدادات المظهر' }}</span>
             </a>
         </li>
         <li class="nav-item mt-auto">

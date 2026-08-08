@@ -538,28 +538,54 @@ th, td {
 /* ============================================================
    17. PAGINATION
    ============================================================ */
+
+/* ── General Pagination ── */
 .pagination .page-link {
     background-color: var(--card-bg);
     border-color: var(--border-color);
     color: var(--text-color);
+    border-radius: 6px !important;
+    margin: 0 2px;
+    min-width: 38px;
+    text-align: center;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
 .pagination .page-link:hover {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
     color: #000;
+    transform: translateY(-1px);
 }
 
 .pagination .page-item.active .page-link {
     background-color: var(--primary-color) !important;
     border-color: var(--primary-color) !important;
     color: #000 !important;
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
 }
 
 .pagination .page-item.disabled .page-link {
     background-color: var(--section-bg);
     border-color: var(--border-color);
     color: var(--text-muted);
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ── Admin Pagination Wrapper ── */
+.admin-pagination .pagination {
+    gap: 3px;
+    margin-bottom: 0;
+}
+
+.admin-pagination .page-link {
+    border-radius: 8px !important;
+    padding: 6px 13px;
 }
 
 /* ============================================================

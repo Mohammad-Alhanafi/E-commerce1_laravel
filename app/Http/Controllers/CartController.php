@@ -17,7 +17,7 @@ class CartController extends Controller
             'quantity'   => 'required|integer|min:1',
         ]);
 
-        $variant = Variant::with('product')->find($request->variant_id);
+        $variant = Variant::with(['product', 'attributeValues'])->find($request->variant_id);
         $cart = session()->get('cart', []);
 
         if(isset($cart[$variant->id])) {
@@ -57,9 +57,10 @@ class CartController extends Controller
                 session()->put('cart', $cart);
 
                 return response()->json([
-                    'success'   => true,
-                    'cart_html' => $this->getCartHtml(),
-                    'total'     => $this->getCartTotal()
+                    'success'    => true,
+                    'cart_html'  => $this->getCartHtml(),
+                    'total'      => $this->getCartTotal(),
+                    'cart_count' => count(session('cart', [])),
                 ]);
             }
         }
@@ -79,9 +80,10 @@ class CartController extends Controller
             }
 
             return response()->json([
-                'success'   => true,
-                'cart_html' => $this->getCartHtml(),
-                'total'     => $this->getCartTotal()
+                'success'    => true,
+                'cart_html'  => $this->getCartHtml(),
+                'total'      => $this->getCartTotal(),
+                'cart_count' => count(session('cart', [])),
             ]);
         }
         return response()->json(['success' => false], 400);

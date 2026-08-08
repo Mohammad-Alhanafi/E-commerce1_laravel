@@ -28,8 +28,8 @@ class ProductController extends Controller
         }
 
         // 4. ترتيب المنتجات وعمل الترقيم (Pagination)
-        $products = $query->latest()->paginate(10);
-        
+        $products = $query->latest()->paginate(10)->withQueryString();
+
         $categories = Category::all();
         $attribute_values = AttributeValues::with('attribute')->get();
 
@@ -102,20 +102,23 @@ class ProductController extends Controller
     {
         $product = Product::with(['variants.attributeValues.attribute', 'category'])->findOrFail($id);
 
-        // جلب الإعدادات من الداتابيز
-        $settings = \Illuminate\Support\Facades\DB::table('settings')->pluck('value', 'key')->toArray();
+        $settings = \Illuminate\Support\Facades\Cache::remember('global_app_settings', 86400, function () {
+            return \Illuminate\Support\Facades\DB::table('settings')->pluck('value', 'key')->toArray();
+        });
         
-        $relatedProducts = Product::where('category_id', $product->category_id)
+        $relatedProducts = Product::select('id', 'name', 'price', 'image', 'category_id')
+            ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->where('status', 'active')
-            ->inRandomOrder()
-            ->take(8) // زدنا العدد ليكون السلايدر أجمل
+            ->latest()
+            ->take(8)
             ->get();
 
         if ($relatedProducts->isEmpty()) {
-            $relatedProducts = Product::where('id', '!=', $product->id)
+            $relatedProducts = Product::select('id', 'name', 'price', 'image', 'category_id')
+                ->where('id', '!=', $product->id)
                 ->where('status', 'active')
-                ->inRandomOrder()
+                ->latest()
                 ->take(8)
                 ->get();
         }

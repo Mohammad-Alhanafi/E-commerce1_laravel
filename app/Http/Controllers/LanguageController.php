@@ -33,10 +33,11 @@ class LanguageController extends Controller
     /**
      * Switch the application locale.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  string  $locale   — e.g. 'ar', 'en', 'fr'
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function switch(string $locale): RedirectResponse
+    public function switch(Request $request, string $locale)
     {
         // ── Validate locale ──────────────────────────────────────
         if (!in_array($locale, $this->supportedLocales, true)) {
@@ -50,13 +51,23 @@ class LanguageController extends Controller
         // ── Store in cookie (persists across sessions) ───────────
         // Cookie lifetime: 365 days (in minutes)
         $cookieLifetime = 365 * 24 * 60;
+        $cookie = cookie('locale', $locale, $cookieLifetime);
 
         // ── Set app locale for this request ─────────────────────
         App::setLocale($locale);
 
-        // ── Redirect back ────────────────────────────────────────
+        // ── If AJAX / JSON request, return JSON without refresh ──
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'locale'  => $locale,
+                'dir'     => $locale === 'ar' ? 'rtl' : 'ltr',
+            ])->withCookie($cookie);
+        }
+
+        // ── Redirect back for standard browser navigation ────────
         return redirect()
             ->back()
-            ->withCookie(cookie('locale', $locale, $cookieLifetime));
+            ->withCookie($cookie);
     }
 }

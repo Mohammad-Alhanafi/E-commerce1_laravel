@@ -1,2 +1,59 @@
 <?php
-return ['required'=>'Le champ :attribute est obligatoire.','email'=>'Le :attribute doit être une adresse email valide.','min'=>['string'=>'Le :attribute doit comporter au moins :min caractères.','numeric'=>'Le :attribute doit être au moins :min.','file'=>'Le :attribute doit faire au moins :min kilo-octets.'],'max'=>['string'=>'Le :attribute ne peut pas dépasser :max caractères.','numeric'=>'Le :attribute ne peut pas dépasser :max.','file'=>'Le :attribute ne peut pas dépasser :max kilo-octets.'],'unique'=>'Ce :attribute est déjà utilisé.','confirmed'=>'La confirmation de :attribute ne correspond pas.','numeric'=>'Le :attribute doit être un nombre.','integer'=>'Le :attribute doit être un entier.','string'=>'Le :attribute doit être une chaîne.','boolean'=>'Le :attribute doit être vrai ou faux.','array'=>'Le :attribute doit être un tableau.','in'=>'Le :attribute sélectionné est invalide.','not_in'=>'Le :attribute sélectionné est invalide.','exists'=>'Le :attribute sélectionné n\'existe pas.','mimes'=>'Le :attribute doit être un fichier de type : :values.','mimetypes'=>'Le :attribute doit être un fichier de type : :values.','image'=>'Le :attribute doit être une image.','date'=>'Le :attribute n\'est pas une date valide.','after'=>'Le :attribute doit être une date après :date.','before'=>'Le :attribute doit être une date avant :date.','regex'=>'Le format du :attribute est invalide.','url'=>'Le format du :attribute est invalide.','phone'=>'Le :attribute doit être un numéro valide.','password_strength'=>'Le mot de passe doit contenir des lettres et des chiffres.','attributes'=>['name'=>'nom','email'=>'adresse email','password'=>'mot de passe','phone'=>'numéro de téléphone','address'=>'adresse','city'=>'ville','country'=>'pays','image'=>'image','price'=>'prix','quantity'=>'quantité','description'=>'description','title'=>'titre','category_id'=>'catégorie','size'=>'taille','color'=>'couleur']];
+/*
+ * ============================================================
+ *  lang/fr/validation.php — French Validation Messages
+ * ============================================================
+ */
+return [
+    'required'          => 'Le champ :attribute est obligatoire.',
+    'email'             => 'Le :attribute doit être une adresse email valide.',
+    'min'               => [
+        'string'  => 'Le :attribute doit comporter au moins :min caractères.',
+        'numeric' => 'Le :attribute doit être au moins :min.',
+        'file'    => 'Le :attribute doit faire au moins :min kilo-octets.',
+    ],
+    'max'               => [
+        'string'  => 'Le :attribute ne peut pas dépasser :max caractères.',
+        'numeric' => 'Le :attribute ne peut pas dépasser :max.',
+        'file'    => 'Le :attribute ne peut pas dépasser :max kilo-octets.',
+    ],
+    'unique'            => 'Ce :attribute est déjà utilisé.',
+    'confirmed'         => 'La confirmation de :attribute ne correspond pas.',
+    'numeric'           => 'Le :attribute doit être un nombre.',
+    'integer'           => 'Le :attribute doit être un entier.',
+    'string'            => 'Le :attribute doit être une chaîne.',
+    'boolean'           => 'Le :attribute doit être vrai ou faux.',
+    'array'             => 'Le :attribute doit être un tableau.',
+    'in'                => 'Le :attribute sélectionné est invalide.',
+    'not_in'            => 'Le :attribute sélectionné est invalide.',
+    'exists'            => 'Le :attribute sélectionné n\'existe pas.',
+    'mimes'             => 'Le :attribute doit être un fichier de type : :values.',
+    'mimetypes'         => 'Le :attribute doit être un fichier de type : :values.',
+    'image'             => 'Le :attribute doit être une image.',
+    'date'              => 'Le :attribute n\'est pas une date valide.',
+    'after'             => 'Le :attribute doit être une date après :date.',
+    'before'            => 'Le :attribute doit être une date avant :date.',
+    'regex'             => 'Le format du :attribute est invalide.',
+    'url'               => 'Le format du :attribute est invalide.',
+    'phone'             => 'Le :attribute doit être un numéro valide.',
+    'password_strength' => 'Le mot de passe doit contenir des lettres et des chiffres.',
+
+    /* ── Custom field names ── */
+    'attributes'        => [
+        'name'        => 'nom',
+        'email'       => 'adresse email',
+        'password'    => 'mot de passe',
+        'phone'       => 'numéro de téléphone',
+        'address'     => 'adresse',
+        'city'        => 'ville',
+        'country'     => 'pays',
+        'image'       => 'image',
+        'price'       => 'prix',
+        'quantity'    => 'quantité',
+        'description' => 'description',
+        'title'       => 'titre',
+        'category_id' => 'catégorie',
+        'size'        => 'taille',
+        'color'       => 'couleur',
+    ],
+];

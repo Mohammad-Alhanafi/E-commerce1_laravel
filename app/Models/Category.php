@@ -31,5 +31,18 @@ class Category extends Model
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
     ];
+
+    protected static function booted(): void
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('header_categories_tree');
+            \Illuminate\Support\Facades\Cache::forget('home_categories_tree');
+        });
+
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('header_categories_tree');
+            \Illuminate\Support\Facades\Cache::forget('home_categories_tree');
+        });
+    }
 }
 

@@ -14,9 +14,8 @@ class SettingController extends Controller
     {
         $settings   = DB::table('settings')->pluck('value', 'key');
         $categories = Category::all();
-        $theme      = Theme::where('is_active', true)->first() ?? new Theme(Theme::$defaults);
 
-        return view('admin.settings.index', compact('settings', 'categories', 'theme'));
+        return view('admin.settings.index', compact('settings', 'categories'));
     }
 
     public function update(Request $request)
@@ -83,6 +82,7 @@ class SettingController extends Controller
             }
         }
 
+        // 5. Logo File Upload
         if ($request->hasFile('logo_image')) {
             $path = $request->file('logo_image')->store('logos', 'public');
 
@@ -95,25 +95,23 @@ class SettingController extends Controller
             );
         }
 
-        // 5. Dynamic Theme Palette Update
-        if ($request->has('update_theme')) {
-            $themeData = $request->validate([
-                'primary_color'   => 'required|string|max:10',
-                'secondary_color' => 'required|string|max:10',
-                'hover_color'     => 'required|string|max:10',
-                'success_color'   => 'nullable|string|max:10',
-                'danger_color'    => 'nullable|string|max:10',
-                'warning_color'   => 'nullable|string|max:10',
-                'info_color'      => 'nullable|string|max:10',
-                'dark_bg'         => 'nullable|string|max:10',
-                'light_bg'        => 'nullable|string|max:10',
-            ]);
+        // 6. Related Products Settings (Layout, Animation, Glow Color)
+        $relatedSettings = [
+            'related_products_layout',
+            'title_animation_style',
+            'title_anim_color',
+        ];
 
-            Theme::updateOrCreate(
-                ['is_active' => true],
-                array_merge(['name' => 'Custom Theme'], $themeData)
-            );
+        foreach ($relatedSettings as $key) {
+            if ($request->has($key)) {
+                DB::table('settings')->updateOrInsert(
+                    ['key' => $key],
+                    ['value' => $request->$key, 'updated_at' => now()]
+                );
+            }
         }
+
+        \Illuminate\Support\Facades\Cache::forget('global_app_settings');
 
         return back()->with('success', __('messages.settings_updated') ?? 'تم تحديث كافة الإعدادات بنجاح!');
     }
@@ -135,6 +133,8 @@ class SettingController extends Controller
                 ['value' => json_encode(array_values($numbers))]
             );
         }
+
+        \Illuminate\Support\Facades\Cache::forget('global_app_settings');
 
         return back()->with('success', __('messages.settings_updated') ?? 'تم حذف الرقم بنجاح!');
     }
