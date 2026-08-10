@@ -39,3 +39,6 @@ RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # فتح المنفذ 80
 EXPOSE 80
+
+# تشغيل أمر الـ Migration ثم تشغيل Apache فور بدء الحاوية
+CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
