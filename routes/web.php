@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Artisan;
 
 use Illuminate\Http\Request;
 
@@ -214,4 +215,19 @@ Route::get('/make-me-admin/{email}', function ($email) {
     $user->update(['role' => 'admin']);
 
     return "Account {$email} has been successfully promoted to Admin!";
+});
+
+
+Route::get('/run-migrations-now', function () {
+    try {
+        Artisan::call('cache:clear');
+        Artisan::call('config:clear');
+        Artisan::call('route:clear');
+        Artisan::call('view:clear');
+        Artisan::call('migrate', ['--force' => true]);
+
+        return 'Success: Database migrated and all caches cleared successfully!';
+    } catch (\Exception $e) {
+        return 'Error executing migration: ' . $e->getMessage();
+    }
 });
