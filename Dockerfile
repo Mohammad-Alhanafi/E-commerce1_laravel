@@ -43,4 +43,4 @@ EXPOSE 80
 # تشغيل أمر الـ Migration ثم تشغيل Apache فور بدء الحاوية
 # إعطاء صلاحية التنفيذ للـ entrypoint
 # تشغيل الـ Migration تلقائياً ثم إطلاق سيرفر Apache
-CMD php artisan migrate --force ; exec apache2-foreground
+CMD php artisan cache:clear && php artisan config:clear && php artisan migrate --force ; exec apache2-foreground
