@@ -41,4 +41,9 @@ RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 EXPOSE 80
 
 # تشغيل أمر الـ Migration ثم تشغيل Apache فور بدء الحاوية
-CMD php artisan migrate --force ; apache2-foreground
+# إعطاء صلاحية التنفيذ للـ entrypoint
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# تحديد الـ Entrypoint لتشغيل السكريبت أولاً
+ENTRYPOINT ["entrypoint.sh"]
