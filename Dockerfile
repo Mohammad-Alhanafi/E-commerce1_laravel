@@ -43,4 +43,15 @@ EXPOSE 80
 # تشغيل أمر الـ Migration ثم تشغيل Apache فور بدء الحاوية
 # إعطاء صلاحية التنفيذ للـ entrypoint
 # تشغيل الـ Migration تلقائياً ثم إطلاق سيرفر Apache
-CMD php artisan cache:clear && php artisan config:clear && php artisan migrate --force ; exec apache2-foreground
+# إعطاء صلاحيات التعديل لمجلدات التخزين والـ Cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# إعطاء صلاحية التنفيذ لملف entrypoint.sh
+RUN chmod +x /var/www/html/entrypoint.sh
+
+# فتح المنفذ 80
+EXPOSE 80
+
+# تشغيل entrypoint.sh عند بدء الحاوية
+ENTRYPOINT ["/var/www/html/entrypoint.sh"]
