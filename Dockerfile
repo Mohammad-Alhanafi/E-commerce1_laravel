@@ -42,8 +42,5 @@ EXPOSE 80
 
 # تشغيل أمر الـ Migration ثم تشغيل Apache فور بدء الحاوية
 # إعطاء صلاحية التنفيذ للـ entrypoint
-COPY entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# تحديد الـ Entrypoint لتشغيل السكريبت أولاً
-ENTRYPOINT ["entrypoint.sh"]
+# تشغيل الـ Migration تلقائياً ثم إطلاق سيرفر Apache
+CMD php artisan migrate --force ; exec apache2-foreground
