@@ -44,11 +44,10 @@ public function store(Request $request)
     $data['is_featured'] = $request->has('is_featured') ? 1 : 0;
     $data['sort_order']  = $request->sort_order ?? 0;
 
-if ($request->hasFile('image')) {
-    $imageName = time() . '.' . $request->image->extension();
-    $request->image->move(public_path('categories'), $imageName);
-    $data['image'] = 'categories/' . $imageName;   // ✅ ضفنا المجلد
-}
+    if ($request->hasFile('image')) {
+        $disk = config('filesystems.default', 'public');
+        $data['image'] = $request->file('image')->store('categories', $disk);
+    }
 
     Category::create($data);
 
@@ -73,11 +72,13 @@ public function update(Request $request, Category $category)
     $data['sort_order']  = $request->sort_order ?? 0;
 
     // image upload
-if ($request->hasFile('image')) {
-    $imageName = time() . '.' . $request->image->extension();
-    $request->image->move(public_path('categories'), $imageName);
-    $data['image'] = 'categories/' . $imageName;   // ✅ ضفنا المجلد
-}
+    if ($request->hasFile('image')) {
+        $disk = config('filesystems.default', 'public');
+        if ($category->image) {
+            \Illuminate\Support\Facades\Storage::disk($disk)->delete($category->image);
+        }
+        $data['image'] = $request->file('image')->store('categories', $disk);
+    }
 
     $category->update($data);
 
@@ -86,7 +87,8 @@ if ($request->hasFile('image')) {
         return response()->json([
             'success' => true,
             'message' => 'تم تعديل الفئة بنجاح',
-            'category' => $category
+            'category' => $category,
+            'image_url' => get_image_url($category->image)
         ]);
     }
 
@@ -104,11 +106,8 @@ if ($request->hasFile('image')) {
 
     // حذف الصورة من السيرفر إذا وجدت
     if ($category->image) {
-        // نستخدم المسار اللي تعودنا عليه في مشروعك
-        $imagePath = str_replace('storage/', 'public/', $category->image);
-        if (\Storage::exists($imagePath)) {
-            \Storage::delete($imagePath);
-        }
+        $disk = config('filesystems.default', 'public');
+        \Illuminate\Support\Facades\Storage::disk($disk)->delete($category->image);
     }
 
     $category->delete();
@@ -137,9 +136,11 @@ if ($request->hasFile('image')) {
 public function updateImage(Request $request, $id) {
     $category = Category::findOrFail($id);
     if ($request->hasFile('image')) {
-        // رفع الصورة وحفظ المسار
-        $path = $request->file('image')->move(public_path('uploads/categories'), time().'.'.$request->image->extension());
-        $category->image = 'uploads/categories/'.basename($path);
+        $disk = config('filesystems.default', 'public');
+        if ($category->image) {
+            \Illuminate\Support\Facades\Storage::disk($disk)->delete($category->image);
+        }
+        $category->image = $request->file('image')->store('categories', $disk);
         $category->save();
     }
     return back()->with('success', 'تم تحديث الصورة بنجاح');

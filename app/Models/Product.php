@@ -43,10 +43,15 @@ class Product extends Model
     {
         return $this->hasMany(Variant::class , 'product_id');
     }
-public function relatedProducts()
-{
-    return $this->belongsToMany(Product::class, 'related_products', 'product_id', 'related_id');
-}
+    public function relatedProducts()
+    {
+        return $this->belongsToMany(Product::class, 'related_products', 'product_id', 'related_id');
+    }
+
+    public function getImageUrlAttribute()
+    {
+        return get_image_url($this->image, 'assets/images/default-product.svg');
+    }
 
  
 

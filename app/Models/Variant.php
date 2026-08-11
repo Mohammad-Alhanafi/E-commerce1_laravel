@@ -32,6 +32,11 @@ class Variant extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function getImageUrlAttribute()
+    {
+        return get_image_url($this->variant_image, null);
+    }
+
 
    public function attributeValues()
 {

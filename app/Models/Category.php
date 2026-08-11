@@ -26,6 +26,11 @@ class Category extends Model
         return $this->hasMany(Product::class);
     }
 
+    public function getImageUrlAttribute()
+    {
+        return get_image_url($this->image, 'assets/images/default-cat.jpg');
+    }
+
 
      protected $casts = [
         'is_active' => 'boolean',

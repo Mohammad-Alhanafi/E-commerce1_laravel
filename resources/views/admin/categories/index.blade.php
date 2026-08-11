@@ -737,7 +737,7 @@
         <td>
             <div class="d-flex align-items-center">
                 @if($category->image)
-                    <img src="{{ asset('storage/' . $category->image) }}" class="rounded me-2" width="35" height="35" style="object-fit: cover;">
+                    <img src="{{ $category->image_url }}" class="rounded me-2" width="35" height="35" style="object-fit: cover;">
                 @endif
                 <span class="text-gold">{{ $category->name }}</span>
             </div>

@@ -61,15 +61,16 @@ class AccountController extends Controller
     ]);
 
     $user = auth()->user();
+    $disk = config('filesystems.default', 'public');
 
-    // حذف الصورة القديمة من S3 إذا موجودة
+    // حذف الصورة القديمة من السيرفر إذا موجودة
     if ($user->profile_image) {
-        \Illuminate\Support\Facades\Storage::disk('s3')->delete($user->profile_image);
+        \Illuminate\Support\Facades\Storage::disk($disk)->delete($user->profile_image);
     }
 
     $file = $request->file('profile_image');
     $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-    $path = $file->storeAs('avatars', $filename, 's3');
+    $path = $file->storeAs('avatars', $filename, $disk);
 
     $user->profile_image = $path;
     $user->save();

@@ -22,7 +22,7 @@
                 <span class="logo-icon-wrap" id="headerLogoWrap">
                     @if(!empty($settings['logo_path']))
                         <img
-                            src="{{ asset('storage/' . $settings['logo_path']) }}"
+                            src="{{ get_image_url($settings['logo_path']) }}"
                             id="headerLogoImg"
                             alt="Logo"
                             style="
@@ -104,9 +104,7 @@
                         @php
                             $user = auth()->user();
                             $avatarPath = $user->avatar ?? $user->profile_image ?? $user->profile_photo_path ?? $user->image ?? null;
-                            if ($avatarPath && str_starts_with($avatarPath, 'http')) { $avatarUrl = $avatarPath; }
-                            elseif ($avatarPath && str_starts_with($avatarPath, 'uploads/')) { $avatarUrl = asset($avatarPath); }
-                            elseif ($avatarPath) { $avatarUrl = asset('storage/' . $avatarPath); }
+                            $avatarUrl = get_image_url($avatarPath, null);
                         @endphp
                     @endauth
 
@@ -173,7 +171,7 @@
             <div id="livePreview" class="live-preview-box">
                 <i id="previewIcon" class="fas fa-crown" style="{{ !empty($settings['logo_path']) ? 'display:none;' : '' }}"></i>
                 <img id="previewLogoImg"
-                     src="{{ !empty($settings['logo_path']) ? asset('storage/'.$settings['logo_path']) : '' }}"
+                     src="{{ !empty($settings['logo_path']) ? get_image_url($settings['logo_path']) : '' }}"
                      style="{{ empty($settings['logo_path']) ? 'display:none;' : '' }} height:{{ $settings['logo_size'] ?? 50 }}px; border-radius:{{ $settings['logo_shape'] ?? '0%' }};">
                 <span id="previewText" class="notranslate" translate="no" style="font-size: {{ $settings['text_size'] ?? 24 }}px;">{{ $settings['store_name'] ?? 'الوقار' }}</span>
             </div>

@@ -68,8 +68,10 @@ class ProductController extends Controller
             $data['sku'] = $generatedSku;
         }
 
+        $disk = config('filesystems.default', 'public');
+
         if($request->hasFile('image')){
-            $data['image'] = $request->file('image')->store('products','s3');
+            $data['image'] = $request->file('image')->store('products', $disk);
         }
 
         $product = Product::create($data);
@@ -87,8 +89,9 @@ class ProductController extends Controller
     // حذف منتج
     public function destroy(Product $product)
     {
+        $disk = config('filesystems.default', 'public');
         if($product->image){
-            Storage::disk('s3')->delete($product->image);
+            Storage::disk($disk)->delete($product->image);
         }
 
         // حذف Variants المرتبطة
@@ -152,6 +155,7 @@ class ProductController extends Controller
         ]);
 
         $product = Product::findOrFail($id);
+        $disk = config('filesystems.default', 'public');
         
         $updateData = [
             'name'              => $request->name,
@@ -167,10 +171,10 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             // حذف الصورة القديمة من السيرفر
             if ($product->image) {
-                Storage::disk('s3')->delete($product->image);
+                Storage::disk($disk)->delete($product->image);
             }
             // تخزين الجديدة
-            $updateData['image'] = $request->file('image')->store('products', 'public');
+            $updateData['image'] = $request->file('image')->store('products', $disk);
         }
 
         $product->update($updateData);
@@ -181,7 +185,7 @@ class ProductController extends Controller
         return response()->json([
             'status'        => 'success',
             'message'       => 'تم تحديث المنتج بنجاح',
-            'image_url'     => Storage::disk('s3')->url($product->image),
+            'image_url'     => get_image_url($product->image),
             'image_path'    => $product->image,                
             'category_name' => $product->category->name ?? 'عام'
         ]);

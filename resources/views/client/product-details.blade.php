@@ -49,7 +49,7 @@
 
                 {{-- الكانتينر الأصلي هلق صار "جوكر" بياخد الستايل من الآدمن أو التلقائي --}}
                 <div class="main-image-container {{ $finalStyle }}">
-                    <img src="{{ Storage::disk('s3')->url($product->image) }}" class="main-img" id="mainProductImage">
+                    <img src="{{ $product->image_url }}" class="main-img" id="mainProductImage">
                 </div>
                 
                 <div class="thumbnail-container mt-3"></div>
@@ -93,7 +93,7 @@
                                 data-stock="{{ $variant->stock }}"
                                 data-price="{{ number_format($variant->variant_price, 2) }}"
                                 data-notes="{{ $variant->notes }}"
-                                onclick="filterModelsByColor('{{ trim($variant->color) }}', '{{ $variant->variant_image ? asset('storage/' . $variant->variant_image) : asset('storage/' . $product->image) }}', this)"
+                                onclick="filterModelsByColor('{{ trim($variant->color) }}', '{{ $variant->image_url ?? $product->image_url }}', this)"
                                 style="width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--border-color); background-color: {{ $variant->color }}; cursor: pointer; transition: 0.3s;">
                         </button>
                         <div class="stock-label" style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">
@@ -261,7 +261,7 @@
                         <div class="swiper-slide">
                             <div class="related-card-curved">
                                 <a href="{{ url('/item/' . $related->id) }}" class="text-decoration-none h-100 d-flex flex-column">
-                                    <img src="{{ asset('storage/' . $related->image) }}" alt="{{ $related->name }}">
+                                    <img src="{{ $related->image_url }}" alt="{{ $related->name }}">
                                     <div class="related-info">
                                         <h6>{{ $related->name }}</h6>
                                         <p>{{ number_format($related->price, 2) }} $</p>
@@ -279,7 +279,7 @@
                     <div class="related-card-item">
                         <div class="related-card-curved">
                             <a href="{{ url('/item/' . $related->id) }}" class="text-decoration-none h-100 d-flex flex-column">
-                                <img src="{{ asset('storage/' . $related->image) }}" alt="{{ $related->name }}">
+                                <img src="{{ $related->image_url }}" alt="{{ $related->name }}">
                                 <div class="related-info">
                                     <h6>{{ $related->name }}</h6>
                                     <p>{{ number_format($related->price, 2) }} $</p>
@@ -296,7 +296,7 @@
                     <div class="col-6 col-md-3 mb-4">
                         <div class="related-card-curved" style="height: 380px;">
                             <a href="{{ url('/item/' . $related->id) }}" class="text-decoration-none h-100 d-flex flex-column">
-                                <img src="{{ asset('storage/' . $related->image) }}" alt="{{ $related->name }}">
+                                <img src="{{ $related->image_url }}" alt="{{ $related->name }}">
                                 <div class="related-info">
                                     <h6>{{ $related->name }}</h6>
                                     <p>{{ number_format($related->price, 2) }} $</p>

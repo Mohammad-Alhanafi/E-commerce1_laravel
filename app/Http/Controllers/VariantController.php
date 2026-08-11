@@ -41,7 +41,7 @@ class VariantController extends Controller
             return [
                 'id'               => $variant->id,
                 'name'             => $variant->name ?? ($variant->product->name ?? 'فارينت بدون اسم'),
-                'variant_image' => $variant->variant_image ? asset('storage/' . $variant->variant_image) : null,
+                'variant_image'    => get_image_url($variant->variant_image, null),
                 'color'            => $variant->color, 
                 'additional_price' => $variant->variant_price, // مطابقته لـ additional_price المتوقع بالـ JS
                 'stock'            => $variant->stock,
@@ -80,7 +80,8 @@ class VariantController extends Controller
             $variant->notes = $request->notes;
 
             if ($request->hasFile('variant_image')) {
-                $imagePath = $request->file('variant_image')->store('variants', 'public');
+                $disk = config('filesystems.default', 'public');
+                $imagePath = $request->file('variant_image')->store('variants', $disk);
                 $variant->variant_image = $imagePath;
             }
 
@@ -137,10 +138,11 @@ class VariantController extends Controller
             ];
 
             if ($request->hasFile('variant_image')) {
+                $disk = config('filesystems.default', 'public');
                 if ($variant->variant_image) {
-                    Storage::disk('public')->delete($variant->variant_image);
+                    Storage::disk($disk)->delete($variant->variant_image);
                 }
-                $data['variant_image'] = $request->file('variant_image')->store('variants', 'public');
+                $data['variant_image'] = $request->file('variant_image')->store('variants', $disk);
             }
 
             $variant->update($data);
@@ -148,7 +150,7 @@ class VariantController extends Controller
             return response()->json([
                 'status' => 'success', 
                 'variant' => $variant,
-                'image_url' => $variant->variant_image ? asset('storage/' . $variant->variant_image) : null
+                'image_url' => get_image_url($variant->variant_image, null)
             ]);
             
         } catch (\Exception $e) {
@@ -170,9 +172,8 @@ class VariantController extends Controller
             DB::table('variant_attribute_values')->where('variants_id', $id)->delete();
 
             if (!empty($variant->variant_image)) {
-                if (Storage::disk('public')->exists($variant->variant_image)) {
-                    Storage::disk('public')->delete($variant->variant_image);
-                }
+                $disk = config('filesystems.default', 'public');
+                Storage::disk($disk)->delete($variant->variant_image);
             }
 
             DB::table('variants')->where('id', $id)->delete();
@@ -196,7 +197,7 @@ class VariantController extends Controller
 
 
                            
-                               $variant->image_url = $variant->variant_image ? asset('storage/' . $variant->variant_image) : asset('assets/images/default.png');
+                               $variant->image_url = get_image_url($variant->variant_image);
                                return $variant;
                            });
 

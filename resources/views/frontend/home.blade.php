@@ -36,18 +36,18 @@
                     @if($isVideo)
                         <div class="video-slider-wrapper">     
                             <video muted loop playsinline preload="metadata" class="video-background">
-                                <source src="{{ asset('storage/'.$slider->image) }}" type="video/{{ $extension }}">
+                                <source src="{{ $slider->image_url }}" type="video/{{ $extension }}">
                             </video>
 
                             <!-- إصلاح: إغلاق وسم الفيديو المفتوح هنا -->
                             <video autoplay muted loop playsinline preload="metadata" class="video-main">
-                                <source src="{{ asset('storage/'.$slider->image) }}" type="video/{{ $extension }}">
+                                <source src="{{ $slider->image_url }}" type="video/{{ $extension }}">
                                 {{ __('home.video_not_supported') }}
                             </video>
                         </div>
                     @else
                         <!-- إصلاح: تحسين الأداء LCP والتحميل المتأخر -->
-                        <img src="{{ asset('storage/'.$slider->image) }}" alt="{{ $slider->title }}" class="slider-image" {{ $loop->first ? 'fetchpriority=high loading=eager' : 'loading=lazy decoding=async' }}>
+                        <img src="{{ $slider->image_url }}" alt="{{ $slider->title }}" class="slider-image" {{ $loop->first ? 'fetchpriority=high loading=eager' : 'loading=lazy decoding=async' }}>
                     @endif
 
                     @if($slider->title || $slider->link)
@@ -91,9 +91,9 @@
                         $shape = $settings['category_style_' . $category->id] ?? 'square';
                         $coverProduct = $category->products->first();
                         if ($coverProduct && $coverProduct->image) {
-                            $catImageUrl = asset('storage/' . $coverProduct->image);
+                            $catImageUrl = $coverProduct->image_url;
                         } elseif ($category->image) {
-                            $catImageUrl = asset($category->image);
+                            $catImageUrl = $category->image_url;
                         } else {
                             $catImageUrl = asset('assets/images/default-cat.jpg');
                         }

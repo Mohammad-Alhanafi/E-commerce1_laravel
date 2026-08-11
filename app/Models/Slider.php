@@ -13,6 +13,11 @@ class Slider extends Model
 
 
 
+public function getImageUrlAttribute()
+{
+    return get_image_url($this->image);
+}
+
 public function isVideo()
 {
     $extension = pathinfo($this->image, PATHINFO_EXTENSION);

@@ -33,7 +33,7 @@
             @forelse($products as $product)
                 @php
                     $fallbackImage = asset('assets/images/default-product.svg');
-                    $productImage = $product->image ? asset('storage/' . $product->image) : $fallbackImage;
+                    $productImage = $product->image_url;
                 @endphp
 
                 <div class="product-card">

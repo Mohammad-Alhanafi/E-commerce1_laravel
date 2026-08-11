@@ -915,22 +915,18 @@
                                    data-id="{{ $product->id }}">
                                    <td class="text-center fw-bold">{{ $products->firstItem() + $loop->index }}</td>
                                    <td class="text-center">
-                                        @if($product->image && Storage::disk('public')->exists($product->image))
-                                        {{ Storage::disk('s3')->url($product->image) }}
-                                                 alt="{{ $product->name }}"
-                                                 class="rounded-circle border border-gold shadow-sm"
-                                                 style="width: 45px; height: 45px; object-fit: cover; background-color: var(--input-bg);">
-                                        @elseif($product->image && (str_starts_with($product->image, 'http://') || str_starts_with($product->image, 'https://')))
-                                            <img src="{{ $product->image }}"
-                                                 alt="{{ $product->name }}"
-                                                 class="rounded-circle border border-gold shadow-sm"
-                                                 style="width: 45px; height: 45px; object-fit: cover; background-color: var(--input-bg);">
-                                        @else
-                                            <div class="rounded-circle border d-flex align-items-center justify-content-center mx-auto"
-                                                 style="width: 45px; height: 45px; background-color: var(--input-bg); border-color: var(--border-color) !important;">
-                                                <i class="bi bi-image text-muted" style="font-size: 0.8rem;"></i>
-                                            </div>
-                                        @endif
+                                         @if($product->image)
+                                             <img src="{{ $product->image_url }}"
+                                                  alt="{{ $product->name }}"
+                                                  class="rounded-circle border border-gold shadow-sm"
+                                                  style="width: 45px; height: 45px; object-fit: cover; background-color: var(--input-bg);">
+                                         @else
+                                             <div class="rounded-circle border d-flex align-items-center justify-content-center mx-auto"
+                                                  style="width: 45px; height: 45px; background-color: var(--input-bg); border-color: var(--border-color) !important;">
+                                                 <i class="bi bi-image text-muted" style="font-size: 0.8rem;"></i>
+                                             </div>
+                                         @endif
+                                    </td>
 
                                     <td>
                                         <div class="d-flex flex-column">
@@ -1574,7 +1570,10 @@ $(document).on('click', '.edit-v', function() {
     // عرض الصورة إذا وجدت
     let imgPath = btn.data('image');
     if (imgPath) {
-        $('#variantImagePreview').attr('src', '/storage/' + imgPath).show();
+        let finalSrc = (typeof imgPath === 'string' && (imgPath.startsWith('http://') || imgPath.startsWith('https://') || imgPath.startsWith('/'))) 
+            ? imgPath 
+            : '/storage/' + imgPath;
+        $('#variantImagePreview').attr('src', finalSrc).show();
     } else {
         $('#variantImagePreview').hide();
     }

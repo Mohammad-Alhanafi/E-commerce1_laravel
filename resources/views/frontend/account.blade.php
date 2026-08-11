@@ -34,13 +34,13 @@
             <div class="account-hero d-flex flex-column flex-md-row align-items-center gap-4 p-4" style="background: var(--section-bg); border-bottom: 1px solid var(--border-color);">
                 <div class="account-avatar" style="position: relative; width: 120px; height: 120px; border-radius: 50%; background: var(--section-bg); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--primary-color); border: 2px solid var(--primary-color); overflow: hidden;">
                     @if($user->profile_image)
-                        <img src="{{ asset($user->profile_image) }}" id="avatarPreview" alt="{{ $user->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ $user->profile_image_url }}" id="avatarPreview" alt="{{ $user->name }}" style="width: 100%; height: 100%; object-fit: cover;">
                     @else
                         <span id="avatarInitials">{{ mb_substr($user->name ?? 'U', 0, 1) }}</span>
                         <img src="" id="avatarPreview" style="display: none; width: 100%; height: 100%; object-fit: cover;">
                     @endif
 
-                    {{-- فورم مستقل خاص فقط برفع الصورة، عشان ما يصطدم مع التحقق (validation) تبع باقي حقول الحساب --}}
+                    {{-- فورم مستقل خاص فقط برفع الصورة --}}
                     <form action="{{ route('account.avatar.update') }}" method="POST" enctype="multipart/form-data" id="avatarForm">
                         @csrf
                         <label for="profileImageInput" style="position: absolute; bottom: 0; right: 0; background: var(--primary-color); color: var(--btn-text-color, #000); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.9rem; border: 2px solid var(--bg-color); z-index: 2;">
@@ -74,12 +74,6 @@
                         <div class="p-3 rounded-3" style="background: var(--section-bg); border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
                             <div>
                                 <small style="color: var(--text-muted); display: block; margin-bottom: 4px;">{{ __('profile.name') }}</small>
-                                <span style="font-weight: 500;">{{ $user->name }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- حقل البريد الإلكتروني --}}
                     <div class="col-md-6">
                         <div class="p-3 rounded-3" style="background: var(--section-bg); border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
                             <div>

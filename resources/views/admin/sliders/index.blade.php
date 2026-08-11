@@ -210,21 +210,19 @@
                             @forelse($sliders->sortBy('order') as $slider)
                             <tr>
                                 <td class="fw-bold text-muted">#{{ $slider->order }}</td>
-                                <td>
                                     @php
-                                        $extension = pathinfo($slider->image, PATHINFO_EXTENSION);
-                                        $isVideo = in_array(strtolower($extension), ['mp4', 'mov', 'webm']);
+                                        $isVideo = $slider->isVideo();
                                     @endphp
 
                                     @if($isVideo)
                                         <div class="position-relative d-inline-block">
                                             <video class="media-preview" muted onmouseover="this.play()" onmouseout="this.pause(); this.currentTime=0;">
-                                                <source src="{{ asset('storage/'.$slider->image) }}">
+                                                <source src="{{ $slider->image_url }}">
                                             </video>
                                         <small class="position-absolute bottom-0 end-0 text-warning px-1" style="font-size: 8px; border-radius: 4px; background-color: var(--input-bg);">{{ __('admin.video') }}</small>
                                         </div>
                                     @else
-                                        <img src="{{ asset('storage/'.$slider->image) }}" class="media-preview">
+                                        <img src="{{ $slider->image_url }}" class="media-preview">
                                     @endif
                                 </td>
                                 <td class="text-start fw-semibold">{{ $slider->title ?? '---' }}</td>
@@ -242,7 +240,7 @@
                                 <td>
                                     <div class="d-flex justify-content-center gap-2">
                                         <button class="btn btn-outline-info btn-sm rounded-circle" 
-                                                onclick="previewMedia('{{ asset('storage/'.$slider->image) }}', '{{ $isVideo ? 'video' : 'image' }}')">
+                                                onclick="previewMedia('{{ $slider->image_url }}', '{{ $isVideo ? 'video' : 'image' }}')">
                                             <i class="fas fa-eye"></i>
                                         </button>
 

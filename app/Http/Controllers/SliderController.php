@@ -49,77 +49,105 @@ public function store(Request $request)
         ]);
 
 
-      if ($isImage) {
+        $disk = config('filesystems.default', 'public');
 
-    $manager = new ImageManager(new Driver());
+        if ($isImage) {
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file);
+            $image->cover(1600, 700);
 
-    $image = $manager->read($file);
+            $tempPath = sys_get_temp_dir() . '/' . $filename;
+            $image->save($tempPath);
 
-    $image->cover(1600, 700);
+            \Illuminate\Support\Facades\Storage::disk($disk)->put(
+                'sliders/' . $filename,
+                file_get_contents($tempPath)
+            );
 
-    // حفظ مؤقت محليًا ثم رفعه لـ S3
-    $tempPath = sys_get_temp_dir() . '/' . $filename;
-    $image->save($tempPath);
+            @unlink($tempPath);
+        } elseif ($isVideo) {
+            $file->storeAs('sliders', $filename, $disk);
+        }
 
-    \Illuminate\Support\Facades\Storage::disk('s3')->put(
-        'sliders/' . $filename,
-        file_get_contents($tempPath)
-    );
+        $slider = Slider::create([
+            'title'  => $request->title,
+            'image'  => 'sliders/' . $filename,
+            'link'   => $request->link,
+            'status' => $request->status ?? 'active',
+            'order'  => $request->order ?? 0,
+        ]);
 
-    @unlink($tempPath);
-
-} 
-
-elseif ($isVideo) {
-
-    $file->storeAs(
-        'sliders',
-        $filename,
-        's3'
-    );
-} 
-
-
-    /**
-    
-     */
-    public function update(Request $request, $id)
-{
-    $slider = Slider::findOrFail($id);
-
-    if ($request->hasFile('image')) {
+        return back()->with('success', 'تم إضافة السلايدر بنجاح');
     }
 
-    $slider->update([
-        'title' => $request->title,
-        'order' => $request->order,
-        'status' => $request->status,
-    ]);
-
-    return response()->json(['success' => true]);
+    return back()->withErrors(['image' => 'لم يتم إرفاق ملف']);
 }
+
+    public function update(Request $request, $id)
+    {
+        $slider = Slider::findOrFail($id);
+        $disk = config('filesystems.default', 'public');
+
+        if ($request->hasFile('image')) {
+            if ($slider->image) {
+                \Illuminate\Support\Facades\Storage::disk($disk)->delete($slider->image);
+            }
+
+            $file = $request->file('image');
+            $extension = strtolower($file->getClientOriginalExtension());
+            $filename = time() . '.' . $extension;
+
+            if (in_array($extension, ['jpeg', 'png', 'jpg', 'gif'])) {
+                $manager = new ImageManager(new Driver());
+                $image = $manager->read($file);
+                $image->cover(1600, 700);
+                $tempPath = sys_get_temp_dir() . '/' . $filename;
+                $image->save($tempPath);
+
+                \Illuminate\Support\Facades\Storage::disk($disk)->put(
+                    'sliders/' . $filename,
+                    file_get_contents($tempPath)
+                );
+                @unlink($tempPath);
+            } else {
+                $file->storeAs('sliders', $filename, $disk);
+            }
+
+            $slider->image = 'sliders/' . $filename;
+        }
+
+        $slider->update([
+            'title'  => $request->title ?? $slider->title,
+            'order'  => $request->order ?? $slider->order,
+            'status' => $request->status ?? $slider->status,
+            'link'   => $request->link ?? $slider->link,
+        ]);
+
+        return response()->json(['success' => true]);
+    }
    
     public function destroy($id)
     {
         $slider = Slider::findOrFail($id);
+        $disk = config('filesystems.default', 'public');
         
-       if ($slider->image) {
-    \Illuminate\Support\Facades\Storage::disk('s3')->delete($slider->image);
-}
+        if ($slider->image) {
+            \Illuminate\Support\Facades\Storage::disk($disk)->delete($slider->image);
+        }
 
         $slider->delete();
-        return back()->with('success', 'تم الحذف  .');
+        return back()->with('success', 'تم الحذف.');
     }
 
+    public function updateLogo(Request $request)
+    {
+        if ($request->hasFile('logo')) {
+            $disk = config('filesystems.default', 'public');
+            $file = $request->file('logo');
+            $path = $file->storeAs('settings', 'logo.png', $disk);
 
-   public function updateLogo(Request $request)
-{
-    if ($request->hasFile('logo')) {
-        $file = $request->file('logo');
-        $path = $file->storeAs('settings', 'logo.png', 's3');
-
-        return response()->json(['success' => true, 'path' => $path]);
+            return response()->json(['success' => true, 'path' => $path]);
+        }
+        return response()->json(['success' => false], 400);
     }
-    return response()->json(['success' => false], 400);
-}
 }
