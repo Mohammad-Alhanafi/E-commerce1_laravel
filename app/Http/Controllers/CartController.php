@@ -30,7 +30,7 @@ class CartController extends Controller
                 "quantity"   => (int)$request->quantity,
                 "price"      => $variant->variant_price,
                 "size"       => $variant->attributeValues->pluck('value')->join(' / '),
-                "image"      => asset('storage/' . ($variant->variant_image ?? $variant->product->image)),
+                "image"      => get_image_url($variant->variant_image ?? $variant->product->image ?? null),
             ];
         }
 
@@ -125,7 +125,7 @@ class CartController extends Controller
             $html .= '
             <div class="cart-item" style="display: flex; gap: 15px; margin-bottom: 20px; padding: 15px; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 8px; background: rgba(255,255,255,0.05); position: relative;">
                 <div style="width: 80px; height: 100px; border-radius: 5px; overflow: hidden; border: 1px solid rgba(212, 175, 55, 0.3);">
-                    <img src="'.$details['image'].'" style="width:100%; height:100%; object-fit: cover;">
+                    <img src="'.(get_image_url($details['image'] ?? null, 'assets/images/default.jpg')).'" style="width:100%; height:100%; object-fit: cover;">
                 </div>
                 <div style="flex: 1;">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start;">

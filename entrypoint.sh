@@ -1,15 +1,25 @@
 #!/bin/bash
 set -e
 
-# 1. تنظيف كاش لارافيل بالكامل
+echo "=== [1] Clearing Laravel cache ==="
 php artisan config:clear
 php artisan cache:clear
+php artisan view:clear
+php artisan route:clear
 
-# 2. تشغيل الـ Migration لإنشاء الجداول في PostgreSQL
+echo "=== [2] Running migrations ==="
 php artisan migrate --force --verbose
 
+echo "=== [3] Creating storage symlink ==="
+# Remove broken symlink if exists then recreate
+if [ -L public/storage ]; then
+    rm public/storage
+fi
+php artisan storage:link
 
-php artisan storage:link || true
+echo "=== [4] Setting storage permissions ==="
+chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
 
-# 3. تشغيل Apache
+echo "=== [5] Starting Apache ==="
 exec apache2-foreground

@@ -786,7 +786,7 @@
             data-is-active="{{ $category->is_active ? 1 : 0 }}" 
             data-is-featured="{{ $category->is_featured ? 1 : 0 }}"
             data-sort-order="{{ $category->sort_order ?? 0 }}"
-            data-image="{{ $category->image }}"
+            data-image="{{ $category->image_url }}"
             title="{{ __('admin.edit') }}">
             <i class="bi bi-pencil"></i>
         </button>
@@ -805,7 +805,7 @@
     data-description="{{ $category->description }}"
     data-is-active="{{ $category->is_active ? 1 : 0 }}" 
     data-is-featured="{{ $category->is_featured ? 1 : 0 }}"
-    data-image="{{ $category->image }}"
+    data-image="{{ $category->image_url }}"
     title="{{ __('admin.view') }}">
     <i class="bi bi-eye"></i>
 </button>

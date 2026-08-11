@@ -27,7 +27,7 @@
                 <div class="cart-item" style="display: flex; gap: 15px; margin-bottom: 16px; padding: 12px; background: var(--section-bg, #1a1a1a); border: 1px solid var(--border-color, #2a2a2a); border-radius: 10px; position: relative;">
                     
                     <div style="width: 70px; height: 85px; background: var(--input-bg, #000); border-radius: 6px; overflow: hidden; flex-shrink: 0;">
-                        <img src="{{ $details['image'] ?? asset('assets/images/default.jpg') }}" alt="{{ $details['name'] ?? '' }}" style="width:100%; height:100%; object-fit: cover;">
+                        <img src="{{ get_image_url($details['image'] ?? null, 'assets/images/default.jpg') }}" alt="{{ $details['name'] ?? '' }}" style="width:100%; height:100%; object-fit: cover;">
                     </div>
                     
                     <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">

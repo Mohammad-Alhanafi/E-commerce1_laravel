@@ -67,7 +67,8 @@ class SettingController extends Controller
             'text_color',
             'font_family',
             'logo_size',
-            'logo_shape'
+            'logo_shape',
+            'text_size',
         ];
 
         foreach ($logoSettings as $key) {
