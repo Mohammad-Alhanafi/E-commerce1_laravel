@@ -1264,6 +1264,7 @@
     </div>
 
 
+    @include('admin.footer')
 
 
     <!-- Bootstrap JS Bundle with Popper -->
