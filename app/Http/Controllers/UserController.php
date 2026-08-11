@@ -140,9 +140,6 @@ class UserController extends Controller
 public function registerClient(Request $request)
 {
 
-    dd($request->phone_number); // ضعها فوق validate للتجربة فقط
-
-
     $request->validate([
         'name' => 'required|string|max:255',
 
@@ -244,13 +241,12 @@ if ($isDisposable) {
 
 
 
-    } catch (\Exception $e) {
+  } catch (\Exception $e) {
 
-    dd([
-        'error' => $e->getMessage(),
-        'line'  => $e->getLine(),
-        'file'  => $e->getFile()
-    ]);
+    return response()->json([
+        'success' => false,
+        'message' => 'حدث خطأ أثناء التحقق من البريد الإلكتروني، حاول لاحقًا.'
+    ], 500);
 
 }
 

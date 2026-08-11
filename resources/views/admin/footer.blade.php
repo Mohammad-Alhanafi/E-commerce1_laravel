@@ -296,15 +296,13 @@
 
                 <div class="social-icons" aria-label="social links">
 
-                    <a href="" aria-label="tiktok">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
+                    
 
-                    <a href="https://www.instagram.com/waqaar.leb?igsh=MW5oYWM2dHU1MnBjMA==" aria-label="Instagram">
+                    <a href="https://www.instagram.com/vertex_soft?igsh=MXN4MXNjbXJkcnRtcg==" aria-label="Instagram">
                         <i class="fab fa-instagram"></i>
                     </a>
 
-                    <a href="https://wa.me/96181025201" aria-label="WhatsApp">
+                    <a href="https://wa.me/96170842075" aria-label="WhatsApp">
                         <i class="fab fa-whatsapp"></i>
                     </a>
 
