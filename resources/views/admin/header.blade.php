@@ -11,6 +11,7 @@
     if (!isset($settings)) {
         $settings = [];
     }
+    $hasLogo = !empty($settings['logo_path']);
 @endphp
 
 <header class="site-header">
@@ -23,13 +24,13 @@
                     {{-- الصورة: تظهر فقط إذا موجود logo_path --}}
                     <img
                         id="headerLogoImg"
-                        src="{{ !empty($settings['logo_path']) ? get_image_url($settings['logo_path']) : '' }}"
+                        src="{{ $hasLogo ? get_image_url($settings['logo_path']) : '' }}"
                         alt=""
                         style="
                             height: {{ $settings['logo_size'] ?? '50' }}px;
                             border-radius: {{ $settings['logo_shape'] ?? '0%' }};
                             object-fit: contain;
-                            display: {{ !empty($settings['logo_path']) ? 'inline-block' : 'none' }};
+                            display: {{ $hasLogo ? 'inline-block' : 'none' }};
                         "
                         onerror="this.style.display='none'; document.getElementById('headerLogoIcon').style.display='inline-block';"
                     >
@@ -40,7 +41,7 @@
                         style="
                             color: {{ !empty($settings['text_color']) ? $settings['text_color'] : 'var(--primary-color)' }};
                             font-size: {{ ($settings['logo_size'] ?? 50) / 1.5 }}px;
-                            display: {{ !empty($settings['logo_path']) ? 'none' : 'inline-block' }};
+                            display: {{ $hasLogo ? 'none' : 'inline-block' }};
                         ">
                     </i>
                 </span>
@@ -93,10 +94,7 @@
 
             {{-- ICONS --}}
             <div class="header-icons">
-                {{-- USER --}}
-
                 @include('components.language-switcher')
-
 
                 <div class="user-dropdown">
                     @php
@@ -113,9 +111,11 @@
                     <button type="button" class="header-icon-btn user-avatar-btn" id="userBtn" aria-label="{{ __('navbar.account') }}">
                         @auth
                             @if($avatarUrl)
-                                <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="header-avatar" onerror="this.remove(); this.parentElement.classList.add('show-initials');">
+                                <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="header-avatar" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='inline-block';">
+                                <span class="avatar-initials" style="display: none;">{{ mb_substr($user->name ?? 'U', 0, 1) }}</span>
+                            @else
+                                <span class="avatar-initials">{{ mb_substr($user->name ?? 'U', 0, 1) }}</span>
                             @endif
-                            <span class="avatar-initials">{{ mb_substr($user->name ?? 'U', 0, 1) }}</span>
                         @else
                             <i class="fas fa-user"></i>
                         @endauth
@@ -137,7 +137,7 @@
                     </div>
                 </div>
 
-                {{-- CART: يظهر في جميع صفحات المستخدم، لا في لوحة الإدارة --}}
+                {{-- CART --}}
                 @php
                     $isAdminRoute = request()->is('admin') || request()->is('admin/*')
                         || request()->is('category') || request()->is('category/*')
@@ -171,10 +171,10 @@
 
         <div class="preview-container-pro">
             <div id="livePreview" class="live-preview-box">
-                <i id="previewIcon" class="fas fa-crown" style="{{ !empty($settings['logo_path']) ? 'display:none;' : '' }}"></i>
+                <i id="previewIcon" class="fas fa-crown" style="{{ $hasLogo ? 'display:none;' : '' }}"></i>
                 <img id="previewLogoImg"
-                     src="{{ !empty($settings['logo_path']) ? get_image_url($settings['logo_path']) : '' }}"
-                     style="{{ empty($settings['logo_path']) ? 'display:none;' : '' }} height:{{ $settings['logo_size'] ?? 50 }}px; border-radius:{{ $settings['logo_shape'] ?? '0%' }};">
+                     src="{{ $hasLogo ? get_image_url($settings['logo_path']) : '' }}"
+                     style="{{ !$hasLogo ? 'display:none;' : '' }} height:{{ $settings['logo_size'] ?? 50 }}px; border-radius:{{ $settings['logo_shape'] ?? '0%' }};">
                 <span id="previewText" class="notranslate" translate="no" style="font-size: {{ $settings['text_size'] ?? 24 }}px;">{{ $settings['store_name'] ?? 'الوقار' }}</span>
             </div>
         </div>
@@ -210,26 +210,16 @@
                 <div class="setting-group-pro">
                     <label><i class="fas fa-font"></i> {{ __('settings.font_family') }}</label>
                     <select id="fontFamilyInput">
-                        <option value="'Cairo', sans-serif" {{ ($settings['font_family'] ?? '') === "'Cairo', sans-serif" ? 'selected' : '' }}>            {{ __('settings.font_cairo') }}
-</option>
-                        <option value="'Tajawal', sans-serif" {{ ($settings['font_family'] ?? '') === "'Tajawal', sans-serif" ? 'selected' : '' }}>            {{ __('settings.font_tajawal') }}
-</option>
-                        <option value="'Almarai', sans-serif" {{ ($settings['font_family'] ?? '') === "'Almarai', sans-serif" ? 'selected' : '' }}>            {{ __('settings.font_almarai') }}
-</option>
-                        <option value="'Amiri', serif" {{ ($settings['font_family'] ?? '') === "'Amiri', serif" ? 'selected' : '' }}>            {{ __('settings.font_amiri') }}
-</option>
-                        <option value="'Changa', sans-serif" {{ ($settings['font_family'] ?? '') === "'Changa', sans-serif" ? 'selected' : '' }}>            {{ __('settings.font_changa') }}
-</option>
-                        <option value="'Lalezar', display" {{ ($settings['font_family'] ?? '') === "'Lalezar', display" ? 'selected' : '' }}>            {{ __('settings.font_lalezar') }}
-</option>
-                        <option value="'Reem Kufi', sans-serif" {{ ($settings['font_family'] ?? '') === "'Reem Kufi', sans-serif" ? 'selected' : '' }}>            {{ __('settings.font_reem_kufi') }}
-</option>
-                        <option value="'Marhey', display" {{ ($settings['font_family'] ?? '') === "'Marhey', display" ? 'selected' : '' }}>            {{ __('settings.font_marhey') }}
-</option>
-                        <option value="'Aref Ruqaa', serif" {{ ($settings['font_family'] ?? '') === "'Aref Ruqaa', serif" ? 'selected' : '' }}>            {{ __('settings.font_aref_ruqaa') }}
-</option>
-                        <option value="'El Messiri', sans-serif" {{ ($settings['font_family'] ?? '') === "'El Messiri', sans-serif" ? 'selected' : '' }}>            {{ __('settings.font_el_messiri') }}
-</option>
+                        <option value="'Cairo', sans-serif" {{ ($settings['font_family'] ?? '') === "'Cairo', sans-serif" ? 'selected' : '' }}>            {{ __('settings.font_cairo') }}</option>
+                        <option value="'Tajawal', sans-serif" {{ ($settings['font_family'] ?? '') === "'Tajawal', sans-serif" ? 'selected' : '' }}>            {{ __('settings.font_tajawal') }}</option>
+                        <option value="'Almarai', sans-serif" {{ ($settings['font_family'] ?? '') === "'Almarai', sans-serif" ? 'selected' : '' }}>            {{ __('settings.font_almarai') }}</option>
+                        <option value="'Amiri', serif" {{ ($settings['font_family'] ?? '') === "'Amiri', serif" ? 'selected' : '' }}>            {{ __('settings.font_amiri') }}</option>
+                        <option value="'Changa', sans-serif" {{ ($settings['font_family'] ?? '') === "'Changa', sans-serif" ? 'selected' : '' }}>            {{ __('settings.font_changa') }}</option>
+                        <option value="'Lalezar', display" {{ ($settings['font_family'] ?? '') === "'Lalezar', display" ? 'selected' : '' }}>            {{ __('settings.font_lalezar') }}</option>
+                        <option value="'Reem Kufi', sans-serif" {{ ($settings['font_family'] ?? '') === "'Reem Kufi', sans-serif" ? 'selected' : '' }}>            {{ __('settings.font_reem_kufi') }}</option>
+                        <option value="'Marhey', display" {{ ($settings['font_family'] ?? '') === "'Marhey', display" ? 'selected' : '' }}>            {{ __('settings.font_marhey') }}</option>
+                        <option value="'Aref Ruqaa', serif" {{ ($settings['font_family'] ?? '') === "'Aref Ruqaa', serif" ? 'selected' : '' }}>            {{ __('settings.font_aref_ruqaa') }}</option>
+                        <option value="'El Messiri', sans-serif" {{ ($settings['font_family'] ?? '') === "'El Messiri', sans-serif" ? 'selected' : '' }}>            {{ __('settings.font_el_messiri') }}</option>
                     </select>
                 </div>
             </div>
@@ -240,41 +230,32 @@
             </div>
 
             <div class="setting-group-pro">
-
-    <label>
-        <i class="fas fa-shapes"></i>
-        {{ __('settings.logo_shape') }}
-    </label>
-
-    <select id="logoShapeInput">
-
-        <option value="0%" {{ ($settings['logo_shape'] ?? '') === '0%' ? 'selected' : '' }}>
-            {{ __('settings.logo_square') }}
-        </option>
-
-        <option value="15px" {{ ($settings['logo_shape'] ?? '') === '15px' ? 'selected' : '' }}>
-            {{ __('settings.logo_rounded') }}
-        </option>
-
-        <option value="50%" {{ ($settings['logo_shape'] ?? '') === '50%' ? 'selected' : '' }}>
-            {{ __('settings.logo_circle') }}
-        </option>
-
-    </select>
-
-</div>
+                <label>
+                    <i class="fas fa-shapes"></i>
+                    {{ __('settings.logo_shape') }}
+                </label>
+                <select id="logoShapeInput">
+                    <option value="0%" {{ ($settings['logo_shape'] ?? '') === '0%' ? 'selected' : '' }}>
+                        {{ __('settings.logo_square') }}
+                    </option>
+                    <option value="15px" {{ ($settings['logo_shape'] ?? '') === '15px' ? 'selected' : '' }}>
+                        {{ __('settings.logo_rounded') }}
+                    </option>
+                    <option value="50%" {{ ($settings['logo_shape'] ?? '') === '50%' ? 'selected' : '' }}>
+                        {{ __('settings.logo_circle') }}
+                    </option>
+                </select>
+            </div>
 
         </div>
 
         <div class="modal-footer-pro">
             <button id="saveLogo" class="btn-save-pro">
-                <i class="fas fa-check"></i>             {{ __('settings.save') }}
-
+                <i class="fas fa-check"></i>            {{ __('settings.save') }}
             </button>
         </div>
     </div>
 </div>
-
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 @vite(['resources/js/app.js'])
@@ -299,8 +280,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewLogoImg = document.getElementById('previewLogoImg');
     const saveBtn = document.getElementById('saveLogo');
 
-    let newImageSelected = false;
-
     btn.onclick = function(e) {
         e.preventDefault();
         modal.style.display = "flex";
@@ -312,7 +291,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.target == modal) { modal.style.display = "none"; }
     });
 
-    // معاينة الصورة فوراً عند الاختيار
     if (logoInput) {
         logoInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -321,8 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.onload = function(event) {
                 previewLogoImg.src = event.target.result;
                 previewLogoImg.style.display = 'inline-block';
-                previewIcon.style.display = 'none';
-                newImageSelected = true;
+                if (previewIcon) previewIcon.style.display = 'none';
                 updateLivePreview();
             };
             reader.readAsDataURL(file);
@@ -338,7 +315,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const size = logoSize ? logoSize.value : 50;
         const shape = logoShapeInput ? logoShapeInput.value : '0%';
 
-        if (previewIcon) {
+        if (previewLogoImg && previewLogoImg.style.display !== 'none' && previewLogoImg.getAttribute('src') !== '') {
+            if (previewIcon) previewIcon.style.display = 'none';
+        }
+
+        if (previewIcon && previewIcon.style.display !== 'none') {
             previewIcon.style.color = textColorInput ? textColorInput.value : '#D4AF37';
             previewIcon.style.fontSize = (size * 0.7) + 'px';
         }
@@ -371,7 +352,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             let token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-            // تعطيل الزر مؤقتاً وإظهار حالة تحميل بسيطة عليه
             const originalBtnHTML = saveBtn.innerHTML;
             saveBtn.disabled = true;
             saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> {{ __('admin.saving') }}';
@@ -472,7 +452,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-{{-- Side Cart: يظهر في جميع صفحات المستخدم، لا في صفحات الإدارة --}}
 @if(!$isAdminRoute)
     @include('components.side-cart')
 @endif
