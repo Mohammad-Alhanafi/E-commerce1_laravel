@@ -2,9 +2,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&family=Almarai:wght@400;700&family=Amiri:wght@400;700&family=Changa:wght@400;700&family=Lalezar&family=Reem+Kufi:wght@400;700&family=Marhey:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=El+Messiri:wght@400;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="{{ asset('css/header.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/header.css') }}">
+    {{-- theme.css is already loaded by @include('components.theme-head') — do NOT load it again here --}}
+
 
 @php
+    // حماية تلقائية: إذا لم يكن المتغير $settings موجوداً، يتم إنشاؤه مصفوفة فارغة لتجنب كسر الصفحات
     if (!isset($settings)) {
         $settings = [];
     }
@@ -15,36 +18,32 @@
     <div class="container">
         <div class="header-content">
 
-            {{-- LOGO --}}
+            {{-- LOGO (يفتح المودال فقط إذا كان المستخدم آدمن) --}}
             <div class="logo" id="adminLogo" style="{{ (Auth::check() && Auth::user()->role === 'admin') ? 'cursor: pointer;' : '' }}">
-                <span class="logo-icon-wrap" id="headerLogoWrap" style="position: relative; display: inline-flex; align-items: center; justify-content: center;">
-                    
-                    @if($hasLogo)
-                        {{-- إذا في اللوغو: بنعرض الصورة بس وبنلغي التاج نهائياً --}}
-                        <img
-                            id="headerLogoImg"
-                            src="{{ get_image_url($settings['logo_path']) }}"
-                            alt=""
-                            style="
-                                height: {{ $settings['logo_size'] ?? '50' }}px;
-                                border-radius: {{ $settings['logo_shape'] ?? '0%' }};
-                                object-fit: contain;
-                                display: inline-block;
-                            "
-                        >
-                    @else
-                        {{-- إذا ما في لوغو: بنعرض التاج بس --}}
-                        <i
-                            id="headerLogoIcon"
-                            class="fas fa-crown logo-icon"
-                            style="
-                                color: {{ !empty($settings['text_color']) ? $settings['text_color'] : 'var(--primary-color)' }};
-                                font-size: {{ ($settings['logo_size'] ?? 50) / 1.5 }}px;
-                                display: inline-block;
-                            ">
-                        </i>
-                    @endif
-
+                <span class="logo-icon-wrap" id="headerLogoWrap">
+                    {{-- الصورة: تظهر فقط إذا موجود logo_path --}}
+                    <img
+                        id="headerLogoImg"
+                        src="{{ $hasLogo ? get_image_url($settings['logo_path']) : '' }}"
+                        alt=""
+                        style="
+                            height: {{ $settings['logo_size'] ?? '50' }}px;
+                            border-radius: {{ $settings['logo_shape'] ?? '0%' }};
+                            object-fit: contain;
+                            display: {{ $hasLogo ? 'inline-block' : 'none' }};
+                        "
+                        onerror="this.style.display='none'; document.getElementById('headerLogoIcon').style.display='inline-block';"
+                    >
+                    {{-- شعار التاج: يظهر فقط إذا لا يوجد logo_path أو إذا انكسرت الصورة --}}
+                    <i
+                        id="headerLogoIcon"
+                        class="fas fa-crown logo-icon"
+                        style="
+                            color: {{ !empty($settings['text_color']) ? $settings['text_color'] : 'var(--primary-color)' }};
+                            font-size: {{ ($settings['logo_size'] ?? 50) / 1.5 }}px;
+                            display: {{ $hasLogo ? 'none' : 'inline-block' }};
+                        ">
+                    </i>
                 </span>
 
                 <div class="logo-text notranslate" translate="no" id="headerStoreName" style="color: {{ !empty($settings['text_color']) ? $settings['text_color'] : 'var(--primary-color)' }}; font-family: {{ $settings['font_family'] ?? "'Cairo', sans-serif" }}; font-size: {{ $settings['text_size'] ?? 24 }}px;">
@@ -112,7 +111,8 @@
                     <button type="button" class="header-icon-btn user-avatar-btn" id="userBtn" aria-label="{{ __('navbar.account') }}">
                         @auth
                             @if($avatarUrl)
-                                <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="header-avatar">
+                                <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="header-avatar" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='inline-block';">
+                                <span class="avatar-initials" style="display: none;">{{ mb_substr($user->name ?? 'U', 0, 1) }}</span>
                             @else
                                 <span class="avatar-initials">{{ mb_substr($user->name ?? 'U', 0, 1) }}</span>
                             @endif
@@ -171,10 +171,10 @@
 
         <div class="preview-container-pro">
             <div id="livePreview" class="live-preview-box">
-                <i id="previewIcon" class="fas fa-crown" style="{{ $hasLogo ? 'display:none !important;' : '' }}"></i>
+                <i id="previewIcon" class="fas fa-crown" style="{{ $hasLogo ? 'display:none;' : '' }}"></i>
                 <img id="previewLogoImg"
                      src="{{ $hasLogo ? get_image_url($settings['logo_path']) : '' }}"
-                     style="{{ !$hasLogo ? 'display:none !important;' : '' }} height:{{ $settings['logo_size'] ?? 50 }}px; border-radius:{{ $settings['logo_shape'] ?? '0%' }};">
+                     style="{{ !$hasLogo ? 'display:none;' : '' }} height:{{ $settings['logo_size'] ?? 50 }}px; border-radius:{{ $settings['logo_shape'] ?? '0%' }};">
                 <span id="previewText" class="notranslate" translate="no" style="font-size: {{ $settings['text_size'] ?? 24 }}px;">{{ $settings['store_name'] ?? 'الوقار' }}</span>
             </div>
         </div>
@@ -298,8 +298,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const reader = new FileReader();
             reader.onload = function(event) {
                 previewLogoImg.src = event.target.result;
-                previewLogoImg.style.setProperty('display', 'inline-block', 'important');
-                if (previewIcon) previewIcon.style.setProperty('display', 'none', 'important');
+                previewLogoImg.style.display = 'inline-block';
+                if (previewIcon) previewIcon.style.display = 'none';
                 updateLivePreview();
             };
             reader.readAsDataURL(file);
@@ -315,8 +315,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const size = logoSize ? logoSize.value : 50;
         const shape = logoShapeInput ? logoShapeInput.value : '0%';
 
-        if (previewLogoImg && previewLogoImg.src && previewLogoImg.style.display !== 'none') {
-            if (previewIcon) previewIcon.style.setProperty('display', 'none', 'important');
+        if (previewLogoImg && previewLogoImg.style.display !== 'none' && previewLogoImg.getAttribute('src') !== '') {
+            if (previewIcon) previewIcon.style.display = 'none';
         }
 
         if (previewIcon && previewIcon.style.display !== 'none') {
