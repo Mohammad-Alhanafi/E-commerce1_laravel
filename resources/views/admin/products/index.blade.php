@@ -916,7 +916,7 @@
                                    <td class="text-center fw-bold">{{ $products->firstItem() + $loop->index }}</td>
                                    <td class="text-center">
                                         @if($product->image && Storage::disk('public')->exists($product->image))
-                                            <img src="{{ asset('storage/' . $product->image) }}"
+                                        {{ Storage::disk('s3')->url($product->image) }}
                                                  alt="{{ $product->name }}"
                                                  class="rounded-circle border border-gold shadow-sm"
                                                  style="width: 45px; height: 45px; object-fit: cover; background-color: var(--input-bg);">

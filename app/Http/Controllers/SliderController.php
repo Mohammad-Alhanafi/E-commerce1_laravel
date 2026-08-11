@@ -49,55 +49,35 @@ public function store(Request $request)
         ]);
 
 
-        if ($isImage) {
+      if ($isImage) {
 
-            $manager = new ImageManager(new Driver());
+    $manager = new ImageManager(new Driver());
 
-            $image = $manager->read($file);
+    $image = $manager->read($file);
 
-            $image->cover(1600, 700);
+    $image->cover(1600, 700);
 
+    // حفظ مؤقت محليًا ثم رفعه لـ S3
+    $tempPath = sys_get_temp_dir() . '/' . $filename;
+    $image->save($tempPath);
 
-            // حفظ داخل storage/app/public/sliders
-            $path = storage_path('app/public/sliders/' . $filename);
+    \Illuminate\Support\Facades\Storage::disk('s3')->put(
+        'sliders/' . $filename,
+        file_get_contents($tempPath)
+    );
 
-            // إنشاء المجلد إذا لم يكن موجوداً
-            if (!file_exists(dirname($path))) {
-                mkdir(dirname($path), 0755, true);
-            }
+    @unlink($tempPath);
 
-            $image->save($path);
+} 
 
-        } 
-        
-        elseif ($isVideo) {
+elseif ($isVideo) {
 
-            $file->storeAs(
-                'sliders',
-                $filename,
-                'public'
-            );
-        }
-
-
-        $slider = new Slider();
-
-        $slider->image = 'sliders/' . $filename;
-
-        $slider->title = $request->title;
-
-        $slider->status = $request->status ?? 'active';
-
-        $slider->order = $request->order ?? 0;
-
-        $slider->save();
-
-
-        return response()->json([
-            'success' => true
-        ]);
-    }
-}
+    $file->storeAs(
+        'sliders',
+        $filename,
+        's3'
+    );
+} 
 
 
     /**
@@ -123,30 +103,22 @@ public function store(Request $request)
     {
         $slider = Slider::findOrFail($id);
         
-        if ($slider->image && file_exists(public_path($slider->image))) {
-            @unlink(public_path($slider->image));
-        }
+       if ($slider->image) {
+    \Illuminate\Support\Facades\Storage::disk('s3')->delete($slider->image);
+}
 
         $slider->delete();
         return back()->with('success', 'تم الحذف  .');
     }
 
 
-    public function updateLogo(Request $request)
+   public function updateLogo(Request $request)
 {
     if ($request->hasFile('logo')) {
         $file = $request->file('logo');
-        $directory = public_path('uploads/settings');
+        $path = $file->storeAs('settings', 'logo.png', 's3');
 
-        // نأكد وجود المجلد
-        if (!file_exists($directory)) {
-            mkdir($directory, 0777, true);
-        }
-
-        // حفظ الصورة باسم ثابت لاستبدال القديمة فوراً
-        $file->move($directory, 'logo.png');
-
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true, 'path' => $path]);
     }
     return response()->json(['success' => false], 400);
 }

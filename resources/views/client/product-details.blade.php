@@ -49,7 +49,7 @@
 
                 {{-- الكانتينر الأصلي هلق صار "جوكر" بياخد الستايل من الآدمن أو التلقائي --}}
                 <div class="main-image-container {{ $finalStyle }}">
-                    <img src="{{ asset('storage/' . $product->image) }}" class="main-img" id="mainProductImage">
+                    <img src="{{ Storage::disk('s3')->url($product->image) }}" class="main-img" id="mainProductImage">
                 </div>
                 
                 <div class="thumbnail-container mt-3"></div>

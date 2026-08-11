@@ -84,7 +84,7 @@ class SettingController extends Controller
 
         // 5. Logo File Upload
         if ($request->hasFile('logo_image')) {
-            $path = $request->file('logo_image')->store('logos', 'public');
+            $path = $request->file('logo_image')->store('logos', 's3');
 
             DB::table('settings')->updateOrInsert(
                 ['key' => 'logo_path'],

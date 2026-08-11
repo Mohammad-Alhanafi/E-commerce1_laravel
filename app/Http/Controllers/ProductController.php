@@ -69,7 +69,7 @@ class ProductController extends Controller
         }
 
         if($request->hasFile('image')){
-            $data['image'] = $request->file('image')->store('products','public');
+            $data['image'] = $request->file('image')->store('products','s3');
         }
 
         $product = Product::create($data);
@@ -88,7 +88,7 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         if($product->image){
-            Storage::disk('public')->delete($product->image);
+            Storage::disk('s3')->delete($product->image);
         }
 
         // حذف Variants المرتبطة
@@ -167,7 +167,7 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             // حذف الصورة القديمة من السيرفر
             if ($product->image) {
-                Storage::disk('public')->delete($product->image);
+                Storage::disk('s3')->delete($product->image);
             }
             // تخزين الجديدة
             $updateData['image'] = $request->file('image')->store('products', 'public');
@@ -181,7 +181,7 @@ class ProductController extends Controller
         return response()->json([
             'status'        => 'success',
             'message'       => 'تم تحديث المنتج بنجاح',
-            'image_url'     => asset('storage/' . $product->image), 
+            'image_url'     => Storage::disk('s3')->url($product->image),
             'image_path'    => $product->image,                
             'category_name' => $product->category->name ?? 'عام'
         ]);

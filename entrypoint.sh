@@ -8,5 +8,8 @@ php artisan cache:clear
 # 2. تشغيل الـ Migration لإنشاء الجداول في PostgreSQL
 php artisan migrate --force --verbose
 
+
+php artisan storage:link || true
+
 # 3. تشغيل Apache
 exec apache2-foreground

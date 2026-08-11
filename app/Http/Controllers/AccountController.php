@@ -54,28 +54,26 @@ class AccountController extends Controller
         return redirect()->back()->with('success', 'تم تحديث كافة بيانات حسابك الشخصية بنجاح!');
     }
 
-    
     public function updateAvatar(Request $request)
-    {
-        $request->validate([
-            'profile_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+{
+    $request->validate([
+        'profile_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
 
-        $user = auth()->user();
+    $user = auth()->user();
 
-        // حذف الصورة القديمة إذا رغبت لعدم تراكم الملفات
-        if ($user->profile_image && file_exists(public_path($user->profile_image))) {
-            @unlink(public_path($user->profile_image));
-        }
-
-        $file = $request->file('profile_image');
-        $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('uploads/avatars'), $filename);
-
-        // حفظ المسار المباشر ليسهل قراءته في asset() بالهيدر
-        $user->profile_image = 'uploads/avatars/' . $filename;
-        $user->save();
-
-        return redirect()->back()->with('success', 'تم تحديث صورة البروفايل بنجاح!');
+    // حذف الصورة القديمة من S3 إذا موجودة
+    if ($user->profile_image) {
+        \Illuminate\Support\Facades\Storage::disk('s3')->delete($user->profile_image);
     }
+
+    $file = $request->file('profile_image');
+    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+    $path = $file->storeAs('avatars', $filename, 's3');
+
+    $user->profile_image = $path;
+    $user->save();
+
+    return redirect()->back()->with('success', 'تم تحديث صورة البروفايل بنجاح!');
+}
 }
