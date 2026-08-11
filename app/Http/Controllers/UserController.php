@@ -254,17 +254,19 @@ if ($isDisposable) {
 
     // 3. إنشاء المستخدم بعد نجاح الفحص
 
-    $user = User::create([
+    // إذا كان هذا أول مستخدم يسجل بالموقع، اجعله أدمن تلقائياً
+$isFirstUser = \App\Models\User::count() === 0;
 
-        'name'         => $request->name,
-        'email'        => $request->email,
-        'phone_number' => $request->phone_number,
-        'password'     => bcrypt($request->password),
-        'role'         => 'user',
-        'status'       => 'active',
+$user = User::create([
 
-    ]);
+    'name'         => $request->name,
+    'email'        => $request->email,
+    'phone_number' => $request->phone_number,
+    'password'     => bcrypt($request->password),
+    'role'         => $isFirstUser ? 'admin' : 'user',
+    'status'       => 'active',
 
+]);
 
 
     // تسجيل الدخول مباشرة

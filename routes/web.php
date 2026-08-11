@@ -203,19 +203,7 @@ Route::post('/forgot-password/reset', [UserController::class, 'resetPasswordWith
 
 
 
-use App\Models\User;
 
-Route::get('/make-me-admin/{email}', function ($email) {
-    $user = User::where('email', $email)->first();
-
-    if (!$user) {
-        return 'User not found!';
-    }
-
-    $user->update(['role' => 'admin']);
-
-    return "Account {$email} has been successfully promoted to Admin!";
-});
 
 
 Route::get('/run-migrations-now', function () {
