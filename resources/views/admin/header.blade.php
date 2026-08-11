@@ -20,27 +20,29 @@
             {{-- LOGO (يفتح المودال فقط إذا كان المستخدم آدمن) --}}
             <div class="logo" id="adminLogo" style="{{ (Auth::check() && Auth::user()->role === 'admin') ? 'cursor: pointer;' : '' }}">
                 <span class="logo-icon-wrap" id="headerLogoWrap">
-                    @if(!empty($settings['logo_path']))
-                        <img
-                            src="{{ get_image_url($settings['logo_path']) }}"
-                            id="headerLogoImg"
-                            alt="Logo"
-                            style="
-                                height: {{ $settings['logo_size'] ?? '50' }}px;
-                                border-radius: {{ $settings['logo_shape'] ?? '0%' }};
-                                object-fit: contain;
-                            "
-                        >
-                    @else
-                        <i
-                            id="headerLogoIcon"
-                            class="fas fa-crown logo-icon"
-                            style="
-                                color: {{ !empty($settings['text_color']) ? $settings['text_color'] : 'var(--primary-color)' }};
-                                font-size: {{ ($settings['logo_size'] ?? 50) / 1.5 }}px;
-                            ">
-                        </i>
-                    @endif
+                    {{-- الصورة: تظهر فقط إذا موجود logo_path --}}
+                    <img
+                        id="headerLogoImg"
+                        src="{{ !empty($settings['logo_path']) ? get_image_url($settings['logo_path']) : '' }}"
+                        alt=""
+                        style="
+                            height: {{ $settings['logo_size'] ?? '50' }}px;
+                            border-radius: {{ $settings['logo_shape'] ?? '0%' }};
+                            object-fit: contain;
+                            display: {{ !empty($settings['logo_path']) ? 'inline-block' : 'none' }};
+                        "
+                        onerror="this.style.display='none'; document.getElementById('headerLogoIcon').style.display='inline-block';"
+                    >
+                    {{-- شعار التاج: يظهر فقط إذا لا يوجد logo_path أو إذا انكسرت الصورة --}}
+                    <i
+                        id="headerLogoIcon"
+                        class="fas fa-crown logo-icon"
+                        style="
+                            color: {{ !empty($settings['text_color']) ? $settings['text_color'] : 'var(--primary-color)' }};
+                            font-size: {{ ($settings['logo_size'] ?? 50) / 1.5 }}px;
+                            display: {{ !empty($settings['logo_path']) ? 'none' : 'inline-block' }};
+                        ">
+                    </i>
                 </span>
 
                 <div class="logo-text notranslate" translate="no" id="headerStoreName" style="color: {{ !empty($settings['text_color']) ? $settings['text_color'] : 'var(--primary-color)' }}; font-family: {{ $settings['font_family'] ?? "'Cairo', sans-serif" }}; font-size: {{ $settings['text_size'] ?? 24 }}px;">
