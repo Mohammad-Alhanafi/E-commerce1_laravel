@@ -70,17 +70,27 @@ class ProductController extends Controller
 
         $disk = config('filesystems.default', 'public');
 
-        if($request->hasFile('image')){
+  
+if($request->hasFile('image')){
     try {
         $data['image'] = $request->file('image')->store('products', $disk);
         if ($data['image'] === false) {
             \Log::error('Image upload failed silently', ['disk' => $disk]);
+            return response()->json([
+                'success' => false,
+                'message' => 'فشل رفع الصورة إلى التخزين (disk: ' . $disk . ')'
+            ], 500);
         }
     } catch (\Throwable $e) {
         \Log::error('Image upload exception: ' . $e->getMessage());
-        return response()->json(['success' => false, 'message' => 'رفع الصورة فشل: ' . $e->getMessage()], 500);
+        return response()->json([
+            'success' => false,
+            'message' => 'خطأ رفع الصورة: ' . $e->getMessage()
+        ], 500);
     }
 }
+
+
 
         $product = Product::create($data);
 
