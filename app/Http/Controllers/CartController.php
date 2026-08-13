@@ -30,7 +30,7 @@ class CartController extends Controller
                 "quantity"   => (int)$request->quantity,
                 "price"      => $variant->variant_price,
                 "size"       => $variant->attributeValues->pluck('value')->join(' / '),
-                "image"      => get_image_url($variant->variant_image ?? $variant->product->image ?? null),
+                "image" => $variant->variant_image ?? $variant->product->image ?? null,
             ];
         }
 
