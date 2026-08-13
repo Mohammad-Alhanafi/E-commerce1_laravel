@@ -16,6 +16,8 @@ FROM php:8.2-apache
 # تثبيت الإضافات والمكتبات المطلوبة لـ Laravel
 RUN apt-get update && apt-get install -y \
     libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
     zip \
@@ -23,6 +25,7 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpq-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd
 
 # تفعيل خاصية mod_rewrite في Apache لتوجيه روابط Laravel
