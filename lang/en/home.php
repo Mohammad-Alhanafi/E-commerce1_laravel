@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Home | Al-Waqar Store',
+    'title' => 'Home | Ver-Commerce',
     'meta_description' => 'Discover the finest abayas and luxury women\'s fashion at Al-Waqar Store.',
     'meta_keywords' => 'abayas, women\'s fashion, luxury, style, Lebanon',
     'hero_title' => 'Unmatched Elegance',

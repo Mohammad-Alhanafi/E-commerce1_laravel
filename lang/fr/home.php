@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Accueil | Boutique Al-Waqar',
+    'title' => 'Accueil | Ver-Commerce',
     'meta_description' => 'Découvrez les plus belles abayas et la mode féminine de luxe chez Al-Waqar.',
     'meta_keywords' => 'abayas, mode féminine, luxe, style, Liban',
     'hero_title' => 'Élégance inégalée',

@@ -210,6 +210,7 @@
                             @forelse($sliders->sortBy('order') as $slider)
                             <tr>
                                 <td class="fw-bold text-muted">#{{ $slider->order }}</td>
+                                <td>
                                     @php
                                         $isVideo = $slider->isVideo();
                                     @endphp
