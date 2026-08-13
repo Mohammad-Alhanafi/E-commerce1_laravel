@@ -40,4 +40,5 @@ return [
     'remove_confirm_button' => 'Supprimer',
     'remove_product_title'  => 'Supprimer le produit',
     'remove_product_text'   => 'Voulez-vous retirer ce produit de votre panier ?',
+    'login_to_checkout' => 'Veuillez vous connecter pour finaliser votre achat',
 ];

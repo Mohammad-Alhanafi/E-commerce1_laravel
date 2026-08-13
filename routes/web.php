@@ -129,10 +129,10 @@ Route::delete('/cart/remove', [CartController::class, 'remove'])->name('cart.rem
 /* =========================
    CHECKOUT & ACCOUNT
 ========================= */
-Route::middleware('auth')->group(function () {
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
-    Route::post('/checkout/store', [CheckoutController::class, 'store'])->name('checkout.store');
-});
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+
+Route::post('/checkout/store', [CheckoutController::class, 'store'])
+    ->name('checkout.store');
 
 Route::get('/account', function () {
     if (! Auth::check()) {

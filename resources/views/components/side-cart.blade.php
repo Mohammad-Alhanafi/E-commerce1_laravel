@@ -87,15 +87,38 @@
             </span>
         </div>
 
-        @if(session('cart') && count(session('cart')) > 0)
-            <a href="{{ route('checkout') }}" id="side-cart-checkout-btn" class="btn-main" style="display: block; text-align: center; width: 100%; padding: 14px; background: var(--primary-color, #D4AF37); color: #000; font-weight: bold; border-radius: 8px; text-decoration: none; transition: 0.3s;">
-                <i class="fas fa-check-circle me-2"></i> {{ __('cart.checkout') }}
-            </a>
-        @else
-            <a href="{{ route('home') }}" id="side-cart-checkout-btn" class="btn-main" style="display: block; text-align: center; width: 100%; padding: 14px; background: var(--border-color, #333); color: #fff; font-weight: bold; border-radius: 8px; text-decoration: none; transition: 0.3s;">
-                {{ __('cart.continue_shopping') }}
-            </a>
-        @endif
+            @if(session('cart') && count(session('cart')) > 0)
+
+    @auth
+        {{-- المستخدم مسجل دخول --}}
+        <a href="{{ route('checkout') }}"
+           id="side-cart-checkout-btn"
+           class="btn-main"
+           style="display: block; text-align: center; width: 100%; padding: 14px; background: var(--primary-color, #D4AF37); color: #000; font-weight: bold; border-radius: 8px; text-decoration: none; transition: 0.3s;">
+            <i class="fas fa-check-circle me-2"></i>
+            {{ __('cart.checkout') }}
+        </a>
+    @else
+        {{-- المستخدم غير مسجل دخول --}}
+        <a href="{{ route('login.page') }}"
+           id="side-cart-checkout-btn"
+           class="btn-main"
+           style="display: block; text-align: center; width: 100%; padding: 14px; background: var(--primary-color, #D4AF37); color: #000; font-weight: bold; border-radius: 8px; text-decoration: none; transition: 0.3s;">
+            <i class="fas fa-sign-in-alt me-2"></i>
+            {{ __('cart.login_to_checkout') }}
+        </a>
+    @endauth
+
+@else
+
+    <a href="{{ route('home') }}"
+       id="side-cart-checkout-btn"
+       class="btn-main"
+       style="display: block; text-align: center; width: 100%; padding: 14px; background: var(--border-color, #333); color: #fff; font-weight: bold; border-radius: 8px; text-decoration: none; transition: 0.3s;">
+        {{ __('cart.continue_shopping') }}
+    </a>
+
+@endif
     </div>
 
 </div>
@@ -108,29 +131,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeBtn = document.getElementById('close-cart');
     const itemsContent = document.getElementById('cart-items-content');
 
-    window.updateSideCartCheckoutButton = function(cartCount) {
-        var btn = document.getElementById('side-cart-checkout-btn');
-        if (!btn) return;
+   window.updateSideCartCheckoutButton = function(cartCount) {
+    var btn = document.getElementById('side-cart-checkout-btn');
+    if (!btn) return;
 
-        var count = parseInt(cartCount, 10);
-        if (isNaN(count)) {
-            var items = itemsContent ? itemsContent.querySelectorAll('.cart-item') : [];
-            count = items.length;
-        }
+    var count = parseInt(cartCount, 10);
 
-        if (count > 0) {
+    if (isNaN(count)) {
+        var items = itemsContent ? itemsContent.querySelectorAll('.cart-item') : [];
+        count = items.length;
+    }
+
+    if (count > 0) {
+
+        @auth
             btn.setAttribute('href', '{{ route("checkout") }}');
             btn.innerHTML = '<i class="fas fa-check-circle me-2"></i> {{ __("cart.checkout") }}';
-            btn.style.background = 'var(--primary-color, #D4AF37)';
-            btn.style.color = '#000';
-        } else {
-            btn.setAttribute('href', '{{ route("home") }}');
-            btn.innerHTML = '<i class="fas fa-shopping-bag me-2"></i> {{ __("cart.continue_shopping") }}';
-            btn.style.background = 'var(--border-color, #333)';
-            btn.style.color = '#fff';
-        }
-    };
+        @else
+            btn.setAttribute('href', '{{ route("login.page") }}');
+            btn.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i> {{ __("cart.login_to_checkout") }}';
+        @endauth
 
+        btn.style.background = 'var(--primary-color, #D4AF37)';
+        btn.style.color = '#000';
+
+    } else {
+
+        btn.setAttribute('href', '{{ route("home") }}');
+        btn.innerHTML = '<i class="fas fa-shopping-bag me-2"></i> {{ __("cart.continue_shopping") }}';
+        btn.style.background = 'var(--border-color, #333)';
+        btn.style.color = '#fff';
+    }
+};
     // Auto update checkout button state
     window.updateSideCartCheckoutButton();
 

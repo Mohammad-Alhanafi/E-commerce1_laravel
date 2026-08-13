@@ -40,4 +40,5 @@ return [
     'remove_product_title'  => 'حذف المنتج',
     'remove_product_text'   => 'هل تريد إزالة هذا المنتج من السلة؟',
     'removed'               => 'تم حذف المنتج من السلة',
+    'login_to_checkout' => 'يرجى تسجيل الدخول  ',
 ];

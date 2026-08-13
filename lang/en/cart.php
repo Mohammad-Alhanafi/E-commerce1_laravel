@@ -40,4 +40,5 @@ return [
     'remove_confirm_button' => 'Remove',
     'remove_product_title'  => 'Remove Product',
     'remove_product_text'   => 'Do you want to remove this product from the cart?',
+    'login_to_checkout' => 'Please log ',
 ];
