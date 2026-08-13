@@ -32,10 +32,15 @@ class Order extends Model
     }
 
     // علاقة المنتجات
-   public function products()
+  public function products()
 {
     return $this->belongsToMany(Product::class, 'order_items')
-                ->withPivot('quantity', 'price', 'variant_id') 
+                ->withPivot('quantity', 'price', 'variant_id')
                 ->withTimestamps();
+}
+
+public function items()
+{
+    return $this->hasMany(OrderItem::class, 'order_id');
 }
 }
