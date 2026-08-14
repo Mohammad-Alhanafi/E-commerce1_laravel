@@ -255,7 +255,7 @@
                 </span>
 
                 <h5 class="footer-title notranslate" translate="no" id="footerStoreName">
-                    {{ $settings['store_name'] ?? __('footer.store_name') }}
+                    {{ $settings['store_name'] ?? __('profile.store_name') }}
                 </h5>
 
                 <p class="footer-text">

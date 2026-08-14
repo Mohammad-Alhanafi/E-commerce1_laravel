@@ -47,7 +47,7 @@
                 </span>
 
                 <div class="logo-text notranslate" translate="no" id="headerStoreName" style="color: {{ !empty($settings['text_color']) ? $settings['text_color'] : 'var(--primary-color)' }}; font-family: {{ $settings['font_family'] ?? "'Cairo', sans-serif" }}; font-size: {{ $settings['text_size'] ?? 24 }}px;">
-                    {{ $settings['store_name'] ?? 'الوقار' }}
+                    {{ $settings['store_name'] ?? __('profile.store_name') }}
                 </div>
             </div>
 

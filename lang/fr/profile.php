@@ -54,4 +54,5 @@ return [
     'theme' => 'Thème du site',
     'dark_mode' => 'Mode sombre',
     'light_mode' => 'Mode clair',
+    'store_name' => 'Ver-Commerce',
 ];
