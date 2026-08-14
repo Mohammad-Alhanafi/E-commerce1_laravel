@@ -238,27 +238,41 @@
 
 
 
+@if(isset($relatedProducts) && count($relatedProducts) > 0)
+    @php 
+        $layout     = $settings['related_products_layout'] ?? 'curved-slider';
+        $animClass  = $settings['title_animation_style'] ?? 'blur-effect';
+        $titleColor = !empty($settings['title_anim_color']) ? $settings['title_anim_color'] : null;
+        $titleStyle = $titleColor ? "color: {$titleColor} !important; --title-glow-color: {$titleColor}; text-shadow: 0 0 14px {$titleColor}66;" : "";
+    @endphp
 
+    <section class="related-products mt-5 mb-5">
+        <div class="container">
+            <h3 class="section-title-gold {{ $animClass }}" style="{{ $titleStyle }}">{{ __('products.related_may_like') }}</h3>
 
-
-
-
-@php 
-    $layout     = $settings['related_products_layout'] ?? 'curved-slider';
-    $animClass  = $settings['title_animation_style'] ?? 'blur-effect';
-    $titleColor = !empty($settings['title_anim_color']) ? $settings['title_anim_color'] : null;
-    $titleStyle = $titleColor ? "color: {$titleColor} !important; --title-glow-color: {$titleColor}; text-shadow: 0 0 14px {$titleColor}66;" : "";
-@endphp
-
-<section class="related-products mt-5 mb-5">
-    <div class="container">
-        <h3 class="section-title-gold {{ $animClass }}" style="{{ $titleStyle }}">{{ __('products.related_may_like') }}</h3>
-
-        @if($layout === 'curved-slider')
-            <div class="swiper relatedSwiper">
-                <div class="swiper-wrapper">
+            @if($layout === 'curved-slider')
+                <div class="swiper relatedSwiper">
+                    <div class="swiper-wrapper">
+                        @foreach($relatedProducts as $related)
+                            <div class="swiper-slide">
+                                <div class="related-card-curved">
+                                    <a href="{{ url('/item/' . $related->id) }}" class="text-decoration-none h-100 d-flex flex-column">
+                                        <img src="{{ $related->image_url }}" alt="{{ $related->name }}">
+                                        <div class="related-info">
+                                            <h6>{{ $related->name }}</h6>
+                                            <p>{{ number_format($related->price, 2) }} $</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            @elseif($layout === 'horizontal-scroll')
+                <div class="related-horizontal-scroll mt-4">
                     @foreach($relatedProducts as $related)
-                        <div class="swiper-slide">
+                        <div class="related-card-item">
                             <div class="related-card-curved">
                                 <a href="{{ url('/item/' . $related->id) }}" class="text-decoration-none h-100 d-flex flex-column">
                                     <img src="{{ $related->image_url }}" alt="{{ $related->name }}">
@@ -271,43 +285,27 @@
                         </div>
                     @endforeach
                 </div>
-                <div class="swiper-pagination"></div>
-            </div>
-        @elseif($layout === 'horizontal-scroll')
-            <div class="related-horizontal-scroll mt-4">
-                @foreach($relatedProducts as $related)
-                    <div class="related-card-item">
-                        <div class="related-card-curved">
-                            <a href="{{ url('/item/' . $related->id) }}" class="text-decoration-none h-100 d-flex flex-column">
-                                <img src="{{ $related->image_url }}" alt="{{ $related->name }}">
-                                <div class="related-info">
-                                    <h6>{{ $related->name }}</h6>
-                                    <p>{{ number_format($related->price, 2) }} $</p>
-                                </div>
-                            </a>
+            @else
+                {{-- Grid View --}}
+                <div class="row mt-4">
+                    @foreach($relatedProducts as $related)
+                        <div class="col-6 col-md-3 mb-4">
+                            <div class="related-card-curved" style="height: 380px;">
+                                <a href="{{ url('/item/' . $related->id) }}" class="text-decoration-none h-100 d-flex flex-column">
+                                    <img src="{{ $related->image_url }}" alt="{{ $related->name }}">
+                                    <div class="related-info">
+                                        <h6>{{ $related->name }}</h6>
+                                        <p>{{ number_format($related->price, 2) }} $</p>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                @endforeach
-            </div>
-        @else
-            {{-- Grid View --}}
-            <div class="row mt-4">
-                @foreach($relatedProducts as $related)
-                    <div class="col-6 col-md-3 mb-4">
-                        <div class="related-card-curved" style="height: 380px;">
-                            <a href="{{ url('/item/' . $related->id) }}" class="text-decoration-none h-100 d-flex flex-column">
-                                <img src="{{ $related->image_url }}" alt="{{ $related->name }}">
-                                <div class="related-info">
-                                    <h6>{{ $related->name }}</h6>
-                                    <p>{{ number_format($related->price, 2) }} $</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-    </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </section>
+@endif
 </section>
 
 <div>
