@@ -38,9 +38,24 @@
                             </span>
                         </div>
 
-                        @if(!empty($details['size']))
-                            <p style="color:var(--text-muted, #888); font-size:12px; margin: 4px 0 0 0;">{{ __('cart.size') }}: {{ $details['size'] }}</p>
-                        @endif
+                        @if(!empty($details['options']))
+    <p style="color:var(--text-muted, #888); font-size:12px; margin: 4px 0 0 0; display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
+        @foreach($details['options'] as $optName => $optValue)
+            <span style="display:inline-flex; align-items:center; gap:4px;">
+                <strong>{{ $optName }}:</strong>
+
+                @if($optName === __('admin.color') && preg_match('/^#[0-9A-Fa-f]{3,6}$/', $optValue))
+                    <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background-color: {{ $optValue }}; border:1px solid var(--border-color, #444);"></span>
+                @else
+                    {{ $optValue }}
+                @endif
+            </span>
+            @if(!$loop->last)
+                <span style="color: var(--border-color, #555);">—</span>
+            @endif
+        @endforeach
+    </p>
+@endif
 
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
                             <div class="quantity-wrapper" style="display: flex; align-items: center; border: 1px solid var(--border-color, #333); border-radius: 6px; overflow: hidden; background: var(--bg-card, #121212);">
