@@ -467,20 +467,20 @@ function activateSize(btn) {
         const trans = window.ProductDetailTrans || {};
 
         if (stockInt > 5) { 
-            icon = '<i class="fas fa-boxes"></i>'; 
-            color = 'var(--primary-color, #d4af37)'; 
-            const template = trans.available_qty || 'متوفر: :qty';
-            text = template.replace(':qty', stockInt); 
-        } else if (stockInt > 0) { 
-            icon = '<i class="fas fa-exclamation-triangle"></i>'; 
-            color = '#ffc107'; 
-            const template = trans.remaining_qty || '⚠️ الكمية المتبقية: :qty';
-            text = template.replace(':qty', stockInt); 
-        } else { 
-            icon = '<i class="fas fa-times-circle"></i>'; 
-            color = 'var(--danger-color, #ff4d4d)'; 
-            text = trans.stock_out || 'نفدت الكمية'; 
-        }
+    icon = '<i class="fas fa-boxes"></i>'; 
+    color = 'var(--primary-color, #d4af37)'; 
+    const template = trans.available_qty || 'الكمية المتوفرة';
+    text = template.includes(':qty') ? template.replace(':qty', stockInt) : `${template}: ${stockInt}`; 
+} else if (stockInt > 0) { 
+    icon = '<i class="fas fa-exclamation-triangle"></i>'; 
+    color = '#ffc107'; 
+    const template = trans.remaining_qty || 'الكمية المتبقية';
+    text = template.includes(':qty') ? template.replace(':qty', stockInt) : `⚠️ ${template}: ${stockInt}`; 
+} else { 
+    icon = '<i class="fas fa-times-circle"></i>'; 
+    color = 'var(--danger-color, #ff4d4d)'; 
+    text = trans.stock_out || 'غير متوفر'; 
+}
 
         stockContainer.innerHTML = `${icon} <span style="color:${color}">${text}</span>`;
         if (stockWrapper) stockWrapper.style.display = 'block'; 
@@ -509,21 +509,21 @@ function selectGeneralAttribute(name, value, element) {
         const stockNum = parseInt(stock) || 0;
         let icon, color, text;
 
-        if (stockNum > 5) { 
-            icon = '<i class="fas fa-boxes"></i>'; 
-            color = 'var(--text-muted)'; 
-            const template = trans.available_qty || 'متوفر: :qty';
-            text = template.replace(':qty', stockNum); 
-        } else if (stockNum > 0) { 
-            icon = '<i class="fas fa-exclamation-triangle"></i>'; 
-            color = 'var(--warning-color)'; 
-            const template = trans.remaining_qty_hurry || trans.remaining_qty || 'سارع للشراء، متبقي :qty قطعة';
-            text = template.replace(':qty', stockNum); 
-        } else { 
-            icon = '<i class="fas fa-times-circle"></i>'; 
-            color = 'var(--danger-color)'; 
-            text = trans.stock_out || 'نفدت الكمية'; 
-        }
+      if (stockNum > 5) { 
+    icon = '<i class="fas fa-boxes"></i>'; 
+    color = 'var(--text-muted)'; 
+    const template = trans.available_qty || 'الكمية المتوفرة';
+    text = template.includes(':qty') ? template.replace(':qty', stockNum) : `${template}: ${stockNum}`; 
+} else if (stockNum > 0) { 
+    icon = '<i class="fas fa-exclamation-triangle"></i>'; 
+    color = 'var(--warning-color, #ffc107)'; 
+    const template = trans.remaining_qty_hurry || trans.remaining_qty || 'الكمية المتبقية';
+    text = template.includes(':qty') ? template.replace(':qty', stockNum) : `${template} (${stockNum})`; 
+} else { 
+    icon = '<i class="fas fa-times-circle"></i>'; 
+    color = 'var(--danger-color, #ff4d4d)'; 
+    text = trans.stock_out || 'غير متوفر'; 
+}
 
         display.style.color = color;
         display.innerHTML = `${icon} <span class="ms-1">${text}</span>`;

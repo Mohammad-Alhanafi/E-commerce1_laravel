@@ -65,8 +65,8 @@ return [
     'choose_option_first_text'  => 'يرجى اختيار الخيار المطلوب قبل الإضافة.',
     'ok'                        => 'موافق',
     'add_to_cart_error'         => 'حدث خطأ أثناء إضافة المنتج',
-    'available_qty'             => 'الكمية المتوفرة',
-    'remaining_qty'             => 'الكمية المتبقية',
-    'remaining_qty_hurry'       => 'بقيت كمية قليلة، سارع بالطلب!',
+    'available_qty'       => 'الكمية المتوفرة: :qty',
+    'remaining_qty'       => 'الكمية المتبقية: :qty',
+    'remaining_qty_hurry' => '(:qty)، سارع بالطلب!',
     'choose_size_cta'           => 'اختر المقاس للإضافة',
 ];
