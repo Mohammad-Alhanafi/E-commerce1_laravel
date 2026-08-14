@@ -890,54 +890,6 @@ $(document).ready(function() {
 
 
 
-function selectGeneralAttribute(name, value, element, stock, variantId) {
-    // 1. تنسيق الأزرار عند الضغط
-    $(element).parent().find('button').css({'background-color': 'transparent', 'color': 'var(--primary-color)', 'border-color': 'var(--primary-color)'});
-    $(element).css({'background-color': 'var(--primary-color)', 'color': 'var(--btn-text-color, #000)'});
-
-    const display = document.getElementById('stock-display');
-    const wrapper = document.getElementById('stock-wrapper');
-    const addToCartBtn = document.querySelector('.add-to-cart-btn');
-
-    if (display && wrapper) {
-        wrapper.style.display = 'block';
-        let stockNum = parseInt(stock);
-        let icon, color, text;
-
-        if (stockNum > 5) {
-            icon = '<i class="fas fa-boxes"></i>'; 
-            color = 'var(--text-muted)';
-            text = window.ProductDetailTrans.available_qty.replace(':qty', stockNum);
-        } else if (stockNum > 0) {
-            icon = '<i class="fas fa-exclamation-triangle"></i>'; 
-            color = 'var(--warning-color)';
-            text = window.ProductDetailTrans.remaining_qty_hurry.replace(':qty', stockNum);
-        } else {
-            icon = '<i class="fas fa-times-circle"></i>'; 
-            color = 'var(--danger-color)';
-            text = window.ProductDetailTrans.stock_out;
-        }
-
-        display.style.color = color;
-        display.innerHTML = `${icon} <span class="ms-1">${text}</span>`;
-        
-        $(wrapper).hide().fadeIn(300);
-
-        if(addToCartBtn) {
-            if (stockNum > 0) {
-                $(addToCartBtn).prop('disabled', false).css('opacity', '1').text(window.ProductDetailTrans.add_to_cart);
-            } else {
-                $(addToCartBtn).prop('disabled', true).css('opacity', '0.5').text(window.ProductDetailTrans.out_of_stock);
-            }
-        }
-    }
-
-    if (document.getElementById('selected_variant_id')) {
-        document.getElementById('selected_variant_id').value = variantId;
-    }
-}
-
-
 
 
 

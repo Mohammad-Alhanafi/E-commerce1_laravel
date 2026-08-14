@@ -112,51 +112,75 @@ class VariantController extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
+public function update(Request $request, Variant $variant)
+{
+    $request->validate([
+        'product_id'       => 'required|exists:products_tabel,id',
+        'name'             => 'required|string|max:255',
+        'color'            => 'nullable|string|max:20', 
+        'additional_price' => 'nullable|numeric',
+        'stock'            => 'nullable|integer|min:0',
+        'status'           => 'nullable|in:active,inactive', 
+        'variant_image'    => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
 
-    public function update(Request $request, Variant $variant)
-    {
-        $request->validate([
-            'product_id'       => 'required|exists:products_tabel,id',
-            'name'             => 'required|string|max:255',
-            'color'            => 'nullable|string|max:20', 
-            'additional_price' => 'nullable|numeric',
-            'stock'            => 'nullable|integer|min:0',
-            'status'           => 'nullable|in:active,inactive', 
-            'variant_image'    => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+    try {
+        DB::beginTransaction();
 
-        try {
-            $data = [
-                'product_id'       => $request->product_id,
-                'name'             => $request->name,
-                'color'            => $request->color, 
-                'additional_price' => $request->additional_price ?? 0,
-                'variant_price'    => $request->additional_price ?? 0,
-                'stock'            => $request->stock,
-                'status'           => $request->status,
-                'notes'            => $request->notes,
-            ];
+        $data = [
+            'product_id'       => $request->product_id,
+            'name'             => $request->name,
+            'color'            => $request->color, 
+            'additional_price' => $request->additional_price ?? 0,
+            'variant_price'    => $request->additional_price ?? 0,
+            'stock'            => $request->stock,
+            'status'           => $request->status,
+            'notes'            => $request->notes,
+        ];
 
-            if ($request->hasFile('variant_image')) {
-                $disk = config('filesystems.default', 'public');
-                if ($variant->variant_image) {
-                    Storage::disk($disk)->delete($variant->variant_image);
-                }
-                $data['variant_image'] = $request->file('variant_image')->store('variants', $disk);
+        if ($request->hasFile('variant_image')) {
+            $disk = config('filesystems.default', 'public');
+            if ($variant->variant_image) {
+                Storage::disk($disk)->delete($variant->variant_image);
             }
-
-            $variant->update($data);
-
-            return response()->json([
-                'status' => 'success', 
-                'variant' => $variant,
-                'image_url' => get_image_url($variant->variant_image, null)
-            ]);
-            
-        } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+            $data['variant_image'] = $request->file('variant_image')->store('variants', $disk);
         }
+
+        $variant->update($data);
+
+        // 🔑 حذف الخصائص القديمة وإعادة إنشائها من جديد حسب الفورم
+        DB::table('variant_attribute_values')->where('variants_id', $variant->id)->delete();
+
+        if ($request->has('attribute_name')) {
+            foreach ($request->attribute_name as $index => $attrName) {
+                if (!empty($attrName) && !empty($request->attribute_value[$index])) {
+                    $attribute = Attributes::firstOrCreate(['name' => $attrName]);
+                    $attributeValue = AttributeValues::firstOrCreate([
+                        'attributes_id' => $attribute->id, 
+                        'value'         => $request->attribute_value[$index]
+                    ]);
+
+                    DB::table('variant_attribute_values')->insert([
+                        'variants_id'          => $variant->id,
+                        'attribute_values_id'  => $attributeValue->id,
+                    ]);
+                }
+            }
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'status' => 'success', 
+            'variant' => $variant,
+            'image_url' => get_image_url($variant->variant_image, null)
+        ]);
+        
+    } catch (\Exception $e) {
+        DB::rollback();
+        return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
     }
+}
 
     public function destroy($id)
     {
