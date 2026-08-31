@@ -55,9 +55,10 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/conf-available/*.conf
 
-# إعطاء صلاحيات التعديل لمجلدات التخزين والـ Cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+# إعطاء صلاحيات التعديل لمجلدات التخزين والـ Cache والواجهات والقوالب
+RUN mkdir -p /var/www/html/resources/views/themes /var/www/html/public/themes /var/www/html/public/uploads
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/resources/views/themes /var/www/html/public/themes /var/www/html/public/uploads
+RUN chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/resources/views/themes /var/www/html/public/themes /var/www/html/public/uploads
 
 # إعطاء صلاحية التنفيذ لملف entrypoint.sh
 RUN chmod +x /var/www/html/entrypoint.sh

@@ -231,14 +231,30 @@ class ThemeService
         $slugName    = Str::slug($zipBaseName) ?: 'theme-' . time();
         $folderName  = $slugName . '-' . Str::random(5);
 
+        $viewsParent  = resource_path('views/themes');
+        $assetsParent = public_path('themes');
+
+        if (! is_dir($viewsParent)) {
+            @mkdir($viewsParent, 0777, true);
+        }
+        if (! is_dir($assetsParent)) {
+            @mkdir($assetsParent, 0777, true);
+        }
+
         $viewsPath  = resource_path("views/themes/{$folderName}");
         $assetsPath = public_path("themes/{$folderName}");
 
         if (! is_dir($viewsPath)) {
-            mkdir($viewsPath, 0755, true);
+            if (! @mkdir($viewsPath, 0777, true)) {
+                $viewsPath = storage_path("app/themes/{$folderName}");
+                @mkdir($viewsPath, 0777, true);
+            }
         }
         if (! is_dir($assetsPath)) {
-            mkdir($assetsPath, 0755, true);
+            if (! @mkdir($assetsPath, 0777, true)) {
+                $assetsPath = storage_path("app/public/themes/{$folderName}");
+                @mkdir($assetsPath, 0777, true);
+            }
         }
 
         $jsonContent = null;

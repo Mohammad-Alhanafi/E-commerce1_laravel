@@ -17,9 +17,10 @@ if [ -L public/storage ]; then
 fi
 php artisan storage:link
 
-echo "=== [4] Setting storage permissions ==="
-chmod -R 775 storage bootstrap/cache 2>/dev/null || true
-chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
+echo "=== [4] Setting storage and theme permissions ==="
+mkdir -p storage bootstrap/cache resources/views/themes public/themes public/uploads 2>/dev/null || true
+chmod -R 777 storage bootstrap/cache resources/views/themes public/themes public/uploads 2>/dev/null || true
+chown -R www-data:www-data storage bootstrap/cache resources/views/themes public/themes public/uploads 2>/dev/null || true
 
 echo "=== [5] Starting Apache ==="
 exec apache2-foreground
