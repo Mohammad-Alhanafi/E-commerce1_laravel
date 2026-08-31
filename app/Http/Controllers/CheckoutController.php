@@ -36,7 +36,8 @@ class CheckoutController extends Controller
     return view('frontend.checkout', compact('cart', 'subtotal', 'ship_fee', 'shipping_type', 'regions'));
 }
 
- public function store(Request $request)
+
+public function store(Request $request)
 {
     $cart = session()->get('cart', []);
     if (empty($cart)) {
@@ -62,48 +63,86 @@ class CheckoutController extends Controller
             $subtotal = 0;
             $orderItems = [];
 
-            foreach ($cart as $variantId => $item) {
+            foreach ($cart as $cartKey => $item) {
                 $qty = (int) $item['quantity'];
 
-                $variant = DB::table('variants')
-                    ->where('id', $variantId)
-                    ->lockForUpdate()
-                    ->first();
+                // ===== حالة 1: عنصر فيه variant (لون/مقاس) =====
+                if (str_starts_with($cartKey, 'variant_')) {
+                    $variantId = str_replace('variant_', '', $cartKey);
 
-                if (!$variant) {
-                    throw new \Exception('المنتج غير موجود');
-                }
+                    $variant = DB::table('variants')
+                        ->where('id', $variantId)
+                        ->lockForUpdate()
+                        ->first();
 
-                if ((int) $variant->stock < $qty) {
-                    throw new \Exception('الكمية غير متوفرة من المنتج: ' . $item['name']);
-                }
+                    if (!$variant) {
+                        throw new \Exception('المنتج غير موجود: ' . $item['name']);
+                    }
 
-                DB::table('variants')
-                    ->where('id', $variantId)
-                    ->decrement('stock', $qty);
+                    if ((int) $variant->stock < $qty) {
+                        throw new \Exception('الكمية غير متوفرة من المنتج: ' . $item['name']);
+                    }
 
-                $product = DB::table('products_tabel')
-                    ->where('id', $variant->product_id)
-                    ->lockForUpdate()
-                    ->first();
+                    DB::table('variants')
+                        ->where('id', $variantId)
+                        ->decrement('stock', $qty);
 
-                if ($product) {
-                    DB::table('products_tabel')
+                    $product = DB::table('products_tabel')
                         ->where('id', $variant->product_id)
-                        ->update(['stock' => max(0, (int) $product->stock - $qty)]);
+                        ->lockForUpdate()
+                        ->first();
+
+                    if ($product) {
+                        DB::table('products_tabel')
+                            ->where('id', $variant->product_id)
+                            ->update(['stock' => max(0, (int) $product->stock - $qty)]);
+                    }
+
+                    $price = (float) $variant->variant_price;
+                    $subtotal += $price * $qty;
+
+                    $orderItems[] = [
+                        'product_id' => $variant->product_id,
+                        'variant_id' => $variant->id,
+                        'quantity' => $qty,
+                        'price' => $price,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
                 }
+                // ===== حالة 2: منتج بسيط بدون variants =====
+                else {
+                    $productId = str_replace('product_', '', $cartKey);
 
-                $price = (float) $variant->variant_price;
-                $subtotal += $price * $qty;
+                    $product = DB::table('products_tabel')
+                        ->where('id', $productId)
+                        ->lockForUpdate()
+                        ->first();
 
-                $orderItems[] = [
-                    'product_id' => $variant->product_id,
-                    'variant_id' => $variant->id,
-                    'quantity' => $qty,
-                    'price' => $price,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
+                    if (!$product) {
+                        throw new \Exception('المنتج غير موجود: ' . $item['name']);
+                    }
+
+                    if ((int) $product->stock < $qty) {
+                        throw new \Exception('الكمية غير متوفرة من المنتج: ' . $item['name']);
+                    }
+
+                    DB::table('products_tabel')
+                        ->where('id', $productId)
+                        ->decrement('stock', $qty);
+
+                    $price = (float) $product->price;
+                    $subtotal += $price * $qty;
+
+                    $orderItems[] = [
+                        'product_id' => $product->id,
+                        'variant_id' => null,
+                        'quantity' => $qty,
+                        'price' => $price,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
             }
 
             $total_final = $subtotal + $ship_fee;
