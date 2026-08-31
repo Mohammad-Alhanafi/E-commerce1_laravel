@@ -25,5 +25,20 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // معالجة خطأ حجم الملف الكبير بشكل أنيق بدل صفحة 413
+        $exceptions->render(function (
+            \Illuminate\Http\Exceptions\PostTooLargeException $e,
+            \Illuminate\Http\Request $request
+        ) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'حجم الملف المرفوع أكبر من الحد المسموح به.',
+                ], 413);
+            }
+
+            return redirect()->back()->with(
+                'error',
+                'حجم الملف أكبر من الحد المسموح به (الحد الأقصى 20 ميغابايت). يرجى تقليص الملف وإعادة المحاولة.'
+            );
+        });
     })->create();

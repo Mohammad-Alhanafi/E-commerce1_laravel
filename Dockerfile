@@ -26,7 +26,10 @@ RUN apt-get update && apt-get install -y \
     curl \
     libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd zip
+
+# ضبط حدود رفع الملفات (theme import / ZIP)
+COPY docker/php/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 
 # تفعيل خاصية mod_rewrite في Apache لتوجيه روابط Laravel
 RUN a2enmod rewrite
