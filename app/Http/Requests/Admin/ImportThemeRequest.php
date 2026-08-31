@@ -14,15 +14,28 @@ class ImportThemeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'theme_file' => ['required', 'file', 'mimes:json,txt,zip', 'max:2048'],
+            'theme_file' => [
+                'required',
+                'file',
+                'max:20480',
+                function ($attribute, $value, $fail) {
+                    if ($value && $value->isValid()) {
+                        $ext = strtolower($value->getClientOriginalExtension());
+                        if (! in_array($ext, ['json', 'zip', 'txt'])) {
+                            $fail('الملف يجب أن يكون بصيغة JSON أو ZIP فقط.');
+                        }
+                    }
+                },
+            ],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'theme_file.mimes' => 'الملف يجب أن يكون بصيغة JSON أو ZIP فقط.',
-            'theme_file.max'   => 'حجم الملف لا يتجاوز 2 ميغابايت.',
+            'theme_file.required' => 'يرجى اختيار ملف القالب أولاً.',
+            'theme_file.file'     => 'الملف المرفوع غير صالح.',
+            'theme_file.max'      => 'حجم الملف لا يتجاوز 20 ميغابايت.',
         ];
     }
 }

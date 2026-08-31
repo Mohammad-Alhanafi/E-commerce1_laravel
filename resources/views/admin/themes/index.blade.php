@@ -120,6 +120,15 @@
             {{ session('error') }}
         </div>
     @endif
+    @if($errors->any())
+        <div style="background: rgba(220, 53, 69, 0.2); color: #dc3545; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dc3545;">
+            <ul style="margin: 0; padding-right: 20px;">
+                @foreach($errors->all() as $err)
+                    <li>{{ $err }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <div id="import-section" class="import-section">
         <form action="{{ route('admin.themes.import') }}" method="POST" enctype="multipart/form-data" style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">

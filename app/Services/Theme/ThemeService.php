@@ -172,11 +172,17 @@ class ThemeService
     {
         $themeData = $payload['theme'] ?? $payload;
 
+        if (! is_array($themeData) || empty($themeData['colors']) || ! is_array($themeData['colors'])) {
+            throw new \InvalidArgumentException('ملف القالب غير صالح: يجب أن يحتوي على بيانات ألوان (colors) صحيحة.');
+        }
+
+        $importedName = $name ?? ($themeData['name'] ?? 'قالب مستورد') . ' (مستورد)';
+
         return $this->create([
-            'name'        => $name ?? ($themeData['name'] ?? 'Imported Theme') . ' ' . Str::random(4),
-            'description' => $themeData['description'] ?? 'Imported theme',
+            'name'        => $importedName,
+            'description' => $themeData['description'] ?? 'قالب تم استيراده من ملف',
             'mode'        => $themeData['mode'] ?? 'both',
-            'colors'      => $themeData['colors'] ?? [],
+            'colors'      => $themeData['colors'],
             'overrides'   => $themeData['overrides'] ?? [],
             'status'      => 'draft',
         ]);
