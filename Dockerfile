@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
+    libzip-dev \
     zip \
     unzip \
     git \
@@ -27,9 +28,6 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd zip
-
-# ضبط حدود رفع الملفات (theme import / ZIP)
-COPY docker/php/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 
 # تفعيل خاصية mod_rewrite في Apache لتوجيه روابط Laravel
 RUN a2enmod rewrite
@@ -42,6 +40,9 @@ COPY . .
 
 # نسخ ملفات الـ build الجاهزة من المرحلة الأولى (Vite)
 COPY --from=node_builder /app/public/build /var/www/html/public/build
+
+# ضبط حدود رفع الملفات (theme import / ZIP) - بعد COPY لضمان وجود الملف
+COPY docker/php/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 
 # تثبيت Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
