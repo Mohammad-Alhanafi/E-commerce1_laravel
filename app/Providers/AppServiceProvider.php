@@ -55,6 +55,21 @@ class AppServiceProvider extends ServiceProvider
 
         $view->with('categories', $categories);
     });
+
+    // Dynamically load views from active theme folder if present
+    try {
+        if (\Illuminate\Support\Facades\Schema::hasTable('themes')) {
+            $activeTheme = \App\Models\Theme::getActive();
+            if ($activeTheme && ! empty($activeTheme->folder)) {
+                $themeViewsPath = resource_path("views/themes/{$activeTheme->folder}");
+                if (is_dir($themeViewsPath)) {
+                    View::prependLocation($themeViewsPath);
+                }
+            }
+        }
+    } catch (\Throwable $e) {
+        // silence errors during migrations
+    }
 }
 
 

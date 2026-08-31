@@ -15,6 +15,7 @@ class Theme extends Model
         'description',
         'status',
         'mode',
+        'folder',
         'colors',
         'overrides',
         'is_active',

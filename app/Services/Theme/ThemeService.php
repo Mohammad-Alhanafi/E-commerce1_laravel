@@ -227,8 +227,22 @@ class ThemeService
             throw new \InvalidArgumentException('تعذّر فتح ملف ZIP (كود الخطأ: ' . $result . ').');
         }
 
-        $jsonContent  = null;
-        $cssContents  = '';
+        $zipBaseName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $slugName    = Str::slug($zipBaseName) ?: 'theme-' . time();
+        $folderName  = $slugName . '-' . Str::random(5);
+
+        $viewsPath  = resource_path("views/themes/{$folderName}");
+        $assetsPath = public_path("themes/{$folderName}");
+
+        if (! is_dir($viewsPath)) {
+            mkdir($viewsPath, 0755, true);
+        }
+        if (! is_dir($assetsPath)) {
+            mkdir($assetsPath, 0755, true);
+        }
+
+        $jsonContent = null;
+        $cssContents = '';
 
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $entry = $zip->getNameIndex($i);
@@ -238,51 +252,92 @@ class ThemeService
                 continue;
             }
 
-            $lower = strtolower($entry);
+            $lower   = strtolower($entry);
+            $content = $zip->getFromIndex($i);
+
             if (str_ends_with($lower, '.json') && $jsonContent === null) {
-                $jsonContent = $zip->getFromIndex($i);
+                $jsonContent = $content;
             } elseif (str_ends_with($lower, '.css') || str_ends_with($lower, '.txt')) {
-                $cssContents .= ' ' . $zip->getFromIndex($i);
+                $cssContents .= ' ' . $content;
+            }
+
+            // 1. Extract HTML/Blade/PHP view templates
+            if (preg_match('/\.(html|blade\.php|php)$/i', $entry)) {
+                $filename = basename($entry);
+
+                // Map index/home to home.blade.php
+                if (in_array(strtolower($filename), ['index.html', 'home.html', 'index.php', 'home.php'])) {
+                    $bladeName = 'home.blade.php';
+                } else {
+                    $baseNameWithoutExt = preg_replace('/\.(html|blade\.php|php)$/i', '', $filename);
+                    $bladeName = $baseNameWithoutExt . '.blade.php';
+                }
+
+                // Adjust relative asset paths in HTML/Blade
+                $processedContent = preg_replace_callback(
+                    '/(href|src)=["\'](?!http:\/\/|https:\/\/|\/\/|data:|\{\{)([^"\']+)["\']/i',
+                    function ($matches) use ($folderName) {
+                        $attr = $matches[1];
+                        $path = ltrim($matches[2], '/');
+                        return $attr . '="{{ asset(\'themes/' . $folderName . '/' . $path . '\') }}"';
+                    },
+                    $content
+                );
+
+                file_put_contents($viewsPath . '/' . $bladeName, $processedContent);
+
+                // Also save under frontend/ subfolder for standard Laravel route namespaces
+                $frontendDir = $viewsPath . '/frontend';
+                if (! is_dir($frontendDir)) {
+                    mkdir($frontendDir, 0755, true);
+                }
+                file_put_contents($frontendDir . '/' . $bladeName, $processedContent);
+            }
+
+            // 2. Extract public assets (CSS, JS, images, fonts)
+            if (preg_match('/\.(css|js|png|jpg|jpeg|gif|svg|webp|woff|woff2|ttf|eot)$/i', $entry)) {
+                $targetFile = $assetsPath . '/' . ltrim($entry, '/');
+                $targetDir  = dirname($targetFile);
+                if (! is_dir($targetDir)) {
+                    mkdir($targetDir, 0755, true);
+                }
+                file_put_contents($targetFile, $content);
             }
         }
 
         $zip->close();
 
-        // 1. If JSON file is present in ZIP, use it
+        // Parse theme colors if json or css available
+        $colors = config('theme.defaults', []);
         if ($jsonContent !== null) {
             $data = json_decode($jsonContent, true);
             if (is_array($data)) {
-                return $this->import($data);
+                $colors = array_merge($colors, $data['theme']['colors'] ?? $data['colors'] ?? []);
             }
         }
 
-        // 2. If NO JSON file is present (ZIP without JSON), build theme from ZIP metadata & CSS
-        $zipBaseName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $cleanName   = ucwords(str_replace(['_', '-'], ' ', $zipBaseName));
-
-        $extractedColors = [];
         if (! empty($cssContents)) {
             preg_match_all('/#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})\b/', $cssContents, $matches);
             if (! empty($matches[0])) {
                 $uniqueColors = array_values(array_unique($matches[0]));
-                $defaults     = config('theme.defaults', []);
-                $colorKeys    = array_keys($defaults);
+                $colorKeys    = array_keys($colors);
 
                 foreach ($uniqueColors as $index => $hex) {
                     if (isset($colorKeys[$index])) {
-                        $extractedColors[$colorKeys[$index]] = $hex;
+                        $colors[$colorKeys[$index]] = $hex;
                     }
                 }
             }
         }
 
-        $finalColors = array_merge(config('theme.defaults', []), $extractedColors);
+        $cleanName = ucwords(str_replace(['_', '-'], ' ', $zipBaseName));
 
         return $this->create([
-            'name'        => $cleanName . ' (مستورد من ZIP)',
-            'description' => 'قالب تم إنشاؤه واستيراده من أرشيف ZIP (' . $file->getClientOriginalName() . ')',
+            'name'        => $cleanName . ' (قالب ديناميكي)',
+            'description' => 'قالب وتصميم متكامل تم إنشاؤه واستيراده من أرشيف ZIP (' . $file->getClientOriginalName() . ')',
             'mode'        => 'both',
-            'colors'      => $finalColors,
+            'folder'      => $folderName,
+            'colors'      => $colors,
             'status'      => 'draft',
         ]);
     }
