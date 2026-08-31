@@ -15,7 +15,7 @@ class CartController extends Controller
 {
     $request->validate([
         'variant_id' => 'nullable|exists:variants,id',
-        'product_id' => 'nullable|exists:products,id',
+        'product_id' => 'nullable|exists:products_tabel,id',
         'quantity'   => 'required|integer|min:1',
     ]);
 
