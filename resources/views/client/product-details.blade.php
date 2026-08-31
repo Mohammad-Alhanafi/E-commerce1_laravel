@@ -346,6 +346,7 @@
 window.ProductDetailTrans = @json($productTrans);
 let selectedVariantId = null;
 let currentColor = '';
+let isSimpleProduct = false;
 
 // ============ نقطة مركزية واحدة لتحديث كل شي مرتبط بالـ variant المختار ============
 function selectVariant(variantId, price, stock, notes) {
@@ -384,9 +385,9 @@ function syncAddToCartButton(stock) {
     if (!cartBox) return;
 
     const stockInt = parseInt(stock);
-    const hasVariant = !!selectedVariantId;
+    const hasSelection = selectedVariantId !== null && selectedVariantId !== undefined;
 
-    if (hasVariant && stockInt > 0) {
+    if (hasSelection && stockInt > 0) {
         cartBox.classList.remove('disabled');
         cartBox.style.opacity = "1";
         cartBox.style.cursor = "pointer";
@@ -395,7 +396,7 @@ function syncAddToCartButton(stock) {
         cartBox.classList.add('disabled');
         cartBox.style.opacity = "0.5";
         cartBox.style.cursor = "not-allowed";
-        cartBox.querySelector('.cart-title').innerText = (hasVariant && stockInt <= 0) ? window.ProductDetailTrans.out_of_stock : window.ProductDetailTrans.add_to_cart;
+        cartBox.querySelector('.cart-title').innerText = (hasSelection && stockInt <= 0) ? window.ProductDetailTrans.out_of_stock : window.ProductDetailTrans.add_to_cart;
         if (stockInt <= 0) selectedVariantId = null;
     }
 }
@@ -599,7 +600,11 @@ $(document).on('click', '#addToCart', function(e) {
     $.ajax({
         url: "{{ route('cart.add') }}",
         method: "POST",
-        data: {
+        data: isSimpleProduct ? {
+            _token: "{{ csrf_token() }}",
+            product_id: {{ $product->id }},
+            quantity: quantity
+        } : {
             _token: "{{ csrf_token() }}",
             variant_id: selectedVariantId,
             quantity: quantity
@@ -749,7 +754,8 @@ $(document).ready(function() {
                 firstVariant.notes
             );
         } else {
-            selectVariant('', "{{ number_format($product->price, 2) }}", {{ $product->stock }}, '');
+            isSimpleProduct = true;
+            selectVariant('SIMPLE', "{{ number_format($product->price, 2) }}", {{ $product->stock }}, '');
         }
     }
 

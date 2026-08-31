@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Variant; 
+use App\Models\Product;
 
 class CartController extends Controller
 {
@@ -11,32 +12,38 @@ class CartController extends Controller
      * إضافة منتج إلى السلة
      */
     public function add(Request $request)
-    {
-        $request->validate([
-            'variant_id' => 'required|exists:variants,id',
-            'quantity'   => 'required|integer|min:1',
-        ]);
+{
+    $request->validate([
+        'variant_id' => 'nullable|exists:variants,id',
+        'product_id' => 'nullable|exists:products,id',
+        'quantity'   => 'required|integer|min:1',
+    ]);
 
+    if (!$request->variant_id && !$request->product_id) {
+        return response()->json(['success' => false, 'message' => 'لم يتم تحديد منتج'], 422);
+    }
+
+    $cart = session()->get('cart', []);
+
+    if ($request->variant_id) {
         $variant = Variant::with(['product', 'attributeValues.attribute'])->find($request->variant_id);
-        $cart = session()->get('cart', []);
+        $cartKey = 'variant_' . $variant->id;
 
-        if(isset($cart[$variant->id])) {
-            $cart[$variant->id]['quantity'] += (int)$request->quantity;
+        if (isset($cart[$cartKey])) {
+            $cart[$cartKey]['quantity'] += (int)$request->quantity;
         } else {
             $options = [];
 
-            // اللون (لو موجود وله قيمة فعلية)
             if (!empty($variant->color) && strtolower($variant->color) !== '#000000') {
                 $options[__('admin.color')] = $variant->color;
             }
 
-            // كل خاصية إضافية (مقاس، وزن، أي شي) بشكل ديناميكي بالكامل
             foreach ($variant->attributeValues as $attrValue) {
                 $attrName = $attrValue->attribute->name ?? __('admin.option');
                 $options[$attrName] = $attrValue->value;
             }
 
-            $cart[$variant->id] = [
+            $cart[$cartKey] = [
                 "id"         => $variant->id,
                 "product_id" => $variant->product_id,
                 "name"       => $variant->product->name,
@@ -46,17 +53,36 @@ class CartController extends Controller
                 "image"      => $variant->variant_image ?? $variant->product->image ?? null,
             ];
         }
+    }
+    // ===== حالة 2: منتج بسيط بدون variants =====
+    else {
+        $product = Product::find($request->product_id);
+        $cartKey = 'product_' . $product->id;
 
-        session()->put('cart', $cart);
-
-        return response()->json([
-            'success'    => true,
-            'cart_count' => count($cart),
-            'total_price'=> $this->getCartTotal(),
-            'cart_html'  => $this->getCartHtml(), 
-        ]);
+        if (isset($cart[$cartKey])) {
+            $cart[$cartKey]['quantity'] += (int)$request->quantity;
+        } else {
+            $cart[$cartKey] = [
+                "id"         => $product->id,
+                "product_id" => $product->id,
+                "name"       => $product->name,
+                "quantity"   => (int)$request->quantity,
+                "price"      => $product->price,
+                "options"    => [],
+                "image"      => $product->image ?? null,
+            ];
+        }
     }
 
+    session()->put('cart', $cart);
+
+    return response()->json([
+        'success'    => true,
+        'cart_count' => count($cart),
+        'total_price'=> $this->getCartTotal(),
+        'cart_html'  => $this->getCartHtml(),
+    ]);
+}
     /**
      * تحديث الكمية
      */
