@@ -300,12 +300,14 @@ class ThemeService
                     $content
                 );
 
+                $processedContent = $this->makeTemplateDynamic($processedContent);
+
                 file_put_contents($viewsPath . '/' . $bladeName, $processedContent);
 
                 // Also save under frontend/ subfolder for standard Laravel route namespaces
                 $frontendDir = $viewsPath . '/frontend';
                 if (! is_dir($frontendDir)) {
-                    mkdir($frontendDir, 0755, true);
+                    @mkdir($frontendDir, 0777, true);
                 }
                 file_put_contents($frontendDir . '/' . $bladeName, $processedContent);
             }
@@ -315,7 +317,7 @@ class ThemeService
                 $targetFile = $assetsPath . '/' . ltrim($entry, '/');
                 $targetDir  = dirname($targetFile);
                 if (! is_dir($targetDir)) {
-                    mkdir($targetDir, 0755, true);
+                    @mkdir($targetDir, 0777, true);
                 }
                 file_put_contents($targetFile, $content);
             }
@@ -356,6 +358,48 @@ class ThemeService
             'colors'      => $colors,
             'status'      => 'draft',
         ]);
+    }
+
+    protected function makeTemplateDynamic(string $content): string
+    {
+        // 1. Inject theme-head inside <head> if head exists
+        if (str_contains($content, '</head>') && ! str_contains($content, 'theme-head')) {
+            $content = str_replace('</head>', "    @include('components.theme-head')\n</head>", $content);
+        }
+
+        // 2. Inject dynamic backend products section if template lacks @foreach / $featuredProducts
+        if (! str_contains($content, '@foreach') && ! str_contains($content, '$featuredProducts')) {
+            $productsSection = '
+            @if(isset($featuredProducts) && count($featuredProducts) > 0)
+                <section class="py-5" style="background: var(--bg-color); color: var(--text-color);">
+                    <div class="container">
+                        <h2 class="text-center mb-4" style="color: var(--primary-color);">منتجاتنا المختارة</h2>
+                        <div class="row g-4">
+                            @foreach($featuredProducts as $product)
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="card product-card h-100 p-2" style="background: var(--card-bg); border: 1px solid var(--border-color);">
+                                        <img src="{{ asset("uploads/" . $product->image) }}" class="card-img-top" alt="{{ $product->name }}" style="height:220px; object-fit:cover; border-radius:8px;" onerror="this.src=\'{{ asset("images/default.jpg") }}\'">
+                                        <div class="card-body d-flex flex-column justify-content-between">
+                                            <h5 class="card-title" style="color: var(--text-color);">{{ $product->name }}</h5>
+                                            <p class="fw-bold" style="color: var(--primary-color);">{{ $product->price }} SAR</p>
+                                            <a href="{{ route("product.details", $product->id) }}" class="btn btn-gold btn-sm w-100 mt-2">عرض التفاصيل</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </section>
+            @endif';
+
+            if (str_contains($content, '</body>')) {
+                $content = str_replace('</body>', $productsSection . "\n</body>", $content);
+            } else {
+                $content .= "\n" . $productsSection;
+            }
+        }
+
+        return $content;
     }
 
     public function publish(Theme $theme): Theme

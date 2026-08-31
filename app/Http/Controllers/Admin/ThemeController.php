@@ -111,12 +111,12 @@ class ThemeController extends Controller
     /**
      * Activate the specified theme.
      */
-    public function activate(Theme $theme)
+    public function activate(Theme $theme, ThemeService $themeService)
     {
-        Theme::where('is_active', true)->update(['is_active' => false]);
-        $theme->update(['is_active' => true]);
+        $themeService->activate($theme);
+        Theme::clearThemeCache();
 
-        return redirect()->back()->with('success', 'تم تفعيل القالب بنجاح.');
+        return redirect()->back()->with('success', 'تم تفعيل القالب الواجهي وتطبيقه على الموقع بنجاح.');
     }
 
     /**
