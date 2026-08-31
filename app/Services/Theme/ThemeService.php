@@ -172,9 +172,9 @@ class ThemeService
     {
         $themeData = $payload['theme'] ?? $payload;
 
-        if (! is_array($themeData) || empty($themeData['colors']) || ! is_array($themeData['colors'])) {
-            throw new \InvalidArgumentException('ملف القالب غير صالح: يجب أن يحتوي على بيانات ألوان (colors) صحيحة.');
-        }
+        $defaults = config('theme.defaults', []);
+        $colors   = is_array($themeData['colors'] ?? null) ? $themeData['colors'] : [];
+        $mergedColors = array_merge($defaults, $colors);
 
         $importedName = $name ?? ($themeData['name'] ?? 'قالب مستورد') . ' (مستورد)';
 
@@ -182,7 +182,7 @@ class ThemeService
             'name'        => $importedName,
             'description' => $themeData['description'] ?? 'قالب تم استيراده من ملف',
             'mode'        => $themeData['mode'] ?? 'both',
-            'colors'      => $themeData['colors'],
+            'colors'      => $mergedColors,
             'overrides'   => $themeData['overrides'] ?? [],
             'status'      => 'draft',
         ]);
@@ -200,7 +200,15 @@ class ThemeService
         $content = json_decode($file->get(), true);
 
         if (! is_array($content)) {
-            throw new \InvalidArgumentException('ملف JSON غير صالح أو تالف.');
+            // Fallback: create theme named after file if JSON parsing fails
+            $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            return $this->create([
+                'name'        => ucwords(str_replace(['_', '-'], ' ', $filename)) . ' (مستورد)',
+                'description' => 'قالب مستورد من ملف النص',
+                'mode'        => 'both',
+                'colors'      => config('theme.defaults', []),
+                'status'      => 'draft',
+            ]);
         }
 
         return $this->import($content);
@@ -219,7 +227,8 @@ class ThemeService
             throw new \InvalidArgumentException('تعذّر فتح ملف ZIP (كود الخطأ: ' . $result . ').');
         }
 
-        $jsonContent = null;
+        $jsonContent  = null;
+        $cssContents  = '';
 
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $entry = $zip->getNameIndex($i);
@@ -229,25 +238,53 @@ class ThemeService
                 continue;
             }
 
-            if (str_ends_with(strtolower($entry), '.json')) {
+            $lower = strtolower($entry);
+            if (str_ends_with($lower, '.json') && $jsonContent === null) {
                 $jsonContent = $zip->getFromIndex($i);
-                break;
+            } elseif (str_ends_with($lower, '.css') || str_ends_with($lower, '.txt')) {
+                $cssContents .= ' ' . $zip->getFromIndex($i);
             }
         }
 
         $zip->close();
 
-        if ($jsonContent === null) {
-            throw new \InvalidArgumentException('لا يوجد ملف JSON داخل ملف ZIP.');
+        // 1. If JSON file is present in ZIP, use it
+        if ($jsonContent !== null) {
+            $data = json_decode($jsonContent, true);
+            if (is_array($data)) {
+                return $this->import($data);
+            }
         }
 
-        $data = json_decode($jsonContent, true);
+        // 2. If NO JSON file is present (ZIP without JSON), build theme from ZIP metadata & CSS
+        $zipBaseName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $cleanName   = ucwords(str_replace(['_', '-'], ' ', $zipBaseName));
 
-        if (! is_array($data)) {
-            throw new \InvalidArgumentException('ملف JSON الموجود داخل ZIP غير صالح أو تالف.');
+        $extractedColors = [];
+        if (! empty($cssContents)) {
+            preg_match_all('/#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})\b/', $cssContents, $matches);
+            if (! empty($matches[0])) {
+                $uniqueColors = array_values(array_unique($matches[0]));
+                $defaults     = config('theme.defaults', []);
+                $colorKeys    = array_keys($defaults);
+
+                foreach ($uniqueColors as $index => $hex) {
+                    if (isset($colorKeys[$index])) {
+                        $extractedColors[$colorKeys[$index]] = $hex;
+                    }
+                }
+            }
         }
 
-        return $this->import($data);
+        $finalColors = array_merge(config('theme.defaults', []), $extractedColors);
+
+        return $this->create([
+            'name'        => $cleanName . ' (مستورد من ZIP)',
+            'description' => 'قالب تم إنشاؤه واستيراده من أرشيف ZIP (' . $file->getClientOriginalName() . ')',
+            'mode'        => 'both',
+            'colors'      => $finalColors,
+            'status'      => 'draft',
+        ]);
     }
 
     public function publish(Theme $theme): Theme
