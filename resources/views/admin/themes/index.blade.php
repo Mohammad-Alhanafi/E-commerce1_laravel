@@ -122,11 +122,12 @@
     @endif
 
     <div id="import-section" class="import-section">
-        <form action="{{ route('admin.themes.import') }}" method="POST" enctype="multipart/form-data" style="display: flex; align-items: center; gap: 15px;">
+        <form action="{{ route('admin.themes.import') }}" method="POST" enctype="multipart/form-data" style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             @csrf
             <div>
-                <label style="display: block; margin-bottom: 5px;">اختر ملف JSON</label>
-                <input type="file" name="theme_file" accept=".json" required style="background: #000; color: #fff; padding: 10px; border-radius: 5px; border: 1px solid var(--border);">
+                <label style="display: block; margin-bottom: 5px;">اختر ملف القالب <span style="color: var(--ink-muted); font-size: 12px;">(JSON أو ZIP)</span></label>
+                <input type="file" name="theme_file" accept=".json,.zip" required style="background: #000; color: #fff; padding: 10px; border-radius: 5px; border: 1px solid var(--border);">
+                <small style="display: block; margin-top: 4px; color: var(--ink-muted);">يمكنك رفع ملف <code>.json</code> مباشرة أو ملف <code>.zip</code> يحتوي على ملف JSON</small>
             </div>
             <button type="submit" class="btn-gold" style="margin-top: 25px;">استيراد</button>
             <button type="button" onclick="document.getElementById('import-section').style.display='none'" class="btn-action btn-outline" style="margin-top: 25px; flex: none; padding: 10px 20px;">إلغاء</button>
@@ -171,7 +172,8 @@
                                 @csrf
                                 <button type="submit" style="background:none; border:none; color:var(--ink); width:100%; text-align:right; padding:5px; cursor:pointer;"><i class="fas fa-copy"></i> تكرار</button>
                             </form>
-                            <a href="{{ route('admin.themes.export', $t) }}" style="display:block; color:var(--ink); text-decoration:none; padding:5px; margin: 5px 0;"><i class="fas fa-download"></i> تصدير</a>
+                            <a href="{{ route('admin.themes.export', $t) }}" style="display:block; color:var(--ink); text-decoration:none; padding:5px; margin: 5px 0;"><i class="fas fa-download"></i> تصدير JSON</a>
+                            <a href="{{ route('admin.themes.export.zip', $t) }}" style="display:block; color:var(--ink); text-decoration:none; padding:5px; margin: 5px 0;"><i class="fas fa-file-archive"></i> تصدير ZIP</a>
                             @if(!$t->is_active)
                                 <form action="{{ route('admin.themes.destroy', $t) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من الحذف؟')" style="margin: 5px 0;">
                                     @csrf @method('DELETE')

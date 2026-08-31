@@ -184,13 +184,64 @@ class ThemeService
 
     public function importFromFile(UploadedFile $file): Theme
     {
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        if ($extension === 'zip') {
+            return $this->importFromZip($file);
+        }
+
+        // Default: treat as JSON
         $content = json_decode($file->get(), true);
 
         if (! is_array($content)) {
-            throw new \InvalidArgumentException('Invalid theme JSON file.');
+            throw new \InvalidArgumentException('ملف JSON غير صالح أو تالف.');
         }
 
         return $this->import($content);
+    }
+
+    public function importFromZip(UploadedFile $file): Theme
+    {
+        if (! class_exists(\ZipArchive::class)) {
+            throw new \RuntimeException('امتداد ZipArchive غير مثبّت على الخادم.');
+        }
+
+        $zip = new \ZipArchive();
+        $result = $zip->open($file->getRealPath());
+
+        if ($result !== true) {
+            throw new \InvalidArgumentException('تعذّر فتح ملف ZIP (كود الخطأ: ' . $result . ').');
+        }
+
+        $jsonContent = null;
+
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $entry = $zip->getNameIndex($i);
+
+            // Skip directories and hidden/system files
+            if (str_ends_with($entry, '/') || str_starts_with(basename($entry), '.')) {
+                continue;
+            }
+
+            if (str_ends_with(strtolower($entry), '.json')) {
+                $jsonContent = $zip->getFromIndex($i);
+                break;
+            }
+        }
+
+        $zip->close();
+
+        if ($jsonContent === null) {
+            throw new \InvalidArgumentException('لا يوجد ملف JSON داخل ملف ZIP.');
+        }
+
+        $data = json_decode($jsonContent, true);
+
+        if (! is_array($data)) {
+            throw new \InvalidArgumentException('ملف JSON الموجود داخل ZIP غير صالح أو تالف.');
+        }
+
+        return $this->import($data);
     }
 
     public function publish(Theme $theme): Theme

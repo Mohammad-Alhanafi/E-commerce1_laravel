@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\ImportThemeRequest;
 use App\Models\Theme;
 use App\Services\Theme\ColorGeneratorService;
+use App\Services\Theme\ThemeService;
+use Illuminate\Support\Str;
 
 class ThemeController extends Controller
 {
@@ -131,51 +134,58 @@ class ThemeController extends Controller
     }
 
     /**
-     * Export the specified theme as JSON.
+     * Export the specified theme as a JSON file.
      */
-    public function export(Theme $theme)
+    public function export(Theme $theme, ThemeService $themeService)
     {
-        $data = [
-            'name' => $theme->name,
-            'description' => $theme->description,
-            'colors' => $theme->colors,
-            'overrides' => $theme->overrides,
-            'mode' => $theme->mode,
-        ];
+        $data   = $themeService->export($theme);
+        $slug   = Str::slug($theme->name);
+        $fileName = "theme-{$slug}-" . date('Y-m-d') . '.json';
+        $json   = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
-        $fileName = 'theme-' . \Illuminate\Support\Str::slug($theme->name) . '-' . date('Y-m-d') . '.json';
-
-        return response()->json($data)->setEncodingOptions(JSON_UNESCAPED_UNICODE)
+        return response($json, 200)
+            ->header('Content-Type', 'application/json')
             ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
     }
 
     /**
-     * Import a theme from a JSON file.
+     * Export the specified theme as a ZIP archive containing the JSON file.
      */
-    public function import(Request $request)
+    public function exportZip(Theme $theme, ThemeService $themeService)
     {
-        $request->validate([
-            'theme_file' => 'required|file|mimes:json'
-        ]);
+        $data      = $themeService->export($theme);
+        $slug      = Str::slug($theme->name);
+        $jsonName  = "theme-{$slug}-" . date('Y-m-d') . '.json';
+        $zipName   = "theme-{$slug}-" . date('Y-m-d') . '.zip';
+        $tmpPath   = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $zipName;
 
-        $file = $request->file('theme_file');
-        $json = file_get_contents($file->getRealPath());
-        $data = json_decode($json, true);
-
-        if (!$data || !isset($data['colors'])) {
-            return redirect()->back()->with('error', 'ملف JSON غير صالح.');
+        $zip = new \ZipArchive();
+        if ($zip->open($tmpPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+            return redirect()->back()->with('error', 'تعذّر إنشاء ملف ZIP للتصدير.');
         }
 
-        Theme::create([
-            'name' => ($data['name'] ?? 'Imported Theme') . ' (مستورد)',
-            'description' => $data['description'] ?? null,
-            'colors' => $data['colors'],
-            'overrides' => $data['overrides'] ?? [],
-            'mode' => $data['mode'] ?? 'both',
-            'status' => 'draft',
-            'is_active' => false,
-            'is_default' => false,
-        ]);
+        $zip->addFromString($jsonName, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+        $zip->close();
+
+        return response()->download($tmpPath, $zipName, [
+            'Content-Type' => 'application/zip',
+        ])->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Import a theme from a JSON or ZIP file.
+     */
+    public function import(ImportThemeRequest $request, ThemeService $themeService)
+    {
+        try {
+            $themeService->importFromFile($request->file('theme_file'));
+        } catch (\InvalidArgumentException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        } catch (\RuntimeException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'حدث خطأ غير متوقع أثناء الاستيراد: ' . $e->getMessage());
+        }
 
         return redirect()->route('admin.themes.index')->with('success', 'تم استيراد القالب بنجاح.');
     }

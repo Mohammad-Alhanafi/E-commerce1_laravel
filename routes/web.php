@@ -54,6 +54,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/themes/{theme}/activate', [App\Http\Controllers\Admin\ThemeController::class, 'activate'])->name('admin.themes.activate');
     Route::post('/themes/{theme}/duplicate', [App\Http\Controllers\Admin\ThemeController::class, 'duplicate'])->name('admin.themes.duplicate');
     Route::get('/themes/{theme}/export', [App\Http\Controllers\Admin\ThemeController::class, 'export'])->name('admin.themes.export');
+    Route::get('/themes/{theme}/export-zip', [App\Http\Controllers\Admin\ThemeController::class, 'exportZip'])->name('admin.themes.export.zip');
     Route::resource('themes', App\Http\Controllers\Admin\ThemeController::class)->names('admin.themes');
 
     Route::get('/ajax/sales-chart', [AdminPanelController::class, 'ajaxChart']);
@@ -221,11 +222,3 @@ Route::get('/run-migrations-now', function () {
 });
 
 
-Route::get('/fix-variant-id-now', function () {
-    try {
-        \Illuminate\Support\Facades\DB::statement('ALTER TABLE order_items ALTER COLUMN variant_id DROP NOT NULL');
-        return 'Success: variant_id column fixed!';
-    } catch (\Exception $e) {
-        return 'Error: ' . $e->getMessage();
-    }
-});
