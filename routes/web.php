@@ -219,3 +219,13 @@ Route::get('/run-migrations-now', function () {
         return 'Error executing migration: ' . $e->getMessage();
     }
 });
+
+
+Route::get('/fix-variant-id-now', function () {
+    try {
+        \Illuminate\Support\Facades\DB::statement('ALTER TABLE order_items ALTER COLUMN variant_id DROP NOT NULL');
+        return 'Success: variant_id column fixed!';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});

@@ -236,18 +236,22 @@ $('#checkout-form').on('submit', function(e) {
                 });
             }
         },
-        error: function(xhr) {
-            let msg = checkoutTrans.error_text;
-            if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                const errs = Object.values(xhr.responseJSON.errors).flat();
-                if (errs.length) msg = errs.join('\n');
-            }
-            Swal.fire({
-                icon: 'error',
-                title: checkoutTrans.error_title,
-                text: msg
-            });
+      error: function(xhr) {
+    let msg = checkoutTrans.error_text;
+    if (xhr.status === 422 && xhr.responseJSON) {
+        if (xhr.responseJSON.errors) {
+            const errs = Object.values(xhr.responseJSON.errors).flat();
+            if (errs.length) msg = errs.join('\n');
+        } else if (xhr.responseJSON.message) {
+            msg = xhr.responseJSON.message;
         }
+    }
+    Swal.fire({
+        icon: 'error',
+        title: checkoutTrans.error_title,
+        text: msg
+    });
+}
     });
 });
 </script>

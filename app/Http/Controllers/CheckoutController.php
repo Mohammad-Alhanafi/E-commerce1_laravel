@@ -136,7 +136,7 @@ public function store(Request $request)
 
                     $orderItems[] = [
                         'product_id' => $product->id,
-                        'variant_id' => null,
+                        'variant_id' => $product->id,
                         'quantity' => $qty,
                         'price' => $price,
                         'created_at' => now(),
